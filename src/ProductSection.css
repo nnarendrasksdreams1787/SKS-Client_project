@@ -1,0 +1,249 @@
+.product-section {
+  padding: 76px 5%;
+  background: #faf6ee;
+  color: #071b30;
+}
+
+.product-section__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.product-eyebrow {
+  color: #0d766e;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.product-section__header h2 {
+  margin: 10px 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(28px, 3vw, 40px);
+}
+
+.product-section__header p {
+  margin: 0;
+  color: #68717b;
+  line-height: 1.7;
+}
+
+.product-section__actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.product-cart-count,
+.product-view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.product-view-all {
+  color: #0d766e;
+  text-decoration: none;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.product-card {
+  min-width: 0;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #eee5d7;
+  border-radius: 14px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(7, 27, 48, 0.09);
+}
+
+.product-card__image-wrap {
+  position: relative;
+  overflow: hidden;
+  background: #f1e9dc;
+}
+
+.product-card__image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-card__image {
+  transform: scale(1.04);
+}
+
+.product-badge {
+  position: absolute;
+  top: 12px;
+  left: 10px;
+  padding: 6px 9px;
+  border-radius: 4px;
+  background: #e9ad43;
+  color: #071b30;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.product-wishlist {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: #071b30;
+  cursor: pointer;
+}
+
+.product-wishlist.is-active {
+  color: #c43d50;
+}
+
+.product-card__content {
+  padding: 16px 13px;
+}
+
+.product-card__category {
+  display: block;
+  margin-bottom: 8px;
+  color: #0d766e;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.product-card__title {
+  display: block;
+  min-height: 44px;
+  color: #071b30;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.product-rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  color: #b9821d;
+  font-size: 12px;
+}
+
+.product-reviews {
+  overflow: hidden;
+  color: #7b838b;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-price {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.product-price strong {
+  font-size: 18px;
+}
+
+.product-price del {
+  color: #8a9097;
+  font-size: 12px;
+}
+
+.product-add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px 8px;
+  border: 1px solid #0d766e;
+  border-radius: 7px;
+  background: #0d766e;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.product-add-button:hover {
+  background: #095c56;
+}
+
+.product-message {
+  margin: 0 0 20px;
+  color: #0d766e;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+@media (max-width: 1500px) {
+  .product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .product-section {
+    padding: 48px 5%;
+  }
+
+  .product-section__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .product-section__actions {
+    flex-wrap: wrap;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .product-card__content {
+    padding: 12px 10px;
+  }
+
+  .product-card__title {
+    font-size: 13px;
+  }
+
+  .product-price strong {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+}
