@@ -1,0 +1,279 @@
+
+.sks-bank-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.sks-bank-toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sks-bank-add-btn,
+.sks-bank-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 8px;
+  background: #071b30;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sks-bank-add-btn:hover,
+.sks-bank-save:hover {
+  background: #0d766e;
+}
+
+.sks-bank-card {
+  background: #fffdf9;
+  border: 1px solid #e8e2d9;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 18px rgba(7, 27, 48, 0.06);
+}
+
+.sks-bank-card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 22px;
+  background: #f8f2e8;
+  border-bottom: 1px solid #e8e2d9;
+  border-left: 4px solid #e9ad43;
+}
+
+.sks-bank-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sks-bank-title svg {
+  color: #0d766e;
+}
+
+.sks-bank-title h2 {
+  margin: 0;
+  color: #071b30;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.sks-bank-count {
+  padding: 5px 12px;
+  border: 1px solid #e9ad43;
+  border-radius: 20px;
+  color: #071b30;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sks-bank-table-wrap {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.sks-bank-table {
+  width: 100%;
+  min-width: 850px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.sks-bank-table th {
+  padding: 16px 14px;
+  background: #fffdf9;
+  color: #071b30;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  border-bottom: 1px solid #e8e2d9;
+}
+
+.sks-bank-table td {
+  padding: 17px 14px;
+  color: #536174;
+  font-size: 12px;
+  border-bottom: 1px solid #f0ece5;
+}
+
+.sks-bank-table tbody tr:hover {
+  background: #fcf8f0;
+}
+
+.sks-bank-table .sks-bank-empty {
+  padding: 30px;
+  text-align: center;
+  color: #697583;
+}
+
+.sks-bank-primary,
+.sks-bank-secondary {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.sks-bank-primary {
+  background: #e5f5f1;
+  color: #0d766e;
+}
+
+.sks-bank-secondary {
+  background: #f1f2f4;
+  color: #66717c;
+}
+
+.sks-bank-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(7, 27, 48, 0.6);
+}
+
+.sks-bank-modal {
+  width: 100%;
+  max-width: 650px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #fffdf9;
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
+}
+
+.sks-bank-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e8e2d9;
+}
+
+.sks-bank-modal-header h2 {
+  margin: 0;
+  color: #071b30;
+  font-size: 20px;
+}
+
+.sks-bank-close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 7px;
+  background: #f8f2e8;
+  color: #071b30;
+  cursor: pointer;
+}
+
+.sks-bank-modal form {
+  padding: 24px;
+}
+
+.sks-bank-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.sks-bank-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sks-bank-field label {
+  color: #071b30;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sks-bank-field input,
+.sks-bank-field select {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #d9dfe5;
+  border-radius: 8px;
+  background: #fff;
+  color: #071b30;
+  font: inherit;
+  font-size: 13px;
+}
+
+.sks-bank-field input:focus,
+.sks-bank-field select:focus {
+  outline: 2px solid #e9ad43;
+  outline-offset: 1px;
+}
+
+.sks-bank-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  color: #071b30;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.sks-bank-checkbox input {
+  accent-color: #0d766e;
+}
+
+.sks-bank-error {
+  margin: 16px 0 0;
+  color: #c72c40;
+  font-size: 12px;
+}
+
+.sks-bank-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.sks-bank-cancel {
+  padding: 0 18px;
+  min-height: 40px;
+  border: 1px solid #d9dfe5;
+  border-radius: 8px;
+  background: #fff;
+  color: #071b30;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .sks-bank-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sks-bank-modal form {
+    padding: 18px;
+  }
+
+  .sks-bank-modal-header {
+    padding: 18px;
+  }
+}

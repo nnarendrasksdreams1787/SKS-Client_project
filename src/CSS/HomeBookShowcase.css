@@ -1,0 +1,220 @@
+/* ==========================================
+   SKS DREAM — HOME BOOK SHOWCASE
+========================================== */
+
+.home-book-showcase {
+  width: 100%;
+  padding: 75px 24px;
+  background: #f8f2e8;
+}
+
+.home-book-showcase-container {
+  width: min(1500px, 100%);
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 45px;
+}
+
+/* LEFT — BOOK SLIDER */
+
+.home-book-showcase-left {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-book-showcase-left .sks-book-slider {
+  width: 100%;
+  max-width: 440px;
+}
+
+/* RIGHT — CONTENT */
+
+.home-book-showcase-right {
+  width: 100%;
+  min-width: 0;
+}
+
+.home-book-showcase-right h2 {
+  margin: 0 0 18px;
+  color: #071b30;
+  font-size: clamp(28px, 3vw, 38px);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.home-book-showcase-right p {
+  margin: 0 0 16px;
+  color: #071b30;
+  font-size: 14px;
+  line-height: 1.85;
+}
+
+/* FEATURE CARDS */
+
+.home-book-showcase-features {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 30px;
+  margin-bottom: 22px;
+}
+
+.home-book-showcase-feature {
+  min-width: 0;
+  min-height: 66px;
+  padding: 12px 10px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  background: #f8f2e8;
+  border-radius: 13px;
+
+  color: #071b30;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.home-book-showcase-feature-icon {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #f8f2e8;
+  color: #e9ad43;
+  border-radius: 10px;
+}
+
+/* LEARN MORE BUTTON */
+
+.home-book-showcase-button {
+  width: 100%;
+  min-height: 44px;
+  padding: 12px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+
+  color: #f8f2e8;
+  background: #071b30;
+  border-radius: 50px;
+
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: underline;
+
+  box-shadow: 0 8px 18px rgba(182, 75, 204, 0.22);
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.home-book-showcase-button:hover {
+  background: #071b30;
+  transform: translateY(-2px);
+}
+
+/* TABLET */
+
+@media (max-width: 900px) {
+  .home-book-showcase-container {
+    gap: 25px;
+  }
+
+  .home-book-showcase-features {
+    gap: 8px;
+  }
+
+  .home-book-showcase-feature {
+    padding: 10px 7px;
+    gap: 7px;
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+  .home-book-showcase {
+    padding: 48px 18px;
+  }
+
+  .home-book-showcase-container {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+
+  .home-book-showcase-left .sks-book-slider {
+    max-width: 400px;
+  }
+
+  .home-book-showcase-right h2 {
+    font-size: 30px;
+  }
+
+  .home-book-showcase-right p {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 420px) {
+  .home-book-showcase-features {
+    grid-template-columns: 1fr;
+  }
+
+  .home-book-showcase-feature {
+    min-height: 54px;
+    padding: 10px 14px;
+  }
+}
+
+/* SKS Dream heading */
+.home-book-showcase-right h2 {
+  font-size: 48px;
+}
+
+/* Description paragraphs */
+.home-book-showcase-right p {
+  font-size: 19px;
+  line-height: 1.9;
+}
+
+/* Three feature cards text */
+.home-book-showcase-feature {
+  font-size: 16px;
+}
+
+/* Learn More button text */
+.home-book-showcase-button {
+  font-size: 18px;
+}
+
+/* Responsive font sizes */
+@media (max-width: 700px) {
+  .home-book-showcase-right h2 {
+    font-size: 34px;
+  }
+
+  .home-book-showcase-right p {
+    font-size: 16px;
+  }
+
+  .home-book-showcase-feature {
+    font-size: 14px;
+  }
+
+  .home-book-showcase-button {
+    font-size: 16px;
+  }
+}

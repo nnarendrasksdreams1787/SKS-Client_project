@@ -1,0 +1,324 @@
+/* ========================================
+   CUSTOMER TESTIMONIALS SECTION
+======================================== */
+
+.customer-testimonials {
+  position: relative;
+  isolation: isolate;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  width: 100%;
+  min-height: 440px;
+
+  padding: 65px 7%;
+
+  overflow: hidden;
+
+  background: #0d766e;
+}
+
+/* ========================================
+   RADHA KRISHNA IMAGE CONTAINER
+======================================== */
+
+.customer-testimonials-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+ 
+ 
+  width: 65%;
+  height: 100%;
+
+  z-index: -1;
+
+  overflow: hidden;
+
+  pointer-events: none;
+}
+
+/* ========================================
+   ACTUAL IMAGE WITH SMOOTH FADE
+======================================== */
+
+.customer-testimonials-image img {
+  display: block;
+
+  width: auto;
+  height: 1200px;
+  max-width: none;
+
+  position: absolute;
+  top: -25%;
+  left: 0;
+
+  -webkit-mask-image: linear-gradient(
+    to right,
+
+    black 0%,
+    black 30%,
+    rgba(0, 0, 0, 0.9) 45%,
+    rgba(0, 0, 0, 0.5) 65%,
+
+    transparent 100%
+  );
+
+  mask-image: linear-gradient(
+    to right,
+  
+
+    black 0%,
+    black 30%,
+    rgba(0, 0, 0, 0.9) 45%,
+    rgba(0, 0, 0, 0.5) 65%,
+    transparent 100%
+  );
+}
+
+/* ========================================
+   RIGHT SIDE CONTENT
+======================================== */
+
+.customer-testimonials-content {
+  position: relative;
+  z-index: 1;
+
+  width: 58%;
+  max-width: 760px;
+
+  text-align: center;
+  color: #ffffff;
+}
+
+/* MAIN HEADING */
+
+.customer-testimonials-content h2 {
+  margin: 0 0 20px;
+
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 800;
+  line-height: 1.2;
+
+  color: #ffffff;
+}
+
+/* ========================================
+   GOLD DIVIDER
+======================================== */
+
+.testimonial-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 14px;
+  margin-bottom: 28px;
+
+  color: #e9ad43;
+  font-size: 26px;
+}
+
+.testimonial-divider::before,
+.testimonial-divider::after {
+  content: "";
+
+  display: block;
+  width: 65px;
+  height: 1px;
+
+  background: #e9ad43;
+}
+
+/* ========================================
+   CUSTOMER NAME AND ROLE
+======================================== */
+
+.customer-testimonials-content h3 {
+  margin: 0 0 6px;
+
+  font-size: 28px;
+  font-weight: 700;
+
+  color: #ffffff;
+}
+
+.testimonial-role {
+  margin: 0 0 12px;
+
+  font-size: 17px;
+  color: #ffffff;
+}
+
+/* ========================================
+   GOLD STAR RATING
+======================================== */
+
+.testimonial-stars {
+  margin-bottom: 20px;
+
+  color: #e9ad43;
+  font-size: 30px;
+  letter-spacing: 5px;
+}
+
+/* ========================================
+   CUSTOMER REVIEW
+======================================== */
+
+.customer-testimonials-content blockquote {
+  margin: 0;
+
+  font-size: clamp(17px, 2vw, 23px);
+  font-style: italic;
+  line-height: 1.7;
+
+  color: #ffffff;
+}
+
+.testimonial-quote {
+  padding: 0 8px;
+
+  color: #e9ad43;
+  font-size: 35px;
+  font-weight: 700;
+}
+
+/* ========================================
+   TABLET RESPONSIVE
+======================================== */
+
+@media (max-width: 1024px) {
+  .customer-testimonials {
+    min-height: 400px;
+    padding: 55px 5%;
+  }
+
+  .customer-testimonials-image {
+    width: 55%;
+  }
+
+  .customer-testimonials-content {
+    width: 60%;
+  }
+
+  .customer-testimonials-content h2 {
+    font-size: 34px;
+  }
+
+  .customer-testimonials-content h3 {
+    font-size: 25px;
+  }
+}
+
+/* ========================================
+   MOBILE RESPONSIVE
+======================================== */
+
+@media (max-width: 768px) {
+  .customer-testimonials {
+    justify-content: center;
+
+    min-height: 560px;
+    padding: 280px 20px 45px;
+  }
+
+  /* Image on top, fading downward */
+
+  .customer-testimonials-image {
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 75%;
+
+    overflow: hidden;
+  }
+
+  .customer-testimonials-image img {
+    width: 100%;
+    height: 100%;
+
+    max-width: none;
+
+    object-fit: cover;
+    object-position: center 25%;
+
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 55%,
+      rgba(0, 0, 0, 0.5) 65%,
+      transparent 100%
+    );
+
+    mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 35%,
+      rgba(0, 0, 0, 0.5) 65%,
+      transparent 100%
+    );
+  }
+
+  .customer-testimonials-content {
+    width: 100%;
+    max-width: 520px;
+  }
+
+  .customer-testimonials-content h2 {
+    font-size: 29px;
+  }
+
+  .customer-testimonials-content h3 {
+    font-size: 23px;
+  }
+
+  .testimonial-role {
+    font-size: 15px;
+  }
+
+  .testimonial-stars {
+    font-size: 25px;
+  }
+
+  .customer-testimonials-content blockquote {
+    font-size: 17px;
+  }
+
+  .testimonial-divider::before,
+  .testimonial-divider::after {
+    width: 35px;
+  }
+}
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 420px) {
+  .customer-testimonials {
+    min-height: 540px;
+    padding: 260px 16px 40px;
+    background: #0d766e;
+  }
+
+  .customer-testimonials-content h2 {
+    font-size: 25px;
+  }
+
+  .customer-testimonials-content h3 {
+    font-size: 21px;
+  }
+
+  .customer-testimonials-content blockquote {
+    font-size: 16px;
+  }
+
+  .testimonial-stars {
+    font-size: 23px;
+    letter-spacing: 3px;
+  }
+}

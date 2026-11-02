@@ -13,6 +13,12 @@ import Footer from "./Footer";
 // K:\SKS-Dreams\client\src\assets\Theme\Section-Divider_3.png
 // C:\Projects\SKS-Dreams\client\src\assets\Theme\Golden-section-divider1.png
 
+import HomeBookShowcase from "../Pages/HomeBookShowcase"
+import WhyChooseUs from "../Pages/WhyChooseUs"
+import CustomerTestimonials from "../Pages/CustomerTestimonials"
+import GetInTouch from "../Components/GetinTouch"
+
+
 export default function HomePage() {
   return (
     <>
@@ -33,6 +39,15 @@ export default function HomePage() {
           <img src={divider2} alt="Divider" />
         </section>
         <ProductSection />
+
+        <HomeBookShowcase />
+
+        <WhyChooseUs />
+
+        <CustomerTestimonials />
+
+        <GetInTouch />
+
       </main>
       <Footer />
     </>

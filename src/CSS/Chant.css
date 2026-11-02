@@ -1,0 +1,2290 @@
+
+   /* 1. MAIN PAGE */
+
+.sks-chant-page {
+  --gold: #e9ad43;
+  --teal: #0d766e;
+  min-height: 100%;
+  padding: 14px 18px 20px;
+  background: #f8f2e8;
+  color: #071b30;
+  font-family: inherit;
+  box-sizing: border-box;
+
+}
+
+
+
+.sks-chant-page \*,
+.sks-chant-page \*::before,
+.sks-chant-page \*::after {
+
+  box-sizing: border-box;
+
+}
+
+.sks-chant-page button {
+  font: inherit;
+  cursor: pointer;
+
+}
+
+
+
+.sks-chant-page button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+
+}
+
+
+   /* 2. TOP HEADING */
+
+.sks-chant-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+
+}
+
+.sks-chant-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+}
+
+
+.sks-chant-om {
+  font-size: 39px;
+  line-height: 1;
+  color: #c77c19;
+  text-shadow: 0 2px 10px rgba(233, 173, 67, 0.5);
+
+}
+
+
+
+.sks-chant-heading h2 {
+  margin: 0 0 3px;
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 900;
+  color: #51231d;
+
+}
+
+
+
+.sks-chant-heading p {
+  margin: 0;
+  font-size: 12px;
+  color: #846d55;
+
+}
+
+
+
+.sks-premium-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 15px;
+  border: 1px solid #d7a34d;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #875013, #c98b27);
+  color: #ffffff;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  white-space: nowrap;
+
+}
+
+
+   /* 3. STATISTICS CARDS */
+
+
+.sks-chant-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 13px;
+
+}
+
+
+
+.sks-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 74px;
+  padding: 10px 15px;
+  border: 1px solid #e9c78e;
+  border-radius: 12px;
+
+
+
+  background:
+
+    radial-gradient(
+
+      circle at 100% 0%,
+      rgba(255, 223, 174, 0.5),
+      transparent 60%
+
+    ),
+
+    linear-gradient(135deg, #fffdf6, #fff0d7);
+
+  box-shadow:
+
+    inset 0 0 0 2px rgba(255, 255, 255, 0.5),
+    0 3px 10px rgba(129, 82, 25, 0.07);
+
+}
+
+
+
+.sks-stat-symbol {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border: 1px solid #f0d4a0;
+  border-radius: 50%;
+  background: #fff7e8;
+  color: #c47b20;
+  font-size: 25px;
+
+}
+
+
+
+.sks-stat-card > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+
+}
+
+
+
+.sks-stat-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #77553e;
+
+}
+
+
+
+.sks-stat-card strong {
+  font-size: 23px;
+  line-height: 1.1;
+  font-weight: 800;
+  color: #612b22;
+
+}
+
+
+   /* 4. MAIN TWO-COLUMN LAYOUT */
+
+
+.sks-chant-layout {
+
+  display: grid;
+  grid-template-columns:
+
+    minmax(0, 0.94fr)
+    minmax(0, 1.06fr);
+
+  align-items: stretch;
+  gap: 14px;
+  margin-bottom: 13px;
+
+}
+
+
+   /* 5. LEFT — SACRED CHANTS */
+
+
+.sks-chant-list {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #dfba77;
+  border-radius: 12px;
+  background: linear-gradient(160deg, #fffefa, #fff1da);
+  box-shadow: 0 4px 12px rgba(98, 59, 20, 0.08);
+
+}
+
+
+
+.sks-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 9px;
+  border: 1px solid #d7ac5b;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #075f60, #0b383c);
+  color: #fff4d9;
+
+}
+
+
+
+.sks-panel-heading h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: inherit;
+
+}
+
+
+
+.sks-panel-heading span {
+  font-size: 17px;
+
+}
+
+
+
+.sks-chant-helper {
+  margin: 9px 0;
+  color: #876b50;
+  font-size: 11px;
+  text-align: center;
+
+}
+
+.sks-chant-items {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  max-height: 310px;
+  overflow-y: auto;
+  padding-right: 2px;
+
+}
+
+.sks-chant-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  padding: 6px;
+  border: 1px solid #e6c999;
+  border-radius: 8px;
+  background: #fffaf1;
+
+}
+
+.sks-chant-item.is-selected {
+  border-color: #0d766e;
+  background: #eaf6f3;
+  box-shadow: inset 0 0 0 1px rgba(13, 118, 110, 0.2);
+
+}
+
+.sks-theme-hanuman .sks-chant-item.is-selected {
+  border-color: #dc8a24;
+  background: #fff0ce;
+  box-shadow: inset 0 0 0 1px rgba(220, 138, 36, 0.2);
+
+}
+
+
+
+.sks-theme-shiva {
+  --panel-border: #c9ad5d;
+  --panel-inner-border: rgba(246, 215, 129, 0.28);
+  --panel-shadow: rgba(5, 29, 17, 0.45);
+  --panel-fallback: #071d15;
+  --panel-heading: #ffe69b;
+
+}
+
+
+
+.sks-theme-shiva .sks-artwork-shade {
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(3, 20, 12, 0.68) 0%,
+      rgba(3, 20, 12, 0.08) 22%,
+      rgba(3, 20, 12, 0.04) 43%,
+      rgba(3, 28, 17, 0.70) 70%,
+      rgba(3, 20, 12, 0.96) 100%
+
+    ),
+
+    linear-gradient(
+      90deg,
+      rgba(4, 30, 17, 0.28),
+      transparent 30%,
+      transparent 70%,
+      rgba(4, 30, 17, 0.28)
+
+    );
+
+}
+
+/* Shiva theme — active chant card */
+
+.sks-theme-shiva .sks-chant-item.is-selected {
+  border-color: #a58c3f;
+  background: #edf4e7;
+  box-shadow:
+
+    inset 0 0 0 1px rgba(165, 140, 63, 0.2);
+
+}
+
+/* Shiva theme — Chant +1 button */
+
+.sks-theme-shiva .sks-main-chant-button {
+  background: linear-gradient(
+    135deg,
+    #124b35,
+    #287451,
+    #124b35
+
+  );
+
+  border-color: #d9bc6b;
+  color: #fff5d5;
+
+}
+
+/* Shiva theme — progress bar */
+
+.sks-theme-shiva .sks-jaap-progress span {
+  background: linear-gradient(
+    90deg,
+    #287451,
+    #eac76c
+
+  );
+
+}
+
+/* Shiva theme — counter */
+
+.sks-theme-shiva .sks-artwork-counter {
+  border-color: #d9bc6b;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 249, 225, 0.97),
+    rgba(231, 221, 170, 0.94)
+
+  );
+
+}
+
+.sks-theme-shiva .sks-artwork-counter strong {
+  color: #164a35;
+
+}
+
+.sks-chant-select {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 4px;
+  border: none;
+  background: transparent;
+  text-align: left;
+
+}
+
+.sks-chant-item-name {
+  color: #4f3023;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+
+}
+
+.sks-chant-select small {
+  color: #99764d;
+  font-size: 10px;
+
+}
+
+.sks-chant-start {
+  flex: none;
+  padding: 7px 9px;
+  border: 1px solid #096a63;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #0d766e, #064d4b);
+  color: #ffffff;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  white-space: nowrap;
+
+}
+
+.sks-chant-delete {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 29px;
+  height: 29px;
+  border: 1px solid #f1d3cc;
+  border-radius: 6px;
+  background: #fff7f4;
+  color: #ba4037;
+
+}
+
+
+   /* 6. RIGHT — FULL ARTWORK PANEL */
+
+.sks-jaap-panel {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  min-width: 0;
+  min-height: 365px;
+  overflow: hidden;
+  padding: 13px 18px 15px;
+  border: 2px solid var(--panel-border);
+  border-radius: 13px;
+  background-color: var(--panel-fallback);
+  background-image: var(--deity-artwork);
+  background-repeat: no-repeat;
+  background-position: center 34%;
+  background-size: cover;
+  box-shadow:
+
+    inset 0 0 0 2px var(--panel-inner-border),
+    0 6px 18px var(--panel-shadow);
+
+}
+
+/* Full image color-blending overlay */
+
+.sks-artwork-shade {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+
+}
+
+   /* 7. VISHNU — COSMIC THEME */
+
+.sks-theme-vishnu {
+  --panel-border: #b78e54;
+  --panel-inner-border: rgba(246, 201, 116, 0.2);
+  --panel-shadow: rgba(9, 15, 42, 0.35);
+  --panel-fallback: #10172e;
+  --panel-heading: #ffe1a2;
+  /* background-size: 80%; */
+
+}
+
+.sks-theme-vishnu .sks-artwork-shade {
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(7, 18, 43, 0.72) 0%,
+      rgba(7, 18, 43, 0.12) 20%,
+      rgba(7, 18, 43, 0.08) 43%,
+      rgba(7, 18, 43, 0.75) 69%,
+      rgba(7, 18, 43, 0.97) 100%
+
+    ),
+
+    linear-gradient(
+      90deg,
+      rgba(20, 20, 52, 0.25),
+      transparent 30%,
+      transparent 70%,
+      rgba(20, 20, 52, 0.25)
+
+    );
+
+}
+
+   /* 8. HANUMAN — GOLDEN THEME */
+
+.sks-theme-hanuman {
+  --panel-border: #e6a638;
+  --panel-inner-border: rgba(255, 207, 107, 0.3);
+  --panel-shadow: rgba(105, 38, 4, 0.42);
+  --panel-fallback: #421409;
+  --panel-heading: #ffdc8a;
+
+}
+
+.sks-theme-hanuman .sks-artwork-shade {
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(51, 14, 5, 0.65) 0%,
+      rgba(51, 14, 5, 0.08) 20%,
+      rgba(51, 14, 5, 0.12) 43%,
+      rgba(65, 21, 5, 0.77) 69%,
+      rgba(53, 14, 5, 0.98) 100%
+
+    ),
+
+    linear-gradient(
+      90deg,
+      rgba(80, 27, 4, 0.25),
+      transparent 30%,
+      transparent 70%,
+      rgba(80, 27, 4, 0.25)
+
+    );
+
+}
+
+
+   /* 9. ARTWORK TOP TITLE */
+
+.sks-artwork-top {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: var(--panel-heading);
+  text-align: center;
+
+}
+
+.sks-artwork-top h3 {
+  margin: 0;
+  color: var(--panel-heading);
+  font-size: 15px;
+  font-weight: 800;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+
+}
+
+.sks-artwork-top > span {
+  color: #ffd16b;
+  font-size: 15px;
+
+}
+
+   /* 10. ARTWORK CONTENT */
+
+  
+.sks-artwork-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 8px;
+
+}
+
+.sks-artwork-mantra {
+  width: 100%;
+  max-width: 420px;
+  color: #fff0c8;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.4;
+  text-align: center;
+  text-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.9),
+    0 0 18px rgba(255, 194, 77, 0.5);
+  overflow-wrap: anywhere;
+
+}
+
+   /* 11. JAAP COUNTER */
+
+.sks-artwork-counter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: min(100%, 205px);
+  padding: 7px 12px;
+  border: 1px solid rgba(255, 214, 143, 0.9);
+  border-radius: 40px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 249, 232, 0.97),
+    rgba(255, 222, 159, 0.93)
+
+  );
+
+  box-shadow:
+    0 0 15px rgba(233, 173, 67, 0.3),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.45);
+  text-align: center;
+
+}
+
+.sks-artwork-counter strong {
+  color: #68280f;
+  font-size: 25px;
+  line-height: 1.15;
+  font-weight: 800;
+
+}
+
+.sks-artwork-counter span {
+  color: #734b31;
+  font-size: 9px;
+  font-weight: 700;
+
+}
+
+
+.sks-artwork-malas {
+  padding: 4px 12px;
+  border: 1px solid rgba(255, 210, 113, 0.6);
+  border-radius: 25px;
+  background: rgba(27, 31, 31, 0.75);
+  color: #ffe2a2;
+  font-size: 10px;
+  font-weight: 800;
+  text-align: center;
+
+}
+
+   /* 12. JAAP PROGRESS BAR */
+
+.sks-jaap-panel .sks-jaap-progress {
+  width: min(100%, 260px);
+  height: 7px;
+  margin: 2px 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 220, 158, 0.7);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.28);
+
+}
+
+.sks-jaap-panel .sks-jaap-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #0d766e, #ffd16b);
+  transition: width 0.15s ease;
+
+}
+
+.sks-theme-hanuman .sks-jaap-progress span {
+  background: linear-gradient(90deg, #f18c15, #ffe7a0);
+
+}
+
+   /* 13. MAIN CHANT BUTTON */
+
+.sks-jaap-panel .sks-main-chant-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: min(100%, 240px);
+  padding: 9px 16px;
+  border: 1px solid #f7cf80;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #0d766e, #07514e);
+  color: #fff7e7;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease;
+
+}
+
+.sks-jaap-panel .sks-main-chant-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+}
+
+.sks-jaap-panel .sks-main-chant-button:active:not(:disabled) {
+  transform: scale(0.98);
+
+}
+
+.sks-theme-hanuman .sks-main-chant-button {
+  background: linear-gradient(
+    135deg,
+    #ffda71,
+    #ce7a09,
+    #ffc348
+
+  );
+
+  color: #55210c;
+
+}
+
+
+   /* 14. RESET / FINISH BUTTONS */
+
+.sks-jaap-panel .sks-jaap-controls {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 2px;
+
+}
+
+.sks-jaap-panel .sks-jaap-controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid #e8c28d;
+  border-radius: 8px;
+  background: rgba(255, 247, 231, 0.95);
+  color: #673c25;
+  font-size: 11px;
+  font-weight: 700;
+
+}
+
+.sks-jaap-notice {
+  max-width: 400px;
+  margin: 5px 0 0;
+  color: #ffe0a1;
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: center;
+
+}
+
+  /* 15. ADD CHANT FORM */
+
+.sks-add-chant-form {
+  margin-bottom: 13px;
+  padding: 13px;
+  border: 1px solid #e6c28a;
+  border-radius: 10px;
+  background: #fffaf1;
+
+}
+
+.sks-add-chant-form label {
+  display: block;
+  margin-bottom: 9px;
+  color: #623b26;
+  font-size: 12px;
+  font-weight: 700;
+
+}
+
+.sks-add-chant-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+
+}
+
+.sks-add-chant-fields input {
+  flex: 1;
+  min-width: 180px;
+  padding: 9px 11px;
+  border: 1px solid #d7b88b;
+  border-radius: 7px;
+  outline: none;
+
+}
+
+.sks-add-chant-fields input:focus {
+  border-color: #0d766e;
+
+}
+
+.sks-add-chant-fields button {
+  padding: 9px 13px;
+  border: none;
+  border-radius: 7px;
+  background: #0d766e;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+
+}
+
+.sks-add-chant-fields .sks-cancel-button {
+  background: #e9e0d4;
+  color: #533b2e;
+
+}
+
+  /* 16. RECENT JAAP ACTIVITY */
+
+.sks-jaap-history {
+  padding: 12px 14px;
+  border: 1px solid #e5bc7d;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 253, 248, 0.98),
+    rgba(255, 241, 217, 0.96)
+
+  );
+
+  box-shadow: 0 4px 12px rgba(118, 76, 25, 0.08);
+
+}
+
+.sks-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 9px;
+
+}
+
+.sks-history-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #b7791c;
+
+}
+
+.sks-history-title h3 {
+  margin: 0;
+  color: #663b25;
+  font-size: 16px;
+
+}
+
+.sks-history-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+
+}
+
+.sks-export-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 7px;
+  background: #0d766e;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+
+}
+
+.sks-reset-activity {
+  padding: 8px 11px;
+  border: 1px solid #e8b9aa;
+  border-radius: 7px;
+  background: #fff8f3;
+  color: #b04d36;
+  font-size: 11px;
+  font-weight: 700;
+
+}
+
+/* =========================
+   17. ACTIVITY TABLE
+   ========================= */
+
+.sks-history-table-wrap {
+  width: 100%;
+  max-height: 190px;
+  overflow: auto;
+
+}
+
+.sks-history-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 4px;
+  text-align: left;
+
+}
+
+.sks-history-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 9px 11px;
+  background: #f8e5c4;
+  color: #73432b;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+
+}
+
+.sks-history-table td {
+  padding: 9px 11px;
+  background: #fffdfa;
+  color: #503d31;
+  font-size: 11px;
+
+}
+
+.sks-history-table tbody tr:hover td {
+  background: #fff5e5;
+
+}
+
+.sks-history-empty {
+  padding: 19px !important;
+  color: #987b5b !important;
+  text-align: center;
+
+}
+
+.sks-history-empty svg {
+  display: block;
+  margin: 0 auto 7px;
+
+}
+
+.sks-status {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 800;
+
+}
+
+.sks-status.is-completed {
+  background: #def4df;
+  color: #24703a;
+
+}
+
+.sks-status.is-incomplete {
+  background: #fff0d4;
+  color: #a56513;
+
+}
+
+.sks-incomplete-count {
+  display: block;
+  margin-top: 4px;
+  color: #9b7654;
+  font-size: 10px;
+
+}
+
+/* =========================
+   18. DESKTOP RESPONSIVE
+   ========================= */
+
+@media (max-width: 1100px) {
+  .sks-chant-layout {
+    grid-template-columns: 1fr;
+
+  }
+
+  .sks-jaap-panel {
+    min-height: 430px;
+  }
+
+}
+
+/* =========================
+   19. TABLET RESPONSIVE
+   ========================= */
+@media (max-width: 760px) {
+
+  .sks-chant-page {
+    padding: 12px;
+
+  }
+
+  .sks-chant-top {
+    flex-direction: column;
+    align-items: flex-start;
+
+  }
+
+  .sks-chant-heading h2 {
+    font-size: 19px;
+
+  }
+
+  .sks-chant-om {
+    font-size: 34px;
+
+  }
+
+  .sks-stat-card {
+    min-height: 65px;
+
+  }
+
+  .sks-chant-layout {
+    gap: 12px;
+
+  }
+
+  .sks-jaap-panel {
+    min-height: 430px;
+    background-position: center 32%;
+
+  }
+
+  .sks-artwork-mantra {
+    font-size: 16px;
+
+  }
+
+  .sks-history-table {
+    min-width: 620px;
+
+  }
+
+}
+
+/* =========================
+   20. SMALL MOBILE
+   ========================= */
+
+@media (max-width: 420px) {
+  .sks-chant-item {
+    gap: 5px;
+    padding: 5px;
+
+  }
+
+  .sks-chant-start {
+    padding: 7px;
+    font-size: 9px !important;
+
+  }
+
+  .sks-chant-item-name {
+    font-size: 11px;
+
+  }
+
+  .sks-artwork-top h3 {
+    font-size: 13px;
+
+  }
+
+  .sks-artwork-counter strong {
+    font-size: 23px;
+
+  }
+
+}
+
+/* =====================================
+   SHIVA IMAGE — POSITION ADJUSTMENT
+   ===================================== */
+
+.sks-theme-shiva .sks-jaap-panel {
+  background-position: center 100%;
+
+}
+
+ /* SKS DREAM — JAAP BOOK & PDF MODULE */
+/* HISTORY HEADER*/
+
+.sks-history-download-hint {
+  color: #86694b;
+  font-size: 11px;
+  font-weight: 600;
+
+}
+
+/* HISTORY ACTION BUTTONS*/
+.sks-book-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+
+}
+
+.sks-book-row-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 9px;
+  border: 1px solid #d9ad6c;
+  border-radius: 7px;
+  background: #fff3d9;
+  color: #70431c;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+
+}
+
+.sks-book-row-actions button:last-child {
+  background: #0d766e;
+  border-color: #0d766e;
+  color: #ffffff;
+
+}
+
+.sks-book-row-actions button:hover:not(:disabled) {
+  filter: brightness(0.96);
+}
+
+.sks-book-row-actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+
+}
+
+.sks-book-pending {
+  color: #977e60;
+  font-size: 10px;
+
+}
+
+/*  MODAL BACKDROP */
+.sks-book-modal-backdrop {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(5, 15, 28, 0.72);
+
+}
+
+/*  MAIN BOOK MODAL */
+
+.sks-book-modal {
+  width: min(760px, 100%);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff7e8;
+  border: 2px solid #d5a24c;
+  border-radius: 14px;
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.45);
+
+}
+
+/* MODAL HEADER*/
+.sks-book-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 16px;
+  background: #fff0d3;
+  border-bottom: 1px solid #dfbd7e;
+}
+
+.sks-book-modal-header strong {
+  display: block;
+  color: #603419;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.sks-book-modal-header small {
+  display: block;
+  margin-top: 3px;
+  color: #91663c;
+  font-size: 11px;
+}
+/* MODAL BUTTONS*/
+.sks-book-modal-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sks-book-modal-buttons button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 11px;
+  border: 1px solid #d9ad6c;
+  border-radius: 7px;
+  background: #fff3d9;
+  color: #70431c;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sks-book-modal-buttons button:first-child {
+  background: #0d766e;
+  border-color: #0d766e;
+  color: #ffffff;
+
+}
+
+.sks-book-modal-buttons button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+
+}
+
+/* --------------------------------------------
+   BOOK PAGE WRAPPER
+   -------------------------------------------- */
+
+.sks-book-pages {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  overflow-y: auto;
+  background: #f7e9ce;
+
+}
+
+/* --------------------------------------------
+   GOLDEN DEVOTIONAL BOOK PAGE
+   -------------------------------------------- */
+
+.sks-book-sheet {
+  min-height: 420px;
+  padding: 20px;
+  border: 7px double #b7772b;
+  background: linear-gradient(
+    135deg,
+    #fff9e8,
+    #fff0d4
+
+  );
+
+  box-shadow: 0 4px 15px rgba(100, 55, 15, 0.14);
+
+}
+
+.sks-book-sheet-heading {
+  padding-bottom: 12px;
+  color: #97561a;
+  font-size: 16px;
+  font-weight: 800;
+  text-align: center;
+
+}
+
+/* MANTRA GRID */
+
+.sks-book-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+
+}
+
+.sks-book-grid span {
+  display: grid;
+  place-items: center;
+  min-height: 31px;
+  padding: 6px 3px;
+  border: 1px solid #dca15a;
+  border-radius: 4px;
+  background: #fffdf5;
+  color: #7b461f;
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: center;
+  overflow-wrap: anywhere;
+
+}
+
+/* PAGE FOOTER */
+
+.sks-book-sheet-footer {
+  margin-top: 18px;
+  color: #a57b4c;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+
+}
+
+/* PAGE NAVIGATION */
+
+.sks-book-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 18px;
+  border-top: 1px solid #dfbd7e;
+  background: #fff0d3;
+
+}
+
+.sks-book-navigation button {
+  padding: 8px 14px;
+  border: 1px solid #c89242;
+  border-radius: 7px;
+  background: #fff8e8;
+  color: #784719;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+
+}
+
+.sks-book-navigation button:hover:not(:disabled) {
+  background: #f8dfb5;
+
+}
+
+.sks-book-navigation button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+
+}
+
+.sks-book-navigation span {
+  color: #784719;
+  font-size: 12px;
+  font-weight: 700;
+
+}
+
+/* PDF EXPORT SOURCE STYLES */
+.sks-pdf-render-root {
+  font-family:
+    "Noto Sans Devanagari",
+    "Mangal",
+    sans-serif;
+  color: #713c19;
+
+}
+
+/*PDF PAGE */
+
+.sks-pdf-mala-page {
+  width: 794px;
+  height: 1123px;
+  margin: 0;
+  padding: 45px 42px;
+  box-sizing: border-box;
+  border: 12px double #b97a2d;
+  background: #fff8e6;
+  page-break-after: always;
+  break-after: page;
+
+}
+
+.sks-pdf-mala-page:last-child {
+  page-break-after: auto;
+  break-after: auto;
+
+}
+
+/* PDF HEADING*/
+
+.sks-pdf-mala-page h2 {
+  margin: 0 0 35px;
+  color: #915018;
+  font-size: 21px;
+  font-weight: 800;
+  text-align: center;
+
+}
+
+/* PDF MANTRA GRID*/
+
+.sks-pdf-mantra-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 13px 9px;
+
+} 
+
+.sks-pdf-mantra-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 63px;
+  padding: 7px;
+  border: 2px solid #dfa04b;
+  border-radius: 5px;
+  background: #fffdf5;
+  color: #713c19;
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: center;
+  overflow-wrap: anywhere;
+
+}
+
+/* PDF FOOTER*/
+
+.sks-pdf-page-footer {
+  margin-top: 42px;
+  color: #b07a41;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+
+}
+
+   /* RESPONSIVE */
+
+@media (max-width: 560px) {
+
+  .sks-book-modal-backdrop {
+    padding: 10px;
+
+  }
+
+  .sks-book-modal {
+    max-height: 95vh;
+
+  }
+
+  .sks-book-modal-header {
+    align-items: flex-start;
+    flex-direction: column;
+
+  }
+
+  .sks-book-pages {
+    padding: 9px;
+
+  }
+
+  .sks-book-sheet {
+    padding: 9px;
+
+  }
+
+  .sks-book-grid {
+    gap: 3px;
+
+  }
+
+  .sks-book-grid span {
+    padding: 5px 2px;
+    font-size: 9px;
+
+  }
+
+  .sks-book-navigation {
+    padding: 10px;
+
+  }
+
+  .sks-book-navigation button {
+    padding: 7px 9px;
+    font-size: 11px;
+
+  }
+
+}
+
+   /* JAAP BOOK PDF — 4 COLUMN LAYOUT */
+
+.sks-single-pdf-wrapper {
+  width: 794px;
+  padding: 24px;
+  box-sizing: border-box;
+  background: #f7e9ce;
+  font-family: "Noto Sans Devanagari", "Mangal", sans-serif;
+  color: #713c19;
+
+}
+
+.sks-single-pdf-sheet {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 8px double #b7772b;
+  background: #fff8e6;
+
+}
+
+.sks-single-pdf-heading {
+  margin-bottom: 20px;
+  color: #97561a;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.5;
+  text-align: center;
+
+}
+
+.sks-single-pdf-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 8px;
+  width: 100%;
+
+}
+
+.sks-single-pdf-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 42px;
+  padding: 6px 4px;
+  box-sizing: border-box;
+  border: 1px solid #dca15a;
+  border-radius: 4px;
+  background: #fffdf5;
+  color: #7b461f;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+  overflow-wrap: anywhere;
+
+}
+
+   /* RECENT JAAP ACTIVITY — layout and color overrides */
+   /* Append this at the VERY END of src/CSS/Chant.css */
+
+.sks-jaap-history {
+  min-width: 0;
+  overflow: hidden;
+  background: #fff8eb;
+
+}
+
+.sks-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: #fff8eb;
+
+}
+
+.sks-history-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+}
+
+.sks-history-title h3 { margin: 0; }
+
+.sks-clear-activity-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 13px;
+  border: 1px solid #b45e4c;
+  border-radius: 7px;
+  background: #fff3ec;
+  color: #9d3f2d;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+
+}
+
+.sks-clear-activity-btn:hover:not(:disabled) { background: #ffe3d8; }
+
+.sks-clear-activity-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+.sks-history-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  box-sizing: border-box;
+
+}
+
+.sks-history-table {
+  width: 100%;
+  min-width: 820px;
+  table-layout: auto;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff8eb;
+
+}
+
+.sks-history-table thead,
+
+.sks-history-table thead tr,
+
+.sks-history-table thead th {
+  background: #0d766e !important;
+  color: #fff !important;
+
+}
+
+.sks-history-table thead th {
+  padding: 12px 10px;
+  text-align: left;
+  font-weight: 700;
+  white-space: nowrap;
+
+}
+
+.sks-history-table tbody tr,
+
+.sks-history-table tbody td {
+  background: #fff8eb !important;
+
+}
+
+.sks-history-table tbody tr:nth-child(even),
+
+.sks-history-table tbody tr:nth-child(even) td {
+  background: #fff1dc !important;
+
+}
+
+.sks-history-table tbody td {
+  padding: 12px 10px;
+  vertical-align: middle;
+
+}
+
+.sks-history-table th:last-child,
+
+.sks-history-table td:last-child {
+  min-width: 178px;
+
+}
+
+.sks-book-row-actions {
+  display: flex !important;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 7px;
+  width: max-content;
+  max-width: none;
+  position: static;
+
+}
+
+.sks-book-row-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  gap: 5px;
+  white-space: nowrap;
+  position: static;
+
+}
+
+.sks-book-pending { display: inline-block; white-space: nowrap; }
+@media (max-width: 600px) {
+  .sks-history-header { align-items: flex-start; }
+  .sks-history-table { min-width: 820px; }
+
+}
+
+/* Chant Counter heading lotus logo */
+
+.sks-chant-lotus {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  flex-shrink: 0;
+
+}
+
+.sks-chant-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+}
+
+@media (max-width: 600px) {
+
+  .sks-chant-lotus {
+    width: 40px;
+    height: 40px;
+  }
+
+}
+
+/* Recent Jaap Activity — Lotus Symbols */
+
+.sks-history-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+}
+
+.sks-history-title h3 {
+  margin: 0;
+
+}
+
+.sks-history-lotus {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
+
+}
+
+@media (max-width: 600px) {
+  .sks-history-lotus {
+    width: 22px;
+    height: 22px;
+
+  }
+
+}
+
+   /* PREMIUM SPIRITUAL PAGE HEADING */   
+
+.sks-page-welcome {
+  margin-bottom: 20px;
+
+}
+
+.sks-welcome-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #0d766e;
+  font-family: "Poppins", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+
+}
+
+.sks-welcome-title {
+  margin: 0;
+  color: #183c3a;
+  font-family: "Cinzel Decorative", Georgia, serif;
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0.3px;
+
+}
+
+/* Clear Activity — Golden Button */
+
+button.sks-premium-button,
+
+button.sks-clear-activity-btn {
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 118px;
+  height: 38px;
+  padding: 0 14px;
+  background: linear-gradient(135deg, #9b5b12, #d3942b);
+  color: #ffffff;
+  border: 1px solid #d3942b;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+}
+/* Hover */
+
+button.sks-premium-button:hover:not(:disabled),
+
+button.sks-clear-activity-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #854b0e, #b8791c);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(155, 91, 18, 0.2);
+
+}
+
+/* Icons */
+
+button.sks-premium-button svg,
+
+button.sks-clear-activity-btn svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  stroke: currentColor;
+
+}
+
+/* Disabled */
+
+button.sks-premium-button:disabled,
+
+button.sks-clear-activity-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+
+}
+
+   /* SHIVA — ANIMATED DIVINE VIDEO OVERLAY */
+
+/* Keep video inside Shiva artwork panel */
+
+.sks-theme-shiva .sks-jaap-artwork-panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+}
+
+/* Animated video layer */
+
+.sks-theme-shiva .sks-shiva-divine-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+  opacity: 0.65;
+  mix-blend-mode: screen;
+  pointer-events: none;
+
+}
+
+/* Existing gradient above the video */
+
+.sks-theme-shiva .sks-artwork-shade {
+  z-index: 1;
+  pointer-events: none;
+
+}
+
+/* Keep mantra, counter and buttons above animation */
+
+.sks-theme-shiva .sks-artwork-top,
+
+.sks-theme-shiva .sks-artwork-content {
+  position: relative;
+  z-index: 2;
+
+}
+
+/* Mobile adjustments */
+
+@media (max-width: 600px) {
+  .sks-theme-shiva .sks-shiva-divine-video {
+    object-position: center;
+    opacity: 0.35;
+
+  }
+
+}
+
+/* Accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+  .sks-theme-shiva .sks-shiva-divine-video {
+    display: none;
+
+  }
+
+}
+
+   /* GANPATI — DIVINE GOLDEN ANIMATION */
+  
+.sks-theme-ganesha {
+  --panel-border: #e6aa55;
+  --panel-inner-border: rgba(255, 208, 130, 0.3);
+  --panel-shadow: rgba(105, 39, 17, 0.4);
+  --panel-fallback: #51231c;
+  --panel-heading: #ffe5a3;
+
+}
+
+.sks-theme-ganesha .sks-jaap-panel {
+
+  /* background-position: center 38%; */
+  background-size: 80%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-color: #6d3448;
+
+}
+
+.sks-theme-ganesha .sks-ganesha-divine-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 80%;
+  object-fit: cover;
+  z-index: 0;
+  opacity: 0.85;
+  mix-blend-mode: screen;
+  pointer-events: none;
+
+}
+
+.sks-theme-ganesha .sks-artwork-shade {
+  z-index: 1;
+  pointer-events: none;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(65, 23, 23, 0.48) 0%,
+    rgba(65, 23, 23, 0.03) 30%,
+    rgba(65, 23, 23, 0.08) 50%,
+    rgba(65, 23, 23, 0.75) 75%,
+    rgba(43, 14, 16, 0.94) 100%
+
+  );
+
+}
+
+.sks-theme-ganesha .sks-artwork-top,
+
+.sks-theme-ganesha .sks-artwork-content {
+  position: relative;
+  z-index: 2;
+
+}
+
+.sks-theme-ganesha .sks-main-chant-button {
+  background: linear-gradient(135deg, #a34a20, #df8d34);
+  border-color: #ffd68a;
+  color: #fff9e8;
+
+}
+
+.sks-theme-ganesha .sks-jaap-progress span {
+  background: linear-gradient(90deg, #e67c2f, #ffdb82);
+
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .sks-theme-ganesha .sks-ganesha-divine-video {
+    display: none;
+
+  }
+
+}
+
+   /* KRISHNA & VISHNU — BRAHMAND ANIMATION */
+  
+.sks-theme-vishnu .sks-jaap-artwork-panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+}
+
+.sks-theme-vishnu .sks-vishnu-brahmand-video {
+
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+  opacity: 0.95;
+  mix-blend-mode: screen;
+  pointer-events: none;
+
+}
+
+/* Keep counter and buttons above animation */
+
+.sks-theme-vishnu .sks-artwork-shade {
+  z-index: 1;
+
+}
+.sks-theme-vishnu .sks-artwork-top,
+
+.sks-theme-vishnu .sks-artwork-content {
+  position: relative;
+  z-index: 2;
+
+}
+
+@media (max-width: 600px) {
+
+  .sks-theme-vishnu .sks-vishnu-brahmand-video {
+    opacity: 0.75;
+    mix-blend-mode: screen;
+
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sks-theme-vishnu .sks-vishnu-brahmand-video {
+    display: none;
+
+  }
+
+}
+
+/* =========================================================
+   MOBILE JAAP APP — hamburger drawer, desktop unaffected
+   ========================================================= */
+.sks-mobile-header,
+.sks-mobile-drawer,
+.sks-mobile-drawer-backdrop {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .sks-chant-page {
+    padding: 8px 10px 12px;
+    min-width: 0;
+  }
+  .sks-mobile-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    border: 1px solid #e4c48b;
+    border-radius: 12px;
+    background: #fff9ec;
+  }
+  .sks-mobile-menu-button,
+  .sks-mobile-history-shortcut,
+  .sks-mobile-drawer-header button {
+    border: 1px solid #d8b67e;
+    border-radius: 8px;
+    background: #fffdf7;
+    color: #174c49;
+    padding: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 40px;
+  }
+  .sks-mobile-history-shortcut { font-size: 12px; font-weight: 800; }
+  .sks-mobile-header-copy {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+    gap: 2px;
+  }
+  .sks-mobile-header-copy strong { font-size: 14px; color: #51231d; }
+  .sks-mobile-header-copy span {
+    font-size: 11px;
+    color: #856c4e;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .sks-chant-top { display: none; }
+  .sks-chant-layout {
+    display: block;
+    margin: 0;
+  }
+  .sks-chant-page .sks-jaap-panel {
+    width: 100%;
+    min-height: 0;
+    height: clamp(360px, calc(100dvh - 130px), 680px);
+    max-height: calc(100dvh - 92px);
+    padding: 12px 12px 14px;
+    background-position: center 30%;
+  }
+  .sks-jaap-panel .sks-artwork-content { gap: 6px; }
+  .sks-jaap-panel .sks-artwork-mantra { font-size: clamp(13px, 3.5vw, 17px); }
+  .sks-jaap-panel .sks-main-chant-button { min-height: 42px; }
+  .sks-jaap-panel .sks-jaap-controls button { min-height: 36px; }
+
+  .sks-mobile-drawer-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 9900;
+    background: rgba(4, 20, 29, 0.55);
+    border: 0;
+    padding: 0;
+  }
+  .sks-mobile-drawer {
+    display: flex;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: min(90vw, 360px);
+    padding: max(14px, env(safe-area-inset-top)) 12px 12px;
+    background: #fff9ed;
+    z-index: 9901;
+    flex-direction: column;
+    gap: 10px;
+    transform: translateX(-105%);
+    transition: transform .2s ease;
+    pointer-events: none;
+  }
+  .sks-mobile-drawer.is-open {
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+  .sks-mobile-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #51231d;
+    font-weight: 800;
+  }
+  .sks-mobile-add-chant {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 40px;
+    border: 0;
+    border-radius: 8px;
+    color: #fff;
+    background: #0d766e;
+    font-weight: 800;
+  }
+  .sks-mobile-drawer-tabs { display: flex; gap: 6px; }
+  .sks-mobile-drawer-tabs button {
+    flex: 1;
+    padding: 10px 5px;
+    border: 1px solid #e3c48d;
+    border-radius: 8px;
+    background: white;
+    color: #674329;
+    font-weight: 700;
+  }
+  .sks-mobile-drawer-tabs button.is-active {
+    background: #0d766e;
+    color: white;
+  }
+
+  /* Existing sections become drawer content; no duplicate components/state. */
+  .sks-chant-page .sks-chant-list,
+  .sks-chant-page .sks-jaap-history {
+    display: none;
+    position: fixed;
+    top: 156px;
+    left: 12px;
+    bottom: 12px;
+    width: calc(min(90vw, 360px) - 24px);
+    z-index: 9902;
+    margin: 0;
+    overflow: auto;
+    border-radius: 10px;
+  }
+  .sks-chant-page.sks-drawer-chants .sks-chant-list,
+  .sks-chant-page.sks-drawer-history .sks-jaap-history {
+    display: block;
+  }
+  .sks-chant-page .sks-chant-items {
+    max-height: none;
+    overflow: visible;
+  }
+  .sks-chant-page .sks-history-table-wrap { max-height: none; }
+  .sks-chant-page .sks-history-table { min-width: 680px; }
+  .sks-chant-page .sks-add-chant-form {
+    position: fixed;
+    z-index: 9910;
+    top: 16vh;
+    left: 5vw;
+    width: 90vw;
+    max-height: 75dvh;
+    overflow: auto;
+    box-shadow: 0 0 0 100vmax rgba(0, 0, 0, .5);
+  }
+}
+
+@media (max-width: 760px) and (max-height: 570px) {
+  .sks-chant-page .sks-jaap-panel {
+    height: calc(100dvh - 90px);
+    min-height: 310px;
+  }
+  .sks-artwork-top { display: none; }
+  .sks-jaap-panel .sks-artwork-counter { padding: 4px 10px; }
+  .sks-jaap-panel .sks-artwork-counter strong { font-size: 21px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sks-mobile-drawer { transition: none; }
+}
+
+/* Mobile unified Jaap drawer: real selection/history controls */
+@media (max-width: 760px) {
+  .sks-mobile-drawer-content { flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding:4px 1px 20px; }
+  .sks-mobile-mantra-list, .sks-mobile-history-list { display:flex; flex-direction:column; gap:8px; }
+  .sks-mobile-mantra-row { display:flex; gap:6px; align-items:stretch; }
+  .sks-mobile-mantra-row > button:first-child { flex:1; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:4px; border:1px solid #dfc69a; background:#fff; color:#513b23; padding:11px; border-radius:9px; text-align:left; overflow-wrap:anywhere; }
+  .sks-mobile-mantra-row > button:first-child.is-selected { border-color:#0d766e; background:#e6f5ef; }
+  .sks-mobile-mantra-row small, .sks-mobile-history-item small { color:#76634f; font-size:11px; }
+  .sks-mobile-mantra-delete { width:40px; border:1px solid #e4c8a5; border-radius:9px; background:#fff7ef; color:#a33b32; }
+  .sks-mobile-history-item { display:flex; flex-direction:column; gap:5px; background:#fff; border:1px solid #dfc69a; border-radius:9px; padding:10px; overflow-wrap:anywhere; }
+  .sks-mobile-history-actions { display:flex; gap:7px; }
+  .sks-mobile-history-actions button, .sks-mobile-clear-history { border:0; border-radius:7px; background:#0d766e; color:white; padding:8px; font-size:12px; }
+  .sks-mobile-clear-history { background:#9d5023; }
+  .sks-mobile-clear-history:disabled { opacity:.45; }
+  /* Hide the old fixed-position duplicate panels: drawer now owns the mobile UI. */
+  .sks-chant-page.sks-drawer-chants .sks-chant-list,
+  .sks-chant-page.sks-drawer-history .sks-jaap-history { display:none; }
+}
+
+@media (max-width:620px) {
+  .sks-user-chant-route .sks-chant-page .sks-jaap-panel.sks-jaap-artwork-panel {
+    height:100dvh; min-height:100dvh; max-height:none;
+    width:100%; margin:0; border-radius:0;
+    background-size:cover; background-position:center;
+  }
+}
+.sks-theme-swami .sks-jaap-artwork-panel {
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* Swami Samarth — remove dark artwork overlay */
+.sks-theme-swami .sks-artwork-shade {
+  background: transparent !important;
+  box-shadow: none !important;
+}

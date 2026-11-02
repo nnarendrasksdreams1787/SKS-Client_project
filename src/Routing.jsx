@@ -23,6 +23,23 @@ import AdminForgotPassword from './Components/Admin/AdminForgotPassword'
 import AdminPayoutBatchDetails from './Components/Admin/AdminPayoutBatchDetails'
 import DocxExtractionTest from './Test/DocxExtractionTest'
 
+
+import UserLayout from "./Components/Users/UserLayout"
+import Dashboard from "./Components/Users/dashboard"
+import ReferEarn from "./Components/Users/ReferEarn";
+import MyNetworkuser from "./Components/Users/MyNetworkuser";
+import MyOrders from "./Components/Users/MyOrders";
+import MyWallet from "./Components/Users/MyWallet";
+import BankDetails from "./Components/Users/BankDetails";
+import Chant from "./Components/Users/Chant";
+
+import PrivacyPolicy from "./Pages/PrivacyPolicy";
+import SecurityPolicy from "./Pages/SecurityPolicy";
+import TermsConditions from "./Pages/TermsConditions";
+import PaymentPolicy from "./Pages/PaymentPolicy";
+import FAQ from "./Pages/FAQ";
+import OrderCancellation from "./Pages/OrderCancellation";
+
 // import BookReaderrs from "./Pages/BookReaderrs"
 
 export default function Routing() {
@@ -39,6 +56,8 @@ export default function Routing() {
         <Route path="/login" element={<Login />} />
         <Route path="/admin/login" element={<AdminLogin />} />
 
+        {/* Admin Routes  */}
+
         <Route path="/admin" element={<AdminLayout />} >
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboard />} />
@@ -49,17 +68,43 @@ export default function Routing() {
           <Route path="payouts" element={<AdminPayoutFunds />} />
           <Route path="payouts/:batchId" element={<AdminPayoutBatchDetails />} />
           <Route path="orders" element={<AdminAllOrders />} />
-          <Route path="payment-gateway" element={<AdminPaymentGetway/>} />
-          <Route path="referral-tree" element={<AdminReferralTree/>} />
+          <Route path="payment-gateway" element={<AdminPaymentGetway />} />
+          <Route path="referral-tree" element={<AdminReferralTree />} />
           <Route path="bank-details" element={<AdminBackDetails />} />
           <Route path="forgot-password" element={<AdminForgotPassword />} />
 
         </Route>
 
+        {/* User ROutes  */}
+        <Route path="/user" element={<UserLayout />} >
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="referearn" element={<ReferEarn />} />
+          <Route path="mynetwork" element={<MyNetworkuser />} />
+          <Route path="myorders" element={<MyOrders />} />
+          <Route path="mywallet" element={<MyWallet />} />
+          <Route path="bankdetails" element={<BankDetails />} />
+          <Route path="chant" element={<Chant />} />
+
+
+        </Route>
+
+
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/security-policy" element={<SecurityPolicy />} />
+        <Route path="/terms-and-conditions" element={<TermsConditions />} />
+        <Route path="/payment-policy" element={<PaymentPolicy />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/order-cancellation" element={<OrderCancellation />} />
+
+
+
+
+
         <Route path="/doc-test" element={<DocxExtractionTest />} />
       </Routes>
 
-      
+
     </div>
   )
 }

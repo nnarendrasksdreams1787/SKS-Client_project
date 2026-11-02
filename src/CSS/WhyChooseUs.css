@@ -1,0 +1,187 @@
+/* ==========================================
+   SKS DREAM - WHY CHOOSE US SECTION
+   ========================================== */
+
+/* Main Section */
+.why-choose-section {
+  width: 100%;
+  padding: 85px 30px 95px;
+  background: #fffdf9;
+}
+
+/* Main Container */
+.why-choose-container {
+  max-width: 1250px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Section Heading */
+.why-choose-title {
+  font-size: 40px;
+  font-weight: 800;
+  color: #071b30;
+  margin: 0;
+}
+
+/* Gold Divider */
+.why-choose-divider {
+  width: 60px;
+  height: 4px;
+  margin: 10px auto 16px;
+  border-radius: 10px;
+  background: #e9ad43;
+}
+
+/* Subtitle */
+.why-choose-subtitle {
+  font-size: 17px;
+  color: #526274;
+  margin: 0 0 45px;
+}
+
+/* Cards Grid */
+.why-choose-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 18px;
+}
+
+/* ==========================================
+   GOLD CARDS
+   ========================================== */
+
+.why-choose-card {
+  min-height: 185px;
+  padding: 28px 18px;
+
+  /* Warm Gold Background */
+  background: #e9ad43;
+
+  border: 1px solid #d99b30;
+  border-radius: 12px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+/* Card Hover */
+.why-choose-card:hover {
+  transform: translateY(-5px);
+  /* background: #f0b950; */
+  box-shadow: 0 10px 25px rgba(7, 27, 48, 0.15);
+}
+
+/* ==========================================
+   ICON STYLING
+   ========================================== */
+
+.why-choose-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+
+  background: #fffdf9;
+  color: #071b30;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* SVG Icon Size */
+.why-choose-icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+/* ==========================================
+   CARD TEXT
+   ========================================== */
+
+.why-choose-card p {
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 600;
+  color: #071b30;
+  margin: 0;
+}
+
+/* ==========================================
+   TABLET RESPONSIVE
+   ========================================== */
+
+@media (max-width: 1000px) {
+  .why-choose-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .why-choose-section {
+    padding: 65px 24px;
+  }
+
+  .why-choose-card {
+    min-height: 175px;
+  }
+}
+
+/* ==========================================
+   MOBILE RESPONSIVE
+   ========================================== */
+
+@media (max-width: 600px) {
+  .why-choose-section {
+    padding: 50px 16px;
+  }
+
+  .why-choose-title {
+    font-size: 30px;
+  }
+
+  .why-choose-subtitle {
+    font-size: 14px;
+    margin-bottom: 30px;
+  }
+
+  .why-choose-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .why-choose-card {
+    min-height: 155px;
+    padding: 18px 12px;
+    gap: 12px;
+  }
+
+  .why-choose-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .why-choose-icon svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  .why-choose-card p {
+    font-size: 13px;
+  }
+}
+
+.why-choose-card {
+  background: #ffffff;
+  border: 1px solid #E9AD43;
+}
+
+.why-choose-card:hover {
+  background: #ffffff;
+}

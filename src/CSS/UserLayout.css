@@ -1,0 +1,73 @@
+
+:root { --sks-navy:#071b30; --sks-cream:#f8f2e8; --sks-gold:#e9ad43; --sks-teal:#0d766e; --sks-white:#fffdf9; }
+.sks-user-layout { display:flex; min-height:100vh; background:var(--sks-cream); color:var(--sks-navy); font-family:Arial,sans-serif; }
+.sks-user-layout * { box-sizing:border-box; }
+.sks-user-sidebar { width:225px; flex-shrink:0; background:var(--sks-navy); color:var(--sks-white); padding:24px 14px; }
+.sks-user-sidebar-top { display:flex; align-items:flex-start; }
+.sks-user-brand { flex:1; padding:0 12px 22px; margin-bottom:22px; border-bottom:1px solid #405165; color:var(--sks-gold); font-size:21px; font-weight:700; }
+.sks-user-nav { display:flex; flex-direction:column; gap:7px; }
+.sks-user-nav-link { display:flex; align-items:center; gap:12px; width:100%; padding:13px 12px; border:0; border-radius:9px; background:transparent; color:var(--sks-white); font:inherit; font-size:14px; text-align:left; text-decoration:none; cursor:pointer; }
+.sks-user-nav-link.is-active { background:var(--sks-gold); color:var(--sks-navy); font-weight:700; }
+.sks-user-nav-link.is-disabled { opacity:.65; cursor:not-allowed; }
+.sks-user-main { flex:1; min-width:0; padding:28px; }
+.sks-user-header { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:24px; }
+.sks-user-eyebrow { font-size:11px; font-weight:900; letter-spacing:1.5px; color:var(--sks-teal); }
+.sks-user-heading h1 { margin:6px 0; font-size:20px; color:var(--sks-navy); }
+.sks-user-header-right { display:flex; align-items:center; justify-content:flex-end; gap:14px; min-width:0; }
+.sks-user-account { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:10px; }
+.sks-user-account-label { color:#66717c; font-size:12px; }
+.sks-user-account-value { padding:8px 12px; background:#f8f2e8; border-radius:6px; color:var(--sks-navy); font-size:12px; font-weight:700; }
+.sks-user-logout { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; gap:7px; min-width:88px; height:34px; padding:0 13px; background:#dc2626; color:#fff; border:0; border-radius:6px; font-size:12px; font-weight:600; white-space:nowrap; cursor:not-allowed; opacity:.75; }
+.sks-user-avatar { width:44px; height:44px; flex-shrink:0; display:grid; place-items:center; border:1px solid #eee7dd; border-radius:50%; background:var(--sks-white); }
+.sks-user-mobile-toggle, .sks-user-drawer-close, .sks-user-menu-backdrop, .sks-user-drawer-account, .sks-user-chant-shortcuts { display:none; }
+@media(max-width:900px) and (min-width:621px) { .sks-user-sidebar { width:190px; } .sks-user-main { padding:20px; } .sks-user-header { align-items:flex-start; flex-wrap:wrap; } .sks-user-header-right { flex-wrap:wrap; } }
+@media(max-width:620px) {
+  .sks-user-layout { display:block; min-height:100dvh; }
+  .sks-user-main { padding:14px; min-height:100dvh; }
+  .sks-user-header { flex-wrap:wrap; align-items:flex-start; }
+  .sks-user-header-right, .sks-user-account { justify-content:flex-start; }
+  .sks-user-mobile-toggle { display:grid; place-items:center; position:fixed; top:calc(env(safe-area-inset-top) + 12px); left:12px; z-index:1010; width:42px; height:42px; border:1px solid #d6b477; border-radius:11px; background:#fff9eb; color:var(--sks-navy); box-shadow:0 2px 10px #071b3020; cursor:pointer; }
+  .sks-user-sidebar { position:fixed; z-index:1202; inset:0 auto 0 0; width:min(86vw,330px); height:100dvh; padding:20px 14px; overflow-y:auto; overscroll-behavior:contain; transform:translateX(-105%); transition:transform .2s ease; box-shadow:5px 0 25px #0002; }
+  .sks-user-sidebar.is-open { transform:translateX(0); }
+  .sks-user-drawer-close { display:grid; place-items:center; width:36px; height:36px; border:1px solid #405165; border-radius:8px; background:transparent; color:white; }
+  .sks-user-brand { font-size:18px; padding-bottom:14px; margin-bottom:12px; }
+  .sks-user-nav { flex-direction:column; overflow:visible; }
+  .sks-user-nav-link { width:100%; white-space:normal; }
+  .sks-user-menu-backdrop { display:block; position:fixed; inset:0; z-index:1201; background:#04121fc0; border:0; }
+  .sks-user-drawer-account { display:flex; flex-direction:column; align-items:flex-start; gap:8px; margin-top:18px; padding:15px 12px; border-top:1px solid #405165; font-size:13px; overflow-wrap:anywhere; }
+  .sks-user-drawer-account small { color:#bac9d2; }
+  .sks-user-chant-shortcuts { display:flex; flex-direction:column; gap:8px; margin-top:18px; padding-top:14px; border-top:1px solid #405165; }
+  .sks-user-chant-shortcuts > span { font-size:11px; letter-spacing:1px; color:var(--sks-gold); font-weight:800; }
+  .sks-user-chant-shortcuts button { display:flex; align-items:center; gap:10px; padding:12px; border:1px solid #405165; border-radius:8px; background:#102d42; color:white; font-size:13px; text-align:left; }
+  /* On the Chant route, only artwork is visible behind the floating hamburger. */
+  .sks-user-chant-route .sks-user-main { padding:0; height:100dvh; min-height:0; overflow:hidden; }
+  .sks-user-chant-route .sks-user-header { display:none; }
+  .sks-user-chant-route .sks-user-mobile-toggle { background:#fff9ebeb; }
+  .sks-user-chant-route .sks-chant-page { padding:0; margin:0; height:100dvh; min-height:0; overflow:hidden; }
+  .sks-user-chant-route .sks-mobile-header { display:none; }
+  .sks-user-chant-route .sks-chant-layout { height:100%; margin:0; }
+  .sks-user-chant-route .sks-jaap-panel { height:100dvh; max-height:100dvh; min-height:0; width:100%; margin:0; border-radius:0; }
+}
+@media(max-width:620px) and (max-height:540px) {
+  .sks-user-chant-route .sks-jaap-panel { overflow-y:auto; }
+}
+@media(prefers-reduced-motion:reduce) { .sks-user-sidebar { transition:none; } }
+
+/* Chant route: force the deity artwork to fill the phone viewport.
+   Previous Chant.css had a 680px height cap that left a blank strip. */
+@media (max-width: 620px) {
+  .sks-user-layout.sks-user-chant-route,
+  .sks-user-chant-route .sks-user-main,
+  .sks-user-chant-route .sks-chant-page,
+  .sks-user-chant-route .sks-chant-layout { height:100dvh; min-height:100dvh; }
+  .sks-user-chant-route .sks-chant-page .sks-jaap-panel.sks-jaap-artwork-panel {
+    height:100dvh;
+    min-height:100dvh;
+    max-height:none;
+    width:100%;
+    margin:0;
+    border-radius:0;
+    background-size:cover;
+    background-position:center;
+  }
+}

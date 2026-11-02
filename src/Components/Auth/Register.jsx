@@ -685,6 +685,9 @@ const handleRegister = async (event) => {
     state: form.state.trim(),
     country: form.country.trim(),
     address: (form.address || "").trim(),
+
+    // Optinal referalID
+     referral_id: form.referral_id.trim() || null,
   };
 
   try {
@@ -745,6 +748,8 @@ const Register = () => {
     country: "India",
     document_type: "AADHAAR",
     document_number: "",
+    address: "",
+    referral_id: "",
 
     agreeToTerms: false,
   });
@@ -934,6 +939,19 @@ const Register = () => {
                     </select>
                   </div>
 
+                  <div className="sks-form-field full-width">
+                    <label htmlFor="register-address">ADDRESS *</label>
+
+                    <textarea
+                      id="register-address"
+                      name="address"
+                      value={form.address}
+                      onChange={updateForm}
+                      placeholder="Enter your complete address"
+                      required
+                    />
+                  </div>
+
 
                 </div>
 
@@ -999,18 +1017,25 @@ const Register = () => {
                   <p>Set up your login credentials.</p>
                 </div>
 
+
                 <div className="sks-form-field">
-                  <label htmlFor="register-reference">
-                    REFERENCE ID *
+                  <label htmlFor="register-referral">
+                    REFERRAL ID (OPTIONAL)
                   </label>
+
                   <input
-                    id="register-reference"
-                    name="reference_id"
-                    value={form.reference_id}
+                    id="register-referral"
+                    name="referral_id"
+                    type="text"
+                    value={form.referral_id}
                     onChange={updateForm}
-                    placeholder="Enter your reference ID"
-                    required
+                    placeholder="Enter referral ID (if available)"
+                    autoComplete="off"
                   />
+
+                  <small>
+                    Don't have a referral ID? You can leave this field empty.
+                  </small>
                 </div>
 
 
