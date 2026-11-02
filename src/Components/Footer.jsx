@@ -1,5 +1,7 @@
 import { BookOpen, ArrowUpRight, ArrowUp } from "lucide-react";
 import "../CSS/Footer.css";
+import { Link } from "react-router-dom";
+
 const footerSections = [
   {
     title: "Explore",
@@ -17,7 +19,7 @@ const footerSections = [
       { label: "Contact Us", href: "/contact" },
       { label: "FAQs", href: "/faq" },
       { label: "My Account", href: "/login" },
-      { label: "My Orders", href: "/orders" },
+      { label: "My Orders", href: "/user/orders" },
       { label: "Payment policy", href: "/payment-policy" },
       { label: "Order Cancellation Policy", href: "/order-cancellation-policy" },
 

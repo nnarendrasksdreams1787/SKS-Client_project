@@ -2,8 +2,10 @@
 import React, { useState } from "react";
 import "../../CSS/Auth.css";
 import { Link } from "react-router-dom"
+import { AUTH_API_URL } from "../../Config/api";
 
 const API_URL = "http://localhost:4010/api/auth";
+// const API_URL = "AUTH_API_URL/api/auth";
 
 export default function Login() {
   const [referenceId, setReferenceId] = useState("");

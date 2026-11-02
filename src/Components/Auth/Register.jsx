@@ -628,6 +628,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 const API_URL = "http://localhost:4010/api/auth";
+// const API_URL = "AUTH_API_URL/api/auth";
 
 
 // import logo from "../../assets/Theme/logo-register"

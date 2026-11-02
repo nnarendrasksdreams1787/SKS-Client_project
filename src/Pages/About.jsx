@@ -13,6 +13,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Footer from "../Components/Footer";
+import { Link } from "react-router-dom"
 
 // src\assets\Theme\divine-krishan.webp
 
@@ -30,7 +31,7 @@ const About = () => {
             <p className="about-eyebrow">SKS DREAM</p>
             <h1>About Us</h1>
             <div className="about-breadcrumb">
-              <span>Home</span>
+              <Link to='/'>Home</Link>
               <span className="breadcrumb-separator">/</span>
               <span>About Us</span>
             </div>

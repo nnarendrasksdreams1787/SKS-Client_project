@@ -11,14 +11,16 @@ import {
 //  import logo from "../assets/Theme/main-logo3.png"
  import logo from "../assets/Theme/re-logo1.png"
 
+import { Link, useLocation } from 'react-router-dom';
+
 
 const links = [
     ["Home", "/"],
     ["Products", "#products"],
     ["Courses", "#courses"],
     ["MPSC Series", "#mpsc"],
-    ["About", "about"],
-    ["Contact", "contact"],
+    ["About", "/about"],
+    ["Contact", "/contact"],
 ]; 
 
 function Header() {
@@ -56,9 +58,9 @@ function Header() {
             </span> */}
         {/* </a> */}
 
-        <a href="/" aria-label="SKS Dreams" className="Mainlogo">
+        <Link href="/" aria-label="SKS Dreams" className="Mainlogo">
           <img src={logo} alt="main-logo" />
-        </a>
+        </Link>
 
         <nav
           className={`main-nav ${menuOpen ? "is-open" : ""}`}
@@ -67,14 +69,14 @@ function Header() {
 
         
           {links.map(([label, href], index) => (
-            <a
+            <Link
               key={label}
               className={index === 0 ? "active" : ""}
               href={href}
               onClick={() => setMenuOpen(false)}
             >
               {label}
-            </a>
+            </Link>
           ))}
 
           <div className="mobile-account-links">
