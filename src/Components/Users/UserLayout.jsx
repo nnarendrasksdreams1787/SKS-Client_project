@@ -8,27 +8,63 @@ import {
   useNavigate,
 } from "react-router-dom";
 import {
-  LayoutDashboard, Share2, UsersRound, ShoppingCart, Wallet,
-  Landmark, Flower2, Settings, UserRound, LogOut,
-  Menu, X, List, History
+  LayoutDashboard,
+  Share2,
+  UsersRound,
+  ShoppingCart,
+  Wallet,
+  Landmark,
+  Flower2,
+  Settings,
+  UserRound,
+  LogOut,
+  Menu,
+  X,
+  List,
+  History,
 } from "lucide-react";
 import "../../CSS/UserLayout.css";
+import { USER_API_URL } from "../../Config/api";
+
+// const navItems = [
+//   { name: "Dashboard", path: "/dashboard", Icon: LayoutDashboard },
+//   { name: "Refer & Earn", path: "/referearn", Icon: Share2 },
+//   { name: "My Network", path: "/mynetwork", Icon: UsersRound },
+//   { name: "My Orders", path: "/myorders", Icon: ShoppingCart },
+//   { name: "My Wallet", path: "/mywallet", Icon: Wallet },
+//   { name: "Bank Details", path: "/bankdetails", Icon: Landmark },
+//   { name: "Chant", path: "/chant", Icon: Flower2 },
+//   { name: "Settings", path: null, Icon: Settings },
+// ];
+// const pageTitles = {
+//   "/dashboard": "My Dashboard",
+//   "/referearn": "Refer & Earn",
+//   "/mynetwork": "My Network",
+//   "/myorders": "My Orders",
+//   "/mywallet": "My Wallet",
+//   "/bankdetails": "Bank Details",
+//   "/chant": "Chant & Jaap Counter",
+// };
 
 const navItems = [
-  { name: "Dashboard", path: "/dashboard", Icon: LayoutDashboard },
-  { name: "Refer & Earn", path: "/referearn", Icon: Share2 },
-  { name: "My Network", path: "/mynetwork", Icon: UsersRound },
-  { name: "My Orders", path: "/myorders", Icon: ShoppingCart },
-  { name: "My Wallet", path: "/mywallet", Icon: Wallet },
-  { name: "Bank Details", path: "/bankdetails", Icon: Landmark },
-  { name: "Chant", path: "/chant", Icon: Flower2 },
+  { name: "Dashboard", path: "/user/dashboard", Icon: LayoutDashboard },
+  { name: "Refer & Earn", path: "/user/referearn", Icon: Share2 },
+  { name: "My Network", path: "/user/mynetwork", Icon: UsersRound },
+  { name: "My Orders", path: "/user/myorders", Icon: ShoppingCart },
+  { name: "My Wallet", path: "/user/mywallet", Icon: Wallet },
+  { name: "Bank Details", path: "/user/bankdetails", Icon: Landmark },
+  { name: "Chant", path: "/user/chant", Icon: Flower2 },
   { name: "Settings", path: null, Icon: Settings },
 ];
+
 const pageTitles = {
-  "/dashboard": "My Dashboard", "/referearn": "Refer & Earn",
-  "/mynetwork": "My Network", "/myorders": "My Orders",
-  "/mywallet": "My Wallet", "/bankdetails": "Bank Details",
-  "/chant": "Chant & Jaap Counter",
+  "/user/dashboard": "My Dashboard",
+  "/user/referearn": "Refer & Earn",
+  "/user/mynetwork": "My Network",
+  "/user/myorders": "My Orders",
+  "/user/mywallet": "My Wallet",
+  "/user/bankdetails": "Bank Details",
+  "/user/chant": "Chant & Jaap Counter",
 };
 
 export default function UserLayout() {
@@ -55,15 +91,13 @@ export default function UserLayout() {
       }
 
       try {
-        const response = await axios.get(
-          "http://localhost:4010/api/user/me",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            signal: controller.signal,
-          }
-        );
+        // const response = await axios.get("http://localhost:4000/api/user/me", {
+        const response = await axios.get(`${USER_API_URL}/me` , {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          signal: controller.signal,
+        });
 
         if (response.data.success) {
           setUser(response.data.user);
@@ -74,9 +108,14 @@ export default function UserLayout() {
 
         console.error("Session verification failed:", err);
 
+        // if (err.response?.status === 401 || err.response?.status === 403) {
+        //   sessionStorage.removeItem("authToken");
+        //   sessionStorage.removeItem("authUser");
+        // }
+
         if (err.response?.status === 401 || err.response?.status === 403) {
           sessionStorage.removeItem("authToken");
-          sessionStorage.removeItem("authUser");
+          sessionStorage.removeItem("user");
         }
       } finally {
         if (!controller.signal.aborted) {
@@ -118,7 +157,9 @@ export default function UserLayout() {
 
   const openChantTools = (section) => {
     setMenuOpen(false);
-    window.dispatchEvent(new CustomEvent("sks:chant-menu", { detail: section }));
+    window.dispatchEvent(
+      new CustomEvent("sks:chant-menu", { detail: section }),
+    );
   };
 
   const handleLogout = () => {
@@ -144,35 +185,62 @@ export default function UserLayout() {
     return <Navigate to="/login" replace />;
   }
 
-
-
   return (
-    <div className={`sks-user-layout ${isChantPage ? "sks-user-chant-route" : ""}`}>
+    <div
+      className={`sks-user-layout ${isChantPage ? "sks-user-chant-route" : ""}`}
+    >
       {menuOpen && (
-        <button className="sks-user-menu-backdrop" type="button"
-          aria-label="Close dashboard menu" onClick={() => setMenuOpen(false)} />
+        <button
+          className="sks-user-menu-backdrop"
+          type="button"
+          aria-label="Close dashboard menu"
+          onClick={() => setMenuOpen(false)}
+        />
       )}
-      <aside className={`sks-user-sidebar ${menuOpen ? "is-open" : ""}`}
-        id="sks-user-mobile-navigation" aria-label="Dashboard menu">
+      <aside
+        className={`sks-user-sidebar ${menuOpen ? "is-open" : ""}`}
+        id="sks-user-mobile-navigation"
+        aria-label="Dashboard menu"
+      >
         <div className="sks-user-sidebar-top">
           <div className="sks-user-brand">✦ SKS Dream</div>
-          <button className="sks-user-drawer-close" type="button"
-            aria-label="Close menu" onClick={() => setMenuOpen(false)}>
+          <button
+            className="sks-user-drawer-close"
+            type="button"
+            aria-label="Close menu"
+            onClick={() => setMenuOpen(false)}
+          >
             <X size={22} />
           </button>
         </div>
         <nav className="sks-user-nav" aria-label="User dashboard navigation">
-          {navItems.map(({ name, path, Icon }) => path ? (
-            <NavLink key={name} to={path} end onClick={() => setMenuOpen(false)}
-              className={({ isActive }) => `sks-user-nav-link${isActive ? " is-active" : ""}`}>
-              <Icon size={18} strokeWidth={1.8} /><span>{name}</span>
-            </NavLink>
-          ) : (
-            <button key={name} type="button" className="sks-user-nav-link is-disabled"
-              disabled title="Module coming soon">
-              <Icon size={18} strokeWidth={1.8} /><span>{name}</span>
-            </button>
-          ))}
+          {navItems.map(({ name, path, Icon }) =>
+            path ? (
+              <NavLink
+                key={name}
+                to={path}
+                end
+                onClick={() => setMenuOpen(false)}
+                className={({ isActive }) =>
+                  `sks-user-nav-link${isActive ? " is-active" : ""}`
+                }
+              >
+                <Icon size={18} strokeWidth={1.8} />
+                <span>{name}</span>
+              </NavLink>
+            ) : (
+              <button
+                key={name}
+                type="button"
+                className="sks-user-nav-link is-disabled"
+                disabled
+                title="Module coming soon"
+              >
+                <Icon size={18} strokeWidth={1.8} />
+                <span>{name}</span>
+              </button>
+            ),
+          )}
         </nav>
         {isChantPage && (
           <div className="sks-user-chant-shortcuts">
@@ -189,19 +257,27 @@ export default function UserLayout() {
           <strong>Account</strong>
           <span>{user.full_name}</span>
           <small>Refer ID: {user.referral_code}</small>
-          <button type="button" className="sks-user-logout" onClick={handleLogout} >
+          <button
+            type="button"
+            className="sks-user-logout"
+            onClick={handleLogout}
+          >
             <LogOut size={14} /> Logout
-
             <LogOut size={14} />
             <span>Logout</span>
           </button>
         </div>
-      </aside >
+      </aside>
 
       <main className="sks-user-main">
-        <button type="button" className="sks-user-mobile-toggle"
-          aria-label="Open dashboard menu" aria-controls="sks-user-mobile-navigation"
-          aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>
+        <button
+          type="button"
+          className="sks-user-mobile-toggle"
+          aria-label="Open dashboard menu"
+          aria-controls="sks-user-mobile-navigation"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(true)}
+        >
           <Menu size={23} />
         </button>
         <header className="sks-user-header">
@@ -210,11 +286,16 @@ export default function UserLayout() {
             <h1>{title}</h1>
           </div>
           <div className="sks-user-header-right">
-            <section className="sks-user-account" aria-label="Account information">
+            <section
+              className="sks-user-account"
+              aria-label="Account information"
+            >
               <span className="sks-user-account-label">WELCOME :</span>
               <span className="sks-user-account-value">{user.full_name}</span>
               <span className="sks-user-account-label">Refer ID :</span>
-              <span className="sks-user-account-value">{user.referral_code}</span>
+              <span className="sks-user-account-value">
+                {user.referral_code}
+              </span>
               <button
                 type="button"
                 className="sks-user-logout"
@@ -223,7 +304,6 @@ export default function UserLayout() {
                 <LogOut size={14} />
                 <span>Logout</span>
               </button>
-
             </section>
             <span className="sks-user-avatar" aria-label="User profile">
               <UserRound size={21} strokeWidth={1.8} />
@@ -232,6 +312,6 @@ export default function UserLayout() {
         </header>
         <Outlet />
       </main>
-    </div >
+    </div>
   );
 }

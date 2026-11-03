@@ -16,7 +16,7 @@ import "../../CSS/MyWallet.css";
 const PAGE_SIZE = 5;
 
 
-const WALLET_API_URL = "http://localhost:4010/api/user/wallet";
+const WALLET_API_URL = "http://localhost:4000/api/user/wallet";
 
 // Screenshot summary figures, not calculated from the
 // five sample transactions above.

@@ -26,7 +26,7 @@ export default function ReferEarn() {
       setError("");
 
       const response = await axios.get(
-        "http://localhost:4010/api/user/referrals",
+        "http://localhost:4000/api/user/referrals",
         {
           headers: {
             Authorization: `Bearer ${token}`,

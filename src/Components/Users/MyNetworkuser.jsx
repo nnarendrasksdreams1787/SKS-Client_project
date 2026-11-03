@@ -30,7 +30,7 @@ export default function MyNetwork() {
       }
 
       const response = await axios.get(
-        "http://localhost:4010/api/user/network",
+        "http://localhost:4000/api/user/network",
         {
           headers: {
             Authorization: `Bearer ${token}`,

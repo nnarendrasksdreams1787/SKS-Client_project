@@ -621,15 +621,13 @@
 
 
 
-
 import React, { useState } from "react";
 import "../../CSS/Auth.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-const API_URL = "http://localhost:4010/api/auth";
+const API_URL = "http://localhost:4000/api/auth";
 // const API_URL = "AUTH_API_URL/api/auth";
-
 
 // import logo from "../../assets/Theme/logo-register"
 
@@ -660,82 +658,69 @@ const handleVerifyDocument = () => {
   setSuccess("Document number format is valid.");
 };
 
+// const handleRegister = async (event) => {
+//   event.preventDefault();
 
-const handleRegister = async (event) => {
-  event.preventDefault();
+//   if (loading) return;
 
-  if (loading) return;
+//   setError("");
+//   setSuccess("");
 
-  setError("");
-  setSuccess("");
+//   if (!form.agreeToTerms) {
+//     setError("Please accepts the terms to continue");
+//     return;
+//   }
 
-  if (!form.agreeToTerms) {
-    setError("Please accepts the terms to continue")
-    return;
-  }
+//   const payload = {
+//     document_type: form.document_type,
+//     document_number: form.document_number.trim().toUpperCase(),
+//     full_name: form.full_name.trim(),
+//     mobile_no: form.phone.trim(),
+//     date_of_birth: form.dob,
+//     gender: form.gender,
+//     pincode: form.pincode.trim(),
+//     city: form.city.trim(),
+//     state: form.state.trim(),
+//     country: form.country.trim(),
+//     address: (form.address || "").trim(),
 
-  const payload = {
-    document_type: form.document_type,
-    document_number: form.document_number.trim().toUpperCase(),
-    full_name: form.full_name.trim(),
-    mobile_no: form.phone.trim(),
-    date_of_birth: form.dob,
-    gender: form.gender,
-    pincode: form.pincode.trim(),
-    city: form.city.trim(),
-    state: form.state.trim(),
-    country: form.country.trim(),
-    address: (form.address || "").trim(),
+//     // Optinal referalID
+//     referral_id: form.referral_id.trim() || null,
+//   };
 
-    // Optinal referalID
-     referral_id: form.referral_id.trim() || null,
-  };
+//   try {
+//     setLoading(true);
 
-  try {
-    setLoading(true)
+//     const response = await axios.post(`${API_URL}/register`, payload);
 
-    const response = await axios.post(
-      `${API_URL}/register`,
-      payload
-    )
+//     const data = response.data;
 
-    const data = response.data
+//     if (!response.ok) {
+//       setError(data.message || "Registration failed");
+//       return;
+//     }
 
-    if (!response.ok) {
-      setError(data.message || "Registration failed")
-      return;
-    }
+//     const referenceId = data.user.reference_id;
+//     const temporaryPassword = data.temporaryPassword;
 
-    const referenceId = data.user.reference_id;
-    const temporaryPassword = data.temporaryPassword;
+//     setSuccess(`Registration successful! Your Reference ID is ${referenceId}.`);
 
-    setSuccess(
-      `Registration successful! Your Reference ID is ${referenceId}.`
-    );
+//     // Development/testing only.
+//     // Do not expose temporary passwords this way in production.
+//     console.log("Temporary password:", temporaryPassword);
+//   } catch (error) {
+//     console.error("Registration error:", error);
 
-    // Development/testing only.
-    // Do not expose temporary passwords this way in production.
-    console.log("Temporary password:", temporaryPassword);
-
-  } catch (error) {
-    console.error("Registration error:", error);
-
-    setError(
-      error.response?.data?.message ||
-      (error.response
-        ? "Registration failed. Please check your details."
-        : "Cannot connect to the backend. Check that your server is running on port 4010.")
-    );
-  }
-
-  finally {
-    setLoading(false);
-  }
-
-}
-
-
-
+//     setError(
+//       error.response?.data?.message ||
+//         (error.response
+//           ? "Registration failed. Please check your details."
+//           : "Cannot connect to the backend. Check that your server is running on port 4010."),
+//     );
+//   } finally {
+//     setLoading(false);
+//   }
+// };
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -760,6 +745,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [credentials, setCredentials] = useState(null);
 
   const updateForm = (event) => {
     const { name, value, type, checked } = event.target;
@@ -770,45 +756,94 @@ const Register = () => {
     }));
   };
 
+  // const handleRegister = async (event) => {
+  //   event.preventDefault();
+  //   setError("");
+  //   setSuccess("");
+
+  //   // if (form.password !== form.confirm_password) {
+  //   //   setError("Passwords do not match.");
+  //   //   return;
+  //   // }
+
+  //   // if (form.password.length < 8) {
+  //   //   setError("Password must contain at least 8 characters.");
+  //   //   return;
+  //   // }
+
+  //   if (!form.agreeToTerms) {
+  //     setError("Please accept the terms to continue.");
+  //     return;
+  //   }
+
+  //   // Connect your existing registration API handler here.
+  //   // Keep its original endpoint and payload unchanged.
+  //   setError(
+  //     "Registration API integration is pending. Connect your existing registration handler here."
+  //   );
+  // };
+
   const handleRegister = async (event) => {
     event.preventDefault();
+
+    if (loading) return;
+
     setError("");
     setSuccess("");
-
-    if (form.password !== form.confirm_password) {
-      setError("Passwords do not match.");
-      return;
-    }
-
-    if (form.password.length < 8) {
-      setError("Password must contain at least 8 characters.");
-      return;
-    }
+    setCredentials(null);
 
     if (!form.agreeToTerms) {
       setError("Please accept the terms to continue.");
       return;
     }
 
-    // Connect your existing registration API handler here.
-    // Keep its original endpoint and payload unchanged.
-    setError(
-      "Registration API integration is pending. Connect your existing registration handler here."
-    );
+    const payload = {
+      document_type: form.document_type,
+      document_number: form.document_number.trim().toUpperCase(),
+      full_name: form.full_name.trim(),
+      mobile_no: form.phone.trim(),
+      date_of_birth: form.dob,
+      gender: form.gender,
+      pincode: form.pincode.trim(),
+      city: form.city.trim(),
+      state: form.state.trim(),
+      country: form.country.trim(),
+      address: form.address.trim(),
+      referral_id: form.referral_id.trim() || null,
+    };
+
+    try {
+      setLoading(true);
+
+      const response = await axios.post(`${API_URL}/register`, payload);
+
+      const data = response.data;
+
+      setCredentials({
+        referenceId: data.user.reference_id,
+        temporaryPassword: data.temporaryPassword,
+      });
+
+      setSuccess("Registration successful!");
+    } catch (error) {
+      console.error("Registration error:", error);
+
+      setError(
+        error.response?.data?.message ||
+          "Unable to connect to the registration server.",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <main className="sks-auth-page">
-
       {/* <section>
         <img src={logo} alt="this is only for the register login" />
       </section> */}
 
       <section className="sks-auth-layout">
-
-
-
-
         {/* Registration Form */}
         <section className="sks-auth-main">
           <div className="sks-auth-card">
@@ -824,9 +859,7 @@ const Register = () => {
               Enter your details to get started.
             </p>
             <div className="sks-register-scroll">
-
               <form onSubmit={handleRegister}>
-
                 <div className="sks-section-heading">
                   <h3>Identity Verification</h3>
                   <p>Select your document type and enter its number.</p>
@@ -889,7 +922,6 @@ const Register = () => {
                     />
                   </div>
 
-
                   <div className="sks-form-field">
                     <label htmlFor="register-phone">PHONE NUMBER *</label>
                     <input
@@ -919,10 +951,7 @@ const Register = () => {
                   </div>
                 </div>
 
-
-
                 <div className="sks-form-grid">
-
                   <div className="sks-form-field">
                     <label htmlFor="register-gender">GENDER</label>
                     <select
@@ -936,7 +965,9 @@ const Register = () => {
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
                       <option value="Other">Other</option>
-                      <option value="Prefer not to say">Prefer not to say</option>
+                      <option value="Prefer not to say">
+                        Prefer not to say
+                      </option>
                     </select>
                   </div>
 
@@ -952,8 +983,6 @@ const Register = () => {
                       required
                     />
                   </div>
-
-
                 </div>
 
                 <div className="sks-form-grid">
@@ -1015,9 +1044,9 @@ const Register = () => {
 
                 <div className="sks-section-heading">
                   <h3>Account Security</h3>
-                  <p>Set up your login credentials.</p>
+                  {/* <p>Set up your login credentials.</p> */}
+                  <p>Your login credentials will be generated automatically.</p>
                 </div>
-
 
                 <div className="sks-form-field">
                   <label htmlFor="register-referral">
@@ -1039,7 +1068,6 @@ const Register = () => {
                   </small>
                 </div>
 
-
                 <label className="sks-terms-checkbox">
                   <input
                     type="checkbox"
@@ -1049,10 +1077,25 @@ const Register = () => {
                     required
                   />
 
-                  <span>
-                    I agree to the applicable terms and conditions.
-                  </span>
+                  <span>I agree to the applicable terms and conditions.</span>
                 </label>
+
+                {credentials && (
+                  <div className="sks-success-message">
+                    <h3>Your Account Is Ready!</h3>
+
+                    <p>
+                      Reference ID: <strong>{credentials.referenceId}</strong>
+                    </p>
+
+                    <p>
+                      Temporary Password:{" "}
+                      <strong>{credentials.temporaryPassword}</strong>
+                    </p>
+
+                    <p>Please save these credentials for login.</p>
+                  </div>
+                )}
 
                 {error && (
                   <p className="sks-auth-error" role="alert">
@@ -1076,15 +1119,12 @@ const Register = () => {
                 </button>
 
                 <p className="sks-switch-text">
-                  Already have an account?{" "}
-                  <a href="/login">Login</a>
+                  Already have an account? <a href="/login">Login</a>
                 </p>
               </form>
-
             </div>
           </div>
         </section>
-
       </section>
     </main>
   );

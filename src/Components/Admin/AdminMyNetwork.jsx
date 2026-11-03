@@ -1,99 +1,183 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import "./AdminCSS/AdminMyNetwork.css";
+import { ADMIN_API_URL } from "../../Config/api";
 
-const initialMembers = [
-  {
-    id: 1,
-    name: "Rahul Sharma",
-    email: "rahul@example.com",
-    referralCode: "RAHUL2026",
-    sponsor: "Priya Patil",
-    level: 1,
-    joined: "18 Oct 2026",
-    status: "Active",
-  },
-  {
-    id: 2,
-    name: "Amit Verma",
-    email: "amit@example.com",
-    referralCode: "AMIT2026",
-    sponsor: "Rahul Sharma",
-    level: 2,
-    joined: "16 Oct 2026",
-    status: "Active",
-  },
-  {
-    id: 3,
-    name: "Sneha Joshi",
-    email: "sneha@example.com",
-    referralCode: "SNEHA2026",
-    sponsor: "Priya Patil",
-    level: 1,
-    joined: "12 Oct 2026",
-    status: "Pending",
-  },
-  {
-    id: 4,
-    name: "Vikas More",
-    email: "vikas@example.com",
-    referralCode: "VIKAS2026",
-    sponsor: "Rahul Sharma",
-    level: 2,
-    joined: "08 Oct 2026",
-    status: "Active",
-  },
-  {
-    id: 5,
-    name: "Neha Kulkarni",
-    email: "neha@example.com",
-    referralCode: "NEHA2026",
-    sponsor: "Amit Verma",
-    level: 3,
-    joined: "04 Oct 2026",
-    status: "Inactive",
-  },
-];
+// const initialMembers = [
+//   {
+//     id: 1,
+//     name: "Rahul Sharma",
+//     email: "rahul@example.com",
+//     referralCode: "RAHUL2026",
+//     sponsor: "Priya Patil",
+//     level: 1,
+//     joined: "18 Oct 2026",
+//     status: "Active",
+//   },
+//   {
+//     id: 2,
+//     name: "Amit Verma",
+//     email: "amit@example.com",
+//     referralCode: "AMIT2026",
+//     sponsor: "Rahul Sharma",
+//     level: 2,
+//     joined: "16 Oct 2026",
+//     status: "Active",
+//   },
+//   {
+//     id: 3,
+//     name: "Sneha Joshi",
+//     email: "sneha@example.com",
+//     referralCode: "SNEHA2026",
+//     sponsor: "Priya Patil",
+//     level: 1,
+//     joined: "12 Oct 2026",
+//     status: "Pending",
+//   },
+//   {
+//     id: 4,
+//     name: "Vikas More",
+//     email: "vikas@example.com",
+//     referralCode: "VIKAS2026",
+//     sponsor: "Rahul Sharma",
+//     level: 2,
+//     joined: "08 Oct 2026",
+//     status: "Active",
+//   },
+//   {
+//     id: 5,
+//     name: "Neha Kulkarni",
+//     email: "neha@example.com",
+//     referralCode: "NEHA2026",
+//     sponsor: "Amit Verma",
+//     level: 3,
+//     joined: "04 Oct 2026",
+//     status: "Inactive",
+//   },
+// ];
+
+
+
+const formatDate = (date) => {
+  if (!date) return "—";
+
+  return new Date(date).toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
+
+
+const mapMember = (member) => ({
+  id: member.user_id,
+  name: member.full_name || "Unknown",
+  email: member.email || "—",
+  mobile: member.mobile || "—",
+  referralCode: member.referral_code || "—",
+  sponsor: member.sponsor_name || "No Sponsor",
+  sponsorId: member.sponsor_id,
+  joined: formatDate(member.created_at),
+  status: member.status
+    ? member.status.charAt(0).toUpperCase() + member.status.slice(1)
+    : "Unknown",
+  directReferrals: Number(member.direct_referrals || 0),
+  city: member.city || "—",
+  state: member.state || "—",
+  kycStatus: member.kyc_status || "—",
+});
+
+
 
 export default function AdminMyNetwork() {
-const [members] = useState(initialMembers);
+  // const [members] = useState(initialMembers);
+  //   const [search, setSearch] = useState("");
+  //   const [statusFilter, setStatusFilter] = useState("All");
+  //   const [levelFilter, setLevelFilter] = useState("All");
+  //   const [page, setPage] = useState(1);
+  //   const [selectedMember, setSelectedMember] = useState(null);
+
+
+  const [members, setMembers] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [levelFilter, setLevelFilter] = useState("All");
   const [page, setPage] = useState(1);
   const [selectedMember, setSelectedMember] = useState(null);
-  
 
-  const pageSize = 5;
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 20,
+    total: 0,
+    totalPages: 0,
+  });
 
-  const filteredMembers = useMemo(() => {
-    const query = search.trim().toLowerCase();
+  const pageSize = 20;
 
-    return members.filter((member) => {
-      const matchesSearch =
-        member.name.toLowerCase().includes(query) ||
-        member.email.toLowerCase().includes(query) ||
-        member.referralCode.toLowerCase().includes(query) ||
-        member.sponsor.toLowerCase().includes(query);
 
-      const matchesStatus =
-        statusFilter === "All" || member.status === statusFilter;
+  // const pageSize = 5;
 
-      const matchesLevel =
-        levelFilter === "All" || member.level === Number(levelFilter);
 
-      return matchesSearch && matchesStatus && matchesLevel;
-    });
-  }, [members, search, statusFilter, levelFilter]);
+  useEffect(() => {
+    const controller = new AbortController();
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredMembers.length / pageSize)
-  );
+    const fetchNetwork = async () => {
+      try {
+        setLoading(true);
+        setError("");
 
-  const visibleMembers = filteredMembers.slice(
-    (page - 1) * pageSize,
-    page * pageSize
-  );
+        const params = new URLSearchParams({
+          search: search.trim(),
+          page: String(page),
+          limit: String(pageSize),
+        });
+
+        if (statusFilter !== "All") {
+          params.set("status", statusFilter.toLowerCase());
+        }
+
+        const response = await fetch(
+          `${ADMIN_API_URL}/network?${params.toString()}`,
+          {
+            method: "GET",
+            credentials: "include",
+            signal: controller.signal,
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Unable to load network members");
+        }
+
+        setMembers((data.members || []).map(mapMember));
+        setPagination(data.pagination || {
+          page: 1,
+          limit: pageSize,
+          total: 0,
+          totalPages: 0,
+        });
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          setError(err.message || "Something went wrong");
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchNetwork();
+
+    return () => controller.abort();
+  }, [search, statusFilter, page]);
+
+
+  const visibleMembers = members;
+  const totalPages = pagination.totalPages || 1;
 
   const activeCount = members.filter(
     (member) => member.status === "Active"
@@ -103,8 +187,47 @@ const [members] = useState(initialMembers);
     (member) => member.status === "Pending"
   ).length;
 
-  const levelCount = (level) =>
-    members.filter((member) => member.level === level).length;
+
+  // const filteredMembers = useMemo(() => {
+  //   const query = search.trim().toLowerCase();
+
+  //   return members.filter((member) => {
+  //     const matchesSearch =
+  //       member.name.toLowerCase().includes(query) ||
+  //       member.email.toLowerCase().includes(query) ||
+  //       member.referralCode.toLowerCase().includes(query) ||
+  //       member.sponsor.toLowerCase().includes(query);
+
+  //     const matchesStatus =
+  //       statusFilter === "All" || member.status === statusFilter;
+
+  //     const matchesLevel =
+  //       levelFilter === "All" || member.level === Number(levelFilter);
+
+  //     return matchesSearch && matchesStatus && matchesLevel;
+  //   });
+  // }, [members, search, statusFilter, levelFilter]);
+
+  // const totalPages = Math.max(
+  //   1,
+  //   Math.ceil(filteredMembers.length / pageSize)
+  // );
+
+  // const visibleMembers = filteredMembers.slice(
+  //   (page - 1) * pageSize,
+  //   page * pageSize
+  // );
+
+  // const activeCount = members.filter(
+  //   (member) => member.status === "Active"
+  // ).length;
+
+  // const pendingCount = members.filter(
+  //   (member) => member.status === "Pending"
+  // ).length;
+
+  // const levelCount = (level) =>
+  //   members.filter((member) => member.level === level).length;
 
   return (
     <div className="admin-network">
@@ -120,7 +243,8 @@ const [members] = useState(initialMembers);
           <div className="admin-network-stat-icon blue">♧</div>
           <div>
             <p>Total Members</p>
-            <h2>{members.length}</h2>
+            {/* <h2>{members.length}</h2> */}
+            <h2>{pagination.total}</h2>
             <span>All network members</span>
           </div>
         </article>
@@ -159,19 +283,22 @@ const [members] = useState(initialMembers);
             <h2>Network Members</h2>
             <p>Search and filter members in the network.</p>
           </div>
-          <span className="admin-network-count">
+          {/* <span className="admin-network-count">
             {filteredMembers.length} members
+          </span> */}
+
+          <span className="admin-network-count">
+            {pagination.total} members
           </span>
         </div>
 
-        <div className="admin-network-levels">
+        {/* <div className="admin-network-levels">
           {[1, 2, 3].map((level) => (
             <button
               type="button"
               key={level}
-              className={`admin-network-level ${
-                levelFilter === String(level) ? "selected" : ""
-              }`}
+              className={`admin-network-level ${levelFilter === String(level) ? "selected" : ""
+                }`}
               onClick={() => {
                 setLevelFilter((previous) =>
                   previous === String(level) ? "All" : String(level)
@@ -184,7 +311,7 @@ const [members] = useState(initialMembers);
               <small>Members</small>
             </button>
           ))}
-        </div>
+        </div> */}
 
         <div className="admin-network-toolbar">
           <div className="admin-network-search">
@@ -209,9 +336,9 @@ const [members] = useState(initialMembers);
             }}
           >
             <option value="All">All Statuses</option>
-            <option value="Active">Active</option>
-            <option value="Pending">Pending</option>
-            <option value="Inactive">Inactive</option>
+            <option value="active">Active</option>
+            <option value="pending">Pending</option>
+            <option value="blocked">Blocked</option>
           </select>
 
           <select
@@ -236,7 +363,8 @@ const [members] = useState(initialMembers);
                 <th>MEMBER</th>
                 <th>REFERRAL CODE</th>
                 <th>SPONSOR</th>
-                <th>LEVEL</th>
+                {/* <th>LEVEL</th> */}
+                <th>DIRECT REFERRALS</th>
                 <th>JOINED DATE</th>
                 <th>STATUS</th>
                 <th>ACTIONS</th>
@@ -244,6 +372,23 @@ const [members] = useState(initialMembers);
             </thead>
 
             <tbody>
+              {loading && (
+                <tr>
+                  <td colSpan="7" className="admin-network-empty">
+                    Loading network members...
+                  </td>
+                </tr>
+              )}
+
+              {!loading && error && (
+                <tr>
+                  <td colSpan="7" className="admin-network-empty">
+                    {error}
+                  </td>
+                </tr>
+              )}
+
+
               {visibleMembers.map((member) => (
                 <tr key={member.id}>
                   <td>
@@ -268,11 +413,16 @@ const [members] = useState(initialMembers);
                     {member.sponsor}
                   </td>
 
-                  <td>
+                  {/* <td>
                     <span className={`admin-network-level-badge level-${member.level}`}>
                       Level {member.level}
                     </span>
-                  </td>
+                  </td> */}
+
+                  <div>
+                    <span>Direct referrals</span>
+                    <strong>{selectedMember.directReferrals}</strong>
+                  </div>
 
                   <td className="admin-network-date">{member.joined}</td>
 
@@ -298,7 +448,7 @@ const [members] = useState(initialMembers);
                 </tr>
               ))}
 
-              {visibleMembers.length === 0 && (
+              {!loading && !error && visibleMembers.length === 0 && (
                 <tr>
                   <td colSpan="7" className="admin-network-empty">
                     <div>♧</div>
@@ -312,7 +462,7 @@ const [members] = useState(initialMembers);
         </div>
 
         <div className="admin-network-pagination">
-          <p>
+          {/* <p>
             Showing{" "}
             {filteredMembers.length === 0
               ? 0
@@ -320,6 +470,19 @@ const [members] = useState(initialMembers);
             {" - "}
             {Math.min(page * pageSize, filteredMembers.length)} of{" "}
             {filteredMembers.length}
+          </p> */}
+
+          <p>
+            Showing{" "}
+            {pagination.total === 0
+              ? 0
+              : (pagination.page - 1) * pagination.limit + 1}
+            {" - "}
+            {Math.min(
+              pagination.page * pagination.limit,
+              pagination.total
+            )}{" "}
+            of {pagination.total}
           </p>
 
           <div>

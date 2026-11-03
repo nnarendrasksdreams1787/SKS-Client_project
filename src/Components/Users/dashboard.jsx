@@ -12,7 +12,7 @@ import {
 
 import "../../CSS/Dashboard.css";
 
-const DASHBOARD_API = "http://localhost:4010/api/user/dashboard";
+const DASHBOARD_API = "http://localhost:4000/api/user/dashboard";
 
 export default function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
