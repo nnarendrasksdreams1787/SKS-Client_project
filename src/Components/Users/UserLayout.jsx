@@ -22,6 +22,7 @@ import {
   X,
   List,
   History,
+  BookOpen,
 } from "lucide-react";
 import "../../CSS/UserLayout.css";
 import { USER_API_URL } from "../../Config/api";
@@ -78,6 +79,8 @@ export default function UserLayout() {
   const title = pageTitles[pathname] || "User Dashboard";
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const [purchasedBooks, setPurchasedBooks] = useState([]);
+
   // 1. NEW: Verify logged-in user
   useEffect(() => {
     const controller = new AbortController();
@@ -92,7 +95,7 @@ export default function UserLayout() {
 
       try {
         // const response = await axios.get("http://localhost:4000/api/user/me", {
-        const response = await axios.get(`${USER_API_URL}/me` , {
+        const response = await axios.get(`${USER_API_URL}/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -152,6 +155,41 @@ export default function UserLayout() {
       document.removeEventListener("keydown", closeOnEscape);
     };
   }, [menuOpen]);
+
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const controller = new AbortController();
+
+    async function loadPurchasedBooks() {
+      try {
+        const token = sessionStorage.getItem("authToken");
+
+        const response = await axios.get(
+          "http://localhost:4000/api/library/my-books",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            signal: controller.signal,
+          }
+        );
+
+        if (response.data.success) {
+          setPurchasedBooks(response.data.data || []);
+        }
+      } catch (error) {
+        if (error.code !== "ERR_CANCELED") {
+          console.error("Purchased books error:", error);
+        }
+      }
+    }
+
+    loadPurchasedBooks();
+
+    return () => controller.abort();
+  }, [isAuthenticated]);
 
   // Your existing openChantTools function comes next.
 
@@ -242,6 +280,45 @@ export default function UserLayout() {
             ),
           )}
         </nav>
+
+        {purchasedBooks.length > 0 && (
+          <div className="sks-user-purchased-books">
+            <span className="sks-user-books-heading">
+              MY PURCHASED BOOKS
+            </span>
+
+            {purchasedBooks.map((book) => (
+              <NavLink
+                key={book.product_id}
+                to={`/user/books/${book.product_id}`}
+                onClick={() => setMenuOpen(false)}
+                className={({ isActive }) =>
+                  `sks-user-nav-link${isActive ? " is-active" : ""}`
+                }
+              >
+                <BookOpen size={18} strokeWidth={1.8} />
+                {/* <span>
+                  {book.product_id === 16
+                    ? "MPSC Geography"
+                    : `Book ${book.product_id}`}
+                </span> */}
+
+                <span>
+                  {book.title || book.name || `Book ${book.product_id}`}
+                </span>
+
+
+              </NavLink>
+            ))}
+          </div>
+        )}
+
+
+
+
+
+
+
         {isChantPage && (
           <div className="sks-user-chant-shortcuts">
             <span>JAAP TOOLS</span>

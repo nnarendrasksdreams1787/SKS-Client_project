@@ -32,6 +32,7 @@ import MyOrders from "./Components/Users/MyOrders";
 import MyWallet from "./Components/Users/MyWallet";
 import BankDetails from "./Components/Users/BankDetails";
 import Chant from "./Components/Users/Chant";
+import PurchasedBookReader from "./Components/Users/PurchasedBookReader";
 
 import PrivacyPolicy from "./Pages/PrivacyPolicy";
 import SecurityPolicy from "./Pages/SecurityPolicy";
@@ -39,6 +40,12 @@ import TermsConditions from "./Pages/TermsConditions";
 import PaymentPolicy from "./Pages/PaymentPolicy";
 import FAQ from "./Pages/FAQ";
 import OrderCancellation from "./Pages/OrderCancellation";
+import PaymentResult from "./Pages/PaymentResult"
+
+
+import ProductSection from "./Components/ProductSection";
+import Header from "./Components/Header";
+import Footer from "./Components/Footer";
 
 // import BookReaderrs from "./Pages/BookReaderrs"
 
@@ -55,6 +62,20 @@ export default function Routing() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin/login" element={<AdminLogin />} />
+
+
+        <Route
+          path="/product"
+          element={
+            <>
+              <Header />
+              <main>
+                <ProductSection />
+              </main>
+              <Footer />
+            </>
+          }
+        />
 
         {/* Admin Routes  */}
 
@@ -86,6 +107,7 @@ export default function Routing() {
           <Route path="bankdetails" element={<BankDetails />} />
           <Route path="chant" element={<Chant />} />
 
+          <Route path="books/:productId" element={<PurchasedBookReader />} />
 
         </Route>
 
@@ -102,6 +124,8 @@ export default function Routing() {
 
 
         <Route path="/doc-test" element={<DocxExtractionTest />} />
+
+        <Route path="/payment/result" element={<PaymentResult />} />
       </Routes>
 
 

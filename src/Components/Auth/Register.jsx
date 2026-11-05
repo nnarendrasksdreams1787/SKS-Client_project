@@ -621,6 +621,9 @@
 
 
 
+
+
+
 import React, { useState } from "react";
 import "../../CSS/Auth.css";
 import { Link } from "react-router-dom";
@@ -819,18 +822,80 @@ const Register = () => {
 
       const data = response.data;
 
+
+      // setCredentials({
+      //   referenceId: data.user.reference_id,
+      //   temporaryPassword: data.temporaryPassword,
+      // });
+
+      // setSuccess("Registration successful!");
+      const referenceId = data.user?.reference_id;
+      const temporaryPassword = data.temporaryPassword;
+
+      if (!referenceId || !temporaryPassword) {
+        throw new Error(
+          "Account created, but login credentials were not returned. Please contact support."
+        );
+      }
+
+      // Show credentials so the user can save them.
       setCredentials({
-        referenceId: data.user.reference_id,
-        temporaryPassword: data.temporaryPassword,
+        referenceId,
+        temporaryPassword,
       });
 
       setSuccess("Registration successful!");
+
+      const pendingProductId = sessionStorage.getItem(
+        "sks_pending_purchase"
+      );
+
+      if (pendingProductId) {
+        try {
+          const loginResponse = await axios.post(
+            `${API_URL}/login`,
+            {
+              reference_id: referenceId,
+              password: temporaryPassword,
+            }
+          );
+
+          const token = loginResponse.data?.token;
+
+          if (!token) {
+            throw new Error("Login token missing");
+          }
+
+          sessionStorage.setItem("authToken", token);
+
+          setSuccess(
+            "Registration successful! You are logged in. Save your credentials, then continue to payment."
+          );
+
+
+          // } catch (error) {
+          //   console.error("Registration error:", error);
+
+          //   setError(
+          //     error.response?.data?.message ||
+          //     "Unable to connect to the registration server.",
+          //   );
+        } catch (loginError) {
+          console.error("Automatic login failed:", loginError);
+
+          setError(
+            "Account created, but automatic login failed. Save your credentials and log in manually."
+          );
+        }
+      }
+
     } catch (error) {
       console.error("Registration error:", error);
 
       setError(
         error.response?.data?.message ||
-          "Unable to connect to the registration server.",
+        error.message ||
+        "Unable to connect to the registration server."
       );
     } finally {
       setLoading(false);
@@ -1094,6 +1159,19 @@ const Register = () => {
                     </p>
 
                     <p>Please save these credentials for login.</p>
+
+                    {sessionStorage.getItem("sks_pending_purchase") &&
+                      sessionStorage.getItem("authToken") && (
+                        <button
+                          type="button"
+                          className="sks-submit-btn"
+                          onClick={() => {
+                            window.location.assign("/?resumePurchase=1#products");
+                          }}
+                        >
+                          Continue to Payment →
+                        </button>
+                      )}
                   </div>
                 )}
 

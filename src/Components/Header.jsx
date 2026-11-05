@@ -1,32 +1,32 @@
 import React, { useState } from 'react'
 import {
-    Search,
-    ShoppingCart,
-    Menu,
-    X,
-    UserRound,
- } from "lucide-react";
+  Search,
+  ShoppingCart,
+  Menu,
+  X,
+  UserRound,
+} from "lucide-react";
 
 //  import logo from "../assets/Theme/new-logo.png"
 //  import logo from "../assets/Theme/main-logo3.png"
- import logo from "../assets/Theme/re-logo1.png"
+import logo from "../assets/Theme/re-logo1.png"
 
 import { Link, useLocation } from 'react-router-dom';
 
 
 const links = [
-    ["Home", "/"],
-    ["Products", "#products"],
-    ["Courses", "#courses"],
-    ["MPSC Series", "#mpsc"],
-    ["About", "/about"],
-    ["Contact", "/contact"],
-]; 
+  ["Home", "/"],
+  ["Products", "/product"],
+  ["Courses", "#courses"],
+  ["MPSC Series", "#mpsc"],
+  ["About", "/about"],
+  ["Contact", "/contact"],
+];
 
 function Header() {
 
-    const [menuOpen, setMenuOpen] = useState(false);
-    const [searchOpen, setSearchOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   return (
     <header className="site-header">
@@ -45,14 +45,14 @@ function Header() {
 
             {/* <span className="brand-fallback">✦</span> */}
 
-          {/* </span>  */}
+        {/* </span>  */}
 
-          {/* <span>
+        {/* <span>
             <strong>SKS Dream</strong>
             <small>Dream · Learn · Achieve</small>
           </span> */}
 
-            {/* <span className="brand-logos">
+        {/* <span className="brand-logos">
 
             <img src={logo} alt="brand-Logo" />
             </span> */}
@@ -67,12 +67,17 @@ function Header() {
           aria-label="Main navigation"
         >
 
-        
+
           {links.map(([label, href], index) => (
             <Link
+              // key={label}
+              // className={index === 0 ? "active" : ""}
+              // href={href}
+              // onClick={() => setMenuOpen(false)}
+
               key={label}
-              className={index === 0 ? "active" : ""}
-              href={href}
+              className={window.location.pathname === href ? "active" : ""}
+              to={href}
               onClick={() => setMenuOpen(false)}
             >
               {label}
@@ -92,7 +97,7 @@ function Header() {
             className="header-icon"
             aria-label="Search"
             aria-expanded={searchOpen}
-            onClick={()=> setSearchOpen(!searchOpen)}
+            onClick={() => setSearchOpen(!searchOpen)}
           >
             <Search size={19} />
           </button>
@@ -114,7 +119,7 @@ function Header() {
             className="header-icon menu-toggle"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
-            onClick={()=> setMenuOpen(!menuOpen)}
+            onClick={() => setMenuOpen(!menuOpen)}
           >
             {menuOpen ? <X /> : <Menu />}
           </button>
@@ -126,7 +131,7 @@ function Header() {
       {searchOpen && (
         <form
           className="header-search container"
-          onSubmit={(event)=> {
+          onSubmit={(event) => {
             event.preventDefault();
             document.getElementById("search-products")?.focus();
             setSearchOpen(false);

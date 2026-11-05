@@ -75,6 +75,7 @@ export default function AdminProducts() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [ebook, setEbook] = useState(null);
+  const [docx, setDocx] = useState(null);
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
@@ -190,6 +191,7 @@ export default function AdminProducts() {
       category_id: categories[0] ? String(categories[0].id) : "",
     });
     setEbook(null);
+    setDocx(null);
     setError("");
     setModalOpen(true);
   };
@@ -206,6 +208,7 @@ export default function AdminProducts() {
       status: product.status || "Active",
     });
     setEbook(null);
+    setDocx(null);
     setError("");
     setModalOpen(true);
   };
@@ -278,8 +281,13 @@ export default function AdminProducts() {
       return;
     }
 
-    if (editingId === null && !ebook) {
-      setError("Please upload the product's e-book PDF.");
+    // if (editingId === null && !ebook) {
+    //   setError("Please upload the product's e-book PDF.");
+    //   return;
+    // }
+
+    if (editingId === null && (!ebook || !docx)) {
+      setError("Please upload both PDF and DOCX files.");
       return;
     }
 
@@ -293,6 +301,10 @@ export default function AdminProducts() {
 
     if (ebook) {
       payload.append("ebook", ebook);
+    }
+
+    if (docx) {
+      payload.append("docx", docx);
     }
 
     setSaving(true);
@@ -736,6 +748,23 @@ export default function AdminProducts() {
                   <small>
                     Leave empty to keep the existing PDF.
                   </small>
+                )}
+              </label>
+
+              <label>
+                E-book DOCX {editingId !== null && "(optional)"}
+
+                <input
+                  type="file"
+                  accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  required={editingId === null}
+                  onChange={(event) => {
+                    setDocx(event.target.files?.[0] || null);
+                  }}
+                />
+
+                {editingId !== null && (
+                  <small>Leave empty to keep the existing DOCX.</small>
                 )}
               </label>
 
