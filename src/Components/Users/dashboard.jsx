@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import { Link } from "react-router-dom";
 import {
   IndianRupee,
   UsersRound,
@@ -63,7 +63,7 @@ export default function Dashboard() {
         } else {
           setError(
             err.response?.data?.message ||
-              "Unable to load dashboard. Please try again."
+            "Unable to load dashboard. Please try again."
           );
         }
       } finally {
@@ -93,31 +93,31 @@ export default function Dashboard() {
 
   const dashboardStats = stats
     ? [
-        {
-          label: "Total Amount",
-          value: formatCurrency(stats.total_amount),
-          Icon: IndianRupee,
-          tone: "blue",
-        },
-        {
-          label: "Total Referrals",
-          value: String(stats.total_referrals ?? 0),
-          Icon: UsersRound,
-          tone: "indigo",
-        },
-        {
-          label: "Total Commission",
-          value: formatCurrency(stats.total_commission),
-          Icon: BadgePercent,
-          tone: "orange",
-        },
-        {
-          label: "Total Orders",
-          value: String(stats.total_orders ?? 0),
-          Icon: ShoppingBag,
-          tone: "green",
-        },
-      ]
+      {
+        label: "Total Amount",
+        value: formatCurrency(stats.total_amount),
+        Icon: IndianRupee,
+        tone: "blue",
+      },
+      {
+        label: "Total Referrals",
+        value: String(stats.total_referrals ?? 0),
+        Icon: UsersRound,
+        tone: "indigo",
+      },
+      {
+        label: "Total Commission",
+        value: formatCurrency(stats.total_commission),
+        Icon: BadgePercent,
+        tone: "orange",
+      },
+      {
+        label: "Total Orders",
+        value: String(stats.total_orders ?? 0),
+        Icon: ShoppingBag,
+        tone: "green",
+      },
+    ]
     : [];
 
   const bankAdded = dashboardData?.bank?.is_added ?? false;
@@ -132,6 +132,24 @@ export default function Dashboard() {
         <p>
           Manage your earnings, referrals and orders in one place.
         </p>
+
+        {/* Browse & Buy Books */}
+        <Link
+          to="/product"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            padding: "12px 20px",
+            marginBottom: "20px",
+            background: "#071B30",
+            color: "#FFFFFF",
+            borderRadius: "10px",
+            fontWeight: 600,
+            textDecoration: "none",
+          }}
+        >
+          Browse & Buy Books →
+        </Link>
 
         {/* Bank Account Warning */}
         {!loading && !error && !bankAdded && (

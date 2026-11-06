@@ -593,34 +593,6 @@
 //   }
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import mammoth from "mammoth";
 import { createWorker } from "tesseract.js";
 
@@ -732,7 +704,6 @@ export async function getBookText({ docxUrl, pdfDocument, pageNumber }) {
 //   return result.text;
 // }
 
-
 // export async function getReadablePageText({
 //   docxUrl,
 //   pdfDocument,
@@ -761,8 +732,6 @@ export async function getBookText({ docxUrl, pdfDocument, pageNumber }) {
 //   );
 // }
 
-
-
 export async function getReadablePageText({
   docxUrl,
   pdfDocument,
@@ -773,9 +742,7 @@ export async function getReadablePageText({
   }
 
   if (!docxUrl) {
-    throw new Error(
-      "Clean DOCX text is unavailable for this book."
-    );
+    throw new Error("Clean DOCX text is unavailable for this book.");
   }
 
   const result = await extractVerifiedDocxPage({
@@ -783,7 +750,6 @@ export async function getReadablePageText({
     pdfDocument,
     pageNumber,
   });
-  
 
   if (!result.text?.trim()) {
     throw new Error("No readable text found on this page.");
@@ -791,10 +757,6 @@ export async function getReadablePageText({
 
   return result.text;
 }
-
-
-
-
 
 // export async function testPageOCR(pdfDocument, pageNumber) {
 
@@ -972,9 +934,6 @@ export async function testDocxPageMatch({ docxUrl, pdfDocument, pageNumber }) {
   };
 }
 
-
-
-
 export async function testCleanPageBoundaries({
   docxUrl,
   pdfDocument,
@@ -1014,8 +973,6 @@ export async function testCleanPageBoundaries({
     lastParagraph: paragraphs[lastIndex],
   };
 }
-
-
 
 function normalizeWithPositions(text) {
   const characters = [];
@@ -1070,34 +1027,39 @@ export async function extractVerifiedDocxPage({
         pageNumber,
       });
 
-      const {
-        matches,
-        ocrLines,
-        exactMatches,
-      } = matchResult;
+      const { matches, ocrLines, exactMatches } = matchResult;
 
-      if (
-        exactMatches < 10 ||
-        exactMatches / ocrLines < 0.7
-      ) {
+      // if (
+      //   exactMatches < 10 ||
+      //   exactMatches / ocrLines < 0.7
+      // ) {
+      //   throw new Error(
+      //     "Page matching confidence is too low. Reading stopped."
+      //   );
+      // }
+
+      const matchRatio = ocrLines > 0 ? exactMatches / ocrLines : 0;
+
+      const requiredMatches = Math.min(
+        10,
+        Math.max(5, Math.ceil(ocrLines * 0.7)),
+      );
+
+      if (exactMatches < requiredMatches || matchRatio < 0.7) {
         throw new Error(
-          "Page matching confidence is too low. Reading stopped."
+          "Page matching confidence is too low. Reading stopped.",
         );
       }
 
       const docxText = await extractDocxText(docxUrl);
       const paragraphs = getTextParagraphs(docxText);
 
-      const indexes = matches.map(
-        (match) => match.paragraphIndex
-      );
+      const indexes = matches.map((match) => match.paragraphIndex);
 
       // Matches should progress forward through the DOCX.
       for (let i = 1; i < indexes.length; i++) {
         if (indexes[i] < indexes[i - 1]) {
-          throw new Error(
-            "DOCX matches are out of order. Reading stopped."
-          );
+          throw new Error("DOCX matches are out of order. Reading stopped.");
         }
       }
 
@@ -1107,51 +1069,34 @@ export async function extractVerifiedDocxPage({
       const firstIndex = firstMatch.paragraphIndex;
       const lastIndex = lastMatch.paragraphIndex;
 
-      const selectedParagraphs = paragraphs.slice(
-        firstIndex,
-        lastIndex + 1
-      );
+      const selectedParagraphs = paragraphs.slice(firstIndex, lastIndex + 1);
 
       const combinedText = selectedParagraphs.join("\n\n");
       const mapped = normalizeWithPositions(combinedText);
 
-      const normalizedStart = normalizeForMatching(
-        firstMatch.ocrLine
-      );
+      const normalizedStart = normalizeForMatching(firstMatch.ocrLine);
 
-      const normalizedEnd = normalizeForMatching(
-        lastMatch.ocrLine
-      );
+      const normalizedEnd = normalizeForMatching(lastMatch.ocrLine);
 
-      const startPosition = mapped.normalized.indexOf(
-        normalizedStart
-      );
+      const startPosition = mapped.normalized.indexOf(normalizedStart);
 
-      const endPosition = mapped.normalized.lastIndexOf(
-        normalizedEnd
-      );
+      const endPosition = mapped.normalized.lastIndexOf(normalizedEnd);
 
       if (
         startPosition === -1 ||
         endPosition === -1 ||
         endPosition < startPosition
       ) {
-        throw new Error(
-          "Unable to identify clean page boundaries."
-        );
+        throw new Error("Unable to identify clean page boundaries.");
       }
 
       const originalStart = mapped.positions[startPosition];
 
-      const endCharacterIndex =
-        endPosition + normalizedEnd.length - 1;
+      const endCharacterIndex = endPosition + normalizedEnd.length - 1;
 
-      const originalEnd =
-        mapped.positions[endCharacterIndex] + 1;
+      const originalEnd = mapped.positions[endCharacterIndex] + 1;
 
-      const cleanText = combinedText
-        .slice(originalStart, originalEnd)
-        .trim();
+      const cleanText = combinedText.slice(originalStart, originalEnd).trim();
 
       if (!cleanText) {
         throw new Error("Clean page text is empty.");
@@ -1177,4 +1122,3 @@ export async function extractVerifiedDocxPage({
     throw err;
   }
 }
-

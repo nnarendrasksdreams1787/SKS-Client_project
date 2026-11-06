@@ -192,7 +192,15 @@ export default function Login() {
       // Navigate to dashboard after successful login.
       // Change this route if your actual dashboard path differs.
       // navigate("/dashboard");
-      navigate("/user/dashboard", { replace: true });
+      // navigate("/user/dashboard", { replace: true });
+
+      const pendingProductId = sessionStorage.getItem("sks_pending_purchase");
+
+      if (pendingProductId) {
+        navigate("/?resumePurchase=1#products", { replace: true });
+      } else {
+        navigate("/user/dashboard", { replace: true });
+      }
 
     } catch (err) {
       console.error("Login error:", err);

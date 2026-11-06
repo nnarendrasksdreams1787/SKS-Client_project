@@ -101,6 +101,13 @@ export default function PurchasedBookReader() {
   const speechUtteranceRef = useRef(null);
   const speechStatusRef = useRef("idle");
 
+  const autoFlipTargetRef = useRef(null);
+
+  const pagePreparationCacheRef = useRef(new Map());
+  const pendingSpeechContinuationRef = useRef(null);
+
+  const autoFlipContinuationRef = useRef(null);
+
   const [docxUrl, setDocxUrl] = useState("");
 
   useEffect(() => {
@@ -220,6 +227,17 @@ export default function PurchasedBookReader() {
     loadPurchasedBook();
 
     return () => {
+
+      speechSessionRef.current += 1;
+
+      if (speechTimeoutRef.current) {
+        clearTimeout(speechTimeoutRef.current);
+      }
+
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+
       controller.abort();
       loadingTask?.destroy();
       if (objectUrl) URL.revokeObjectURL(objectUrl);
@@ -282,8 +300,13 @@ export default function PurchasedBookReader() {
 
   function stopSpeaking() {
     speechSessionRef.current += 1;
+    autoFlipTargetRef.current = null;
+    pendingSpeechContinuationRef.current = null;
+    autoFlipContinuationRef.current = null;
     speechPausedRef.current = false;
     speechStatusRef.current = "idle";
+
+
 
     if (speechTimeoutRef.current) {
       clearTimeout(speechTimeoutRef.current);
@@ -319,6 +342,13 @@ export default function PurchasedBookReader() {
 
     window.speechSynthesis.resume();
     setSpeakingStatus("speaking");
+
+    const continuation = pendingSpeechContinuationRef.current;
+
+    if (typeof continuation === "function") {
+      pendingSpeechContinuationRef.current = null;
+      continuation();
+    }
   }
 
   function prepareSpeechChunks(text) {
@@ -371,112 +401,297 @@ export default function PurchasedBookReader() {
     return chunks;
   }
 
+
+  function preparePageForSpeech(pageNumber) {
+    if (!docxUrl || !pdfDocument) {
+      return Promise.reject(new Error("PDF or DOCX is not ready."));
+    }
+
+    const cache = pagePreparationCacheRef.current;
+
+    if (cache.has(pageNumber)) {
+      return cache.get(pageNumber);
+    }
+
+    const promise = getReadablePageText({
+      docxUrl,
+      pdfDocument,
+      pageNumber,
+    })
+      .then((text) => {
+        if (!text?.trim()) {
+          throw new Error(`Page ${pageNumber}: no verified text.`);
+        }
+        return text;
+      })
+      .catch((error) => {
+        if (cache.get(pageNumber) === promise) {
+          cache.delete(pageNumber);
+        }
+        throw error;
+      });
+
+    cache.set(pageNumber, promise);
+    return promise;
+  }
+
+
   async function startSpeaking() {
     if (!("speechSynthesis" in window)) {
       setSpeakingError("Browser speech is not supported.");
       return;
     }
 
+    if (!docxUrl || !pdfDocument) return;
+
     stopSpeaking();
+    setSpeakingError("");
 
     const sessionId = speechSessionRef.current;
-    const pageNumber = currentPage + 1;
+    const synth = window.speechSynthesis;
+    const flip = flipBookRef.current?.pageFlip();
 
-    setSpeakingError("");
-    setSpeakingStatus("loading");
-    speechStatusRef.current = "loading";
+    const initialPage = flip?.getCurrentPageIndex() ?? currentPage;
 
-    try {
-      const matchedText = await getReadablePageText({
-        docxUrl,
-        pdfDocument,
-        pageNumber,
-      });
+    const voice = speechVoices.find(
+      (item) => item.voiceURI === selectedVoice
+    );
 
-      if (sessionId !== speechSessionRef.current) return;
-
-      if (!matchedText || !String(matchedText).trim()) {
-        throw new Error("No verified text found for this page.");
-      }
-
-      const chunks = prepareSpeechChunks(matchedText);
-
-      if (!chunks.length) {
-        throw new Error("No readable sentences found.");
-      }
-
-      const voice = speechVoices.find(
-        (item) => item.voiceURI === selectedVoice
-      );
-
-      let index = 0;
-
-      function speakNext() {
-        if (sessionId !== speechSessionRef.current) return;
-
-        if (speechPausedRef.current) {
-          speechTimeoutRef.current = setTimeout(speakNext, 100);
-          return;
-        }
-
-        if (index >= chunks.length) {
-          speechStatusRef.current = "idle";
-          setSpeakingStatus("idle");
-          speechUtteranceRef.current = null;
-          return;
-        }
-
-        const chunk = chunks[index++];
-        const utterance = new SpeechSynthesisUtterance(chunk.text);
-
-        utterance.voice = voice || null;
-        utterance.lang = voice?.lang || "mr-IN";
-        utterance.rate = speechRate;
-        utterance.pitch = 1;
-        utterance.volume = 1;
-
-        speechUtteranceRef.current = utterance;
-
-        utterance.onstart = () => {
-          if (sessionId !== speechSessionRef.current) return;
-
-          speechStatusRef.current = "speaking";
-          setSpeakingStatus("speaking");
-        };
-
-        utterance.onerror = (event) => {
-          if (sessionId !== speechSessionRef.current) return;
-
-          if (event.error === "canceled" || event.error === "interrupted") {
-            return;
-          }
-
-          setSpeakingError(`Speech failed: ${event.error}`);
-          stopSpeaking();
-        };
-
-        utterance.onend = () => {
-          if (sessionId !== speechSessionRef.current) return;
-
-          speechTimeoutRef.current = setTimeout(
-            speakNext,
-            chunk.pauseMs
-          );
-        };
-
-        window.speechSynthesis.speak(utterance);
-      }
-
-      speakNext();
-    } catch (error) {
-      if (sessionId !== speechSessionRef.current) return;
-
-      console.error("Read aloud failed:", error);
-      setSpeakingError(error.message || "Unable to read this page.");
-      speechStatusRef.current = "idle";
-      setSpeakingStatus("idle");
+    function active() {
+      return sessionId === speechSessionRef.current;
     }
+
+    function fail(error, pageIndex) {
+      if (!active()) return;
+      stopSpeaking();
+      setSpeakingError(
+        `Page ${pageIndex + 1}: ${error.message || error}`
+      );
+      console.error("Continuous reading failed:", error);
+    }
+
+    function waitWhilePaused(next) {
+      if (!active()) return;
+
+      if (speechPausedRef.current) {
+        pendingSpeechContinuationRef.current = next;
+        speechStatusRef.current = "paused";
+        setSpeakingStatus("paused");
+        return;
+      }
+
+      pendingSpeechContinuationRef.current = null;
+      next();
+    }
+
+    function scheduleNext(next, delay) {
+      if (!active()) return;
+
+      speechTimeoutRef.current = setTimeout(() => {
+        speechTimeoutRef.current = null;
+        waitWhilePaused(next);
+      }, delay);
+    }
+
+    async function readPage(pageIndex) {
+      if (!active()) return;
+
+      speechStatusRef.current = "loading";
+      setSpeakingStatus("loading");
+
+      try {
+        const text = await preparePageForSpeech(pageIndex + 1);
+        console.log("TTS PAGE:", pageIndex + 1);
+console.log("TTS TEXT START:", text.slice(0, 500));
+
+        if (!active()) return;
+
+        const chunks = prepareSpeechChunks(text);
+
+        if (!chunks.length) {
+          throw new Error("No verified speaking text found.");
+        }
+
+        // Prepare next page while current page is speaking.
+        if (pageIndex + 1 < totalPages) {
+          preparePageForSpeech(pageIndex + 2).catch((error) => {
+            if (active()) {
+              console.warn(
+                "Next page preparation failed:",
+                pageIndex + 2,
+                error
+              );
+            }
+          });
+        }
+
+        let chunkIndex = 0;
+
+        function speakNext() {
+          if (!active()) return;
+
+          waitWhilePaused(() => {
+            if (!active()) return;
+
+            if (chunkIndex >= chunks.length) {
+              advancePage(pageIndex);
+              return;
+            }
+
+            const chunk = chunks[chunkIndex];
+            const utterance = new SpeechSynthesisUtterance(chunk.text);
+
+            if (voice) utterance.voice = voice;
+
+            utterance.lang = voice?.lang || "mr-IN";
+            utterance.rate = speechRate;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+
+            speechUtteranceRef.current = utterance;
+
+            utterance.onstart = () => {
+              if (!active()) return;
+              if (speechPausedRef.current) {
+                synth.pause();
+                return;
+              }
+              speechStatusRef.current = "speaking";
+              setSpeakingStatus("speaking");
+            };
+
+            utterance.onend = () => {
+              if (!active()) return;
+
+              chunkIndex += 1;
+              speechUtteranceRef.current = null;
+
+              scheduleNext(speakNext, chunk.pauseMs);
+            };
+
+            utterance.onerror = (event) => {
+              if (!active()) return;
+
+              if (
+                event.error === "canceled" ||
+                event.error === "interrupted"
+              ) return;
+
+              fail(new Error(`Speech failed: ${event.error}`), pageIndex);
+            };
+
+            synth.speak(utterance);
+          });
+        }
+
+        waitWhilePaused(speakNext);
+      } catch (error) {
+        fail(error, pageIndex);
+      }
+    }
+
+
+    function advancePage(pageIndex) {
+      if (!active()) return;
+
+      const nextIndex = pageIndex + 1;
+
+      if (nextIndex >= totalPages) {
+        speechStatusRef.current = "idle";
+        setSpeakingStatus("idle");
+        return;
+      }
+
+      waitWhilePaused(() => {
+        if (!active()) return;
+
+        const flip = flipBookRef.current?.pageFlip();
+
+        if (!flip) {
+          fail(new Error("Flipbook unavailable."), pageIndex);
+          return;
+        }
+
+        const visiblePageIndices = flip.getPageCount
+          ? (() => {
+            const current = flip.getCurrentPageIndex();
+            const isPortrait =
+              flip.getSettings?.()?.usePortrait &&
+              flip.getOrientation?.() === "portrait";
+
+            if (isPortrait) return [current];
+
+            // Desktop spread: cover occupies its own spread.
+            if (current === 0) return [0];
+
+            const spreadStart = current % 2 === 1
+              ? current
+              : current - 1;
+
+            return [spreadStart, spreadStart + 1];
+          })()
+          : [pageIndex];
+
+        // Next page already visible: read without flipping.
+        if (visiblePageIndices.includes(nextIndex)) {
+          readPage(nextIndex);
+          return;
+        }
+
+        // Otherwise turn the physical book page.
+        const currentIndex = flip.getCurrentPageIndex();
+
+        // Target is the next visible spread's first page.
+        const expectedIndex =
+          currentIndex === 0
+            ? 1
+            : currentIndex % 2 === 0
+              ? currentIndex + 1
+              : currentIndex + 2;
+
+        autoFlipTargetRef.current = expectedIndex;
+
+        autoFlipContinuationRef.current = () => {
+          if (!active()) return;
+
+          autoFlipContinuationRef.current = null;
+          scheduleNext(() => readPage(nextIndex), 100);
+        };
+
+        flip.flipNext();
+
+        speechTimeoutRef.current = setTimeout(() => {
+          if (!active()) return;
+
+          if (autoFlipTargetRef.current !== null) {
+            fail(
+              new Error("Automatic page flip did not complete."),
+              pageIndex
+            );
+          }
+        }, 2500);
+      });
+    }
+
+
+    // Used by the onFlip handler to continue the same speech session.
+    // pendingSpeechContinuationRef.current = {
+    //   onAutoFlip(nextIndex) {
+    //     if (!active()) return;
+
+    //     if (speechTimeoutRef.current) {
+    //       clearTimeout(speechTimeoutRef.current);
+    //       speechTimeoutRef.current = null;
+    //     }
+
+    //     scheduleNext(() => readPage(nextIndex), 100);
+    //   },
+    // };
+
+    readPage(initialPage);
   }
+
+
 
 
   function goPrevious() {
@@ -648,7 +863,34 @@ export default function PurchasedBookReader() {
               drawShadow
               flippingTime={650}
               maxShadowOpacity={0.45}
-              onFlip={(event) => setCurrentPage(event.data)}
+              // onFlip={(event) => setCurrentPage(event.data)}
+
+              onFlip={(event) => {
+                const nextPage = event.data;
+                setCurrentPage(nextPage);
+
+                if (autoFlipTargetRef.current === nextPage) {
+                  autoFlipTargetRef.current = null;
+
+                  if (speechTimeoutRef.current) {
+                    clearTimeout(speechTimeoutRef.current);
+                    speechTimeoutRef.current = null;
+                  }
+
+                  const continuation = autoFlipContinuationRef.current;
+
+                  if (typeof continuation === "function") {
+                    continuation();
+                  }
+
+                  return;
+                }
+
+                if (speechStatusRef.current !== "idle") {
+                  stopSpeaking();
+                }
+              }}
+
               className="book-flip"
             >
               {Array.from({ length: totalPages }, (_, index) => (

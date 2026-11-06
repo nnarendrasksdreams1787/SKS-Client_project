@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { reconcilePayment } from "../Services/PaymentApi";
 
 function findCheckoutAttempt() {
@@ -33,6 +33,8 @@ function findCheckoutAttempt() {
 }
 
 export default function PaymentResult() {
+
+  const navigate = useNavigate();
   const [state, setState] = useState({
     loading: true,
     status: "checking",
@@ -88,9 +90,18 @@ export default function PaymentResult() {
             loading: false,
             status: "success",
             message:
-              "Payment verified successfully! Your ebook access has been granted.",
+              "Payment verified successfully! Redirecting to your dashboard.",
             orderReference: attempt.orderReference,
           });
+
+          navigate("/user/dashboard", {
+            replace: true,
+            state: {
+              paymentSuccess: true,
+              orderReference: attempt.orderReference,
+            },
+          });
+
           return;
         }
 
@@ -188,7 +199,7 @@ export default function PaymentResult() {
 
         {!state.loading && (
           <Link
-            to={isSuccess ? "/user/myorders" : "/user/myorders"}
+            to={isSuccess ? "/user/dashboard" : "/user/myorders"}
             style={{
               display: "inline-block",
               padding: "12px 20px",
