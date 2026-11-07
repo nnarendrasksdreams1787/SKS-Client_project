@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Heart, ShoppingBag, Star, ArrowRight } from "lucide-react";
-import { products } from "../Data/products";
+// import { products } from "../Data/products";
 import "../ProductSection.css";
 
 import { useNavigate } from "react-router-dom";
@@ -30,7 +30,9 @@ export default function ProductSection() {
     async function loadProducts() {
       try {
         // const response = await fetch("http://localhost:4000/api/products");
-        const response = await fetch( "https://sks-serverproject-new.onrender.com/api/products");
+        const response = await fetch(
+          "https://sks-serverproject-new.onrender.com/api/products",
+        );
 
         if (!response.ok) {
           throw new Error("Unable to load products");
@@ -38,8 +40,17 @@ export default function ProductSection() {
 
         const data = await response.json();
 
+        // if (!cancelled) {
+        //   setProducts(data.products || []);
+        // }
+
         if (!cancelled) {
-          setProducts(data.products || []);
+          const filteredProducts = (data.products || []).filter((product) => {
+            const productId = Number(product.product_id ?? product.id);
+            return productId >= 29;
+          });
+
+          setProducts(filteredProducts);
         }
       } catch (error) {
         if (!cancelled) {

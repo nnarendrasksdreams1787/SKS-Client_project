@@ -250,15 +250,6 @@
 //   );
 // }
 
-
-
-
-
-
-
-
-
-
 // import { forwardRef, useEffect, useRef, useState } from "react";
 // import { useParams, Link } from "react-router-dom";
 // import HTMLFlipBook from "react-pageflip";
@@ -291,8 +282,6 @@
 // //     </div>
 // //   );
 // // });
-
-
 
 // const FlipPage = forwardRef(function FlipPage(
 //   { pdfDocument, number, shouldRender },
@@ -352,7 +341,6 @@
 //   );
 // });
 
-
 // export default function BookReader() {
 //   const { id } = useParams();
 //   const flipBookRef = useRef(null);
@@ -371,7 +359,6 @@
 //   const readingQueueRef = useRef([]);
 
 //   const pagePreparationCacheRef = useRef(new Map());
-
 
 //   const [pages, setPages] = useState([]);
 //   const [currentPage, setCurrentPage] = useState(0);
@@ -395,7 +382,6 @@
 
 //   const [translationProgress, setTranslationProgress] = useState("");
 
-
 //   const [ttsLanguage, setTtsLanguage] = useState("en-IN");
 //   const [ttsSpeed, setTtsSpeed] = useState(1);
 //   const [ttsVoices, setTtsVoices] = useState([]);
@@ -404,8 +390,6 @@
 
 //   const [product, setProduct] = useState(null);
 //   const [productLoading, setProductLoading] = useState(true);
-
-
 
 //   function zoomIn() {
 //     setZoom((current) => Math.min(current + 25, 200));
@@ -452,7 +436,6 @@
 //       cancelled = true;
 //     };
 //   }, [id]);
-
 
 //   useEffect(() => {
 //     if (!("speechSynthesis" in window)) return;
@@ -557,9 +540,6 @@
 //       }
 //     }
 
-
-
-
 //     loadPdf();
 
 //     return () => {
@@ -605,11 +585,9 @@
 //   //   }
 //   // }
 
-
 //   async function handleReadDocx() {
 
 //     if (!product?.docxUrl) return;
-
 
 //     try {
 //       setDocxLoading(true);
@@ -665,7 +643,6 @@
 //       console.error("DOCX MATCH FAILED:", error);
 //     }
 //   }
-
 
 //   async function handleTestPageBoundaries() {
 //     if (!pdfDocument || !product?.docxUrl) return;
@@ -794,7 +771,6 @@
 //   //   }
 //   // }
 
-
 //   async function extractCurrentPageText() {
 //     if (!pdfDocument) return;
 
@@ -834,7 +810,6 @@
 //   //     alert("Text-to-Speech is not supported in this browser.");
 //   //     return;
 //   //   }
-
 
 //   //   try {
 //   //     // stop any previous speech
@@ -877,7 +852,6 @@
 //   //     console.log("TTS PAGE:", pageNumber);
 //   //     console.log("TTS TEST:", pageText);
 
-
 //   //   } catch (error) {
 //   //     console.error("TTS failed: ", error);
 //   //     alert("Unable to read this page aloud.");
@@ -904,19 +878,16 @@
 
 //     const firstPage = currentIndex + 1;
 
-
 //     // Mobile: one page at a time.
 //     if (orientation === "portrait") {
 //       return [firstPage];
 //     }
-
 
 //     // if (secondPage <= totalPages) {
 //     //   return [firstPage, secondPage];
 //     // }
 
 //     // return [firstPage];
-
 
 //     // Desktop: cover is displayed alon
 //     if (currentIndex === 0) {
@@ -931,7 +902,6 @@
 //       : [firstPage];
 
 //   }
-
 
 //   function flipToNextReadingPages() {
 //     const flipInstance = flipBookRef.current?.pageFlip();
@@ -963,10 +933,9 @@
 //       )
 //     }
 
-
 //     const cache = pagePreparationCacheRef.current;
 
-//     // Already prepared or currently preperting 
+//     // Already prepared or currently preperting
 
 //     if (cache.has(pageNumber)) {
 //       return cache.get(pageNumber);
@@ -1027,7 +996,6 @@
 //     })
 //   }
 
-
 //   function completeReadingPage(sessionId) {
 //     if (sessionId !== speechSessionRef.current) return;
 
@@ -1045,7 +1013,6 @@
 //       setTtsStatus("idle");
 //       return;
 //     }
-
 
 //     const lastVisiblePage = visiblePages[visiblePages.length - 1];
 
@@ -1069,7 +1036,6 @@
 //       setTtsStatus("idle");
 //     }
 //   }
-
 
 //   async function readNextVisiblePage(pageNumber, sessionId) {
 
@@ -1107,7 +1073,6 @@
 //       if (!pageText?.trim()) {
 //         throw new Error(`No readable text found on page ${pageNumber}`);
 //       }
-
 
 //       const chunks = [];
 //       const maxChunkLength = 200;
@@ -1155,9 +1120,6 @@
 
 //       //   })
 //       // }
-
-
-
 
 //       const voice =
 //         ttsVoices.find(
@@ -1280,7 +1242,6 @@
 //     //   setTtsStatus("playing");
 //     //   return;
 //     // }
-
 
 //     if (ttsStatus === "paused") {
 //       // console.log("RESUME REQUEST: ", {
@@ -1428,7 +1389,6 @@
 //     //   pageNumber,
 //     // });
 
-
 //     // if (sessionId !== speechSessionRef.current) return;
 
 //     // const pageText = textContent.items
@@ -1436,7 +1396,6 @@
 //     //   .join(" ")
 //     //   .replace(/\s+/g, " ")
 //     //   .trim();
-
 
 //     //   if (!pageText) {
 //     //     setTtsStatus("idle");
@@ -1517,7 +1476,6 @@
 //     //         item.lang.toLowerCase() === ttsLanguage.toLowerCase()
 //     //     );
 
-
 //     //   let chunkIndex = 0;
 
 //     //   const speakNextChunk = () => {
@@ -1552,7 +1510,6 @@
 //     //       return;
 
 //     //     }
-
 
 //     //     const utterance = new SpeechSynthesisUtterance(
 //     //       chunks[chunkIndex]
@@ -1660,7 +1617,6 @@
 //   //   setTtsStatus("paused");
 //   // }
 
-
 //   function handlePauseSpeech() {
 //     if (!("speechSynthesis" in window)) return;
 
@@ -1677,7 +1633,6 @@
 //     setTtsStatus("paused");
 
 //   }
-
 
 //   async function handleTranslate() {
 //     if (!extractedText.trim()) {
@@ -1732,7 +1687,6 @@
 //     }
 //   }
 
-
 //   if (productLoading) {
 //     return (
 //       <main className="reader-message">
@@ -1740,7 +1694,6 @@
 //       </main>
 //     )
 //   }
-
 
 //   if (!product) {
 //     return (
@@ -2120,7 +2073,6 @@
 //               </div>
 //             )}
 
-
 //           </div>
 
 //           <div className="reader-controls">
@@ -2235,32 +2187,7 @@
 //   );
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ////////////////////////////////////  This is the working verions which is we check already /////////////////////////////
-
 
 import { forwardRef, useEffect, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
@@ -2270,6 +2197,7 @@ import pdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 // import { products } from "../Data/products";
 import { getBookById } from "../Services/BookService";
 import "../BookReader.css";
+import { API_BASE_URL } from "../Config/api";
 
 import { translateToHindi } from "../Services/TranslationServices";
 
@@ -2295,11 +2223,9 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 //   );
 // });
 
-
-
 const FlipPage = forwardRef(function FlipPage(
   { pdfDocument, number, shouldRender },
-  ref
+  ref,
 ) {
   const canvasRef = useRef(null);
 
@@ -2355,7 +2281,6 @@ const FlipPage = forwardRef(function FlipPage(
   );
 });
 
-
 export default function BookReader() {
   const { id } = useParams();
   const flipBookRef = useRef(null);
@@ -2366,7 +2291,7 @@ export default function BookReader() {
     chunks: [],
     chunkIndex: 0,
     status: "idle",
-  })
+  });
 
   const autoFlipRef = useRef(false);
   const pendingAutoFlipSessionRef = useRef(null);
@@ -2374,7 +2299,6 @@ export default function BookReader() {
   const readingQueueRef = useRef([]);
 
   const pagePreparationCacheRef = useRef(new Map());
-
 
   const [pages, setPages] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -2398,7 +2322,6 @@ export default function BookReader() {
 
   const [translationProgress, setTranslationProgress] = useState("");
 
-
   const [ttsLanguage, setTtsLanguage] = useState("en-IN");
   const [ttsSpeed, setTtsSpeed] = useState(1);
   const [ttsVoices, setTtsVoices] = useState([]);
@@ -2407,8 +2330,6 @@ export default function BookReader() {
 
   const [product, setProduct] = useState(null);
   const [productLoading, setProductLoading] = useState(true);
-
-
 
   function zoomIn() {
     setZoom((current) => Math.min(current + 25, 200));
@@ -2456,7 +2377,6 @@ export default function BookReader() {
     };
   }, [id]);
 
-
   useEffect(() => {
     if (!("speechSynthesis" in window)) return;
 
@@ -2470,28 +2390,102 @@ export default function BookReader() {
         voices.map((voice) => ({
           name: voice.name,
           lang: voice.lang,
-        }))
+        })),
       );
     };
 
     loadVoices();
 
-    window.speechSynthesis.addEventListener(
-      "voiceschanged",
-      loadVoices
-    );
+    window.speechSynthesis.addEventListener("voiceschanged", loadVoices);
 
     return () => {
-      window.speechSynthesis.removeEventListener(
-        "voiceschanged",
-        loadVoices
-      );
+      window.speechSynthesis.removeEventListener("voiceschanged", loadVoices);
     };
   }, []);
+
+  // useEffect(() => {
+  //   let cancelled = false;
+  //   let loadingTask;
+
+  //   if (!product) return;
+
+  //   async function loadPdf() {
+  //     setLoading(true);
+  //     setError("");
+  //     setPages([]);
+  //     setCurrentPage(0);
+  //     setPdfDocument(null);
+  //     setTotalPages(0);
+  //     pagePreparationCacheRef.current.clear();
+
+  //     if (!product?.pdfUrl) {
+  //       setError("This book does not have a PDF available yet.");
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     try {
+  //       const pdfUrl = new URL(product.pdfUrl, window.location.origin).href;
+  //       loadingTask = pdfjsLib.getDocument({ url: pdfUrl });
+  //       const pdf = await loadingTask.promise;
+
+  //       if (cancelled) return;
+
+  //       setPdfDocument(pdf);
+  //       setTotalPages(pdf.numPages);
+
+  //       // const renderedPages = [];
+
+  //       // for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+  //       //   if (cancelled) return;
+
+  //       //   const pdfPage = await pdf.getPage(pageNumber);
+  //       //   const viewport = pdfPage.getViewport({ scale: 1.15 });
+  //       //   const canvas = document.createElement("canvas");
+  //       //   const context = canvas.getContext("2d");
+
+  //       //   canvas.width = Math.ceil(viewport.width);
+  //       //   canvas.height = Math.ceil(viewport.height);
+
+  //       //   await pdfPage.render({
+  //       //     canvasContext: context,
+  //       //     viewport,
+  //       //   }).promise;
+
+  //       //   renderedPages.push(canvas.toDataURL("image/jpeg", 0.88));
+  //       //   canvas.width = 0;
+  //       //   canvas.height = 0;
+  //       // }
+
+  //       // if (!cancelled) setPages(renderedPages);
+  //     } catch (err) {
+  //       if (cancelled || err?.name === "AbortException") {
+  //         return;
+  //       }
+
+  //       console.error("PDF loading failed:", err);
+
+  //       setError(
+  //         "We couldn't open this PDF. Check the file path and try again."
+  //       );
+
+  //     } finally {
+  //       if (!cancelled) setLoading(false);
+  //     }
+  //   }
+
+  //   loadPdf();
+
+  //   return () => {
+  //     cancelled = true;
+  //     loadingTask?.destroy();
+  //   };
+  // }, [product?.pdfUrl]);
 
   useEffect(() => {
     let cancelled = false;
     let loadingTask;
+    let docxObjectUrl;
 
     if (!product) return;
 
@@ -2504,15 +2498,71 @@ export default function BookReader() {
       setTotalPages(0);
       pagePreparationCacheRef.current.clear();
 
-      if (!product?.pdfUrl) {
+      if (!product.pdfUrl) {
         setError("This book does not have a PDF available yet.");
         setLoading(false);
         return;
       }
 
       try {
-        const pdfUrl = new URL(product.pdfUrl, window.location.origin).href;
-        loadingTask = pdfjsLib.getDocument({ url: pdfUrl });
+        // 1. Get logged-in user's token
+        const token = sessionStorage.getItem("authToken");
+
+        if (!token) {
+          throw new Error("Please log in to read this book.");
+        }
+
+        const headers = {
+          Authorization: `Bearer ${token}`,
+        };
+
+        // 2. Verify purchase/access
+        const accessResponse = await fetch(
+          `${API_BASE_URL}/api/library/${product.id}/access`,
+          { headers },
+        );
+
+        if (!accessResponse.ok) {
+          if (accessResponse.status === 401) {
+            throw new Error("Your session has expired. Please log in again.");
+          }
+
+          if (accessResponse.status === 403) {
+            throw new Error("Please purchase this book to read it.");
+          }
+
+          throw new Error("Unable to verify book access.");
+        }
+
+        const accessData = await accessResponse.json();
+
+        if (accessData?.data?.hasAccess !== true) {
+          throw new Error("Please purchase this book to read it.");
+        }
+
+        // 3. Download protected PDF
+        const pdfResponse = await fetch(product.pdfUrl, {
+          headers,
+        });
+
+        if (!pdfResponse.ok) {
+          throw new Error(
+            pdfResponse.status === 401
+              ? "Your session has expired. Please log in again."
+              : pdfResponse.status === 403
+                ? "You do not have access to this book."
+                : "Unable to download the PDF.",
+          );
+        }
+
+        const pdfBuffer = await pdfResponse.arrayBuffer();
+
+        if (cancelled) return;
+
+        loadingTask = pdfjsLib.getDocument({
+          data: pdfBuffer,
+        });
+
         const pdf = await loadingTask.promise;
 
         if (cancelled) return;
@@ -2520,56 +2570,53 @@ export default function BookReader() {
         setPdfDocument(pdf);
         setTotalPages(pdf.numPages);
 
-        // const renderedPages = [];
+        // 4. Download DOCX with the same authentication
+        if (product.docxUrl) {
+          const docxResponse = await fetch(product.docxUrl, {
+            headers,
+          });
 
-        // for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
-        //   if (cancelled) return;
+          if (!docxResponse.ok) {
+            throw new Error("Unable to download the DOCX file.");
+          }
 
-        //   const pdfPage = await pdf.getPage(pageNumber);
-        //   const viewport = pdfPage.getViewport({ scale: 1.15 });
-        //   const canvas = document.createElement("canvas");
-        //   const context = canvas.getContext("2d");
+          const docxBlob = await docxResponse.blob();
 
-        //   canvas.width = Math.ceil(viewport.width);
-        //   canvas.height = Math.ceil(viewport.height);
+          if (cancelled) return;
 
-        //   await pdfPage.render({
-        //     canvasContext: context,
-        //     viewport,
-        //   }).promise;
+          docxObjectUrl = URL.createObjectURL(docxBlob);
 
-        //   renderedPages.push(canvas.toDataURL("image/jpeg", 0.88));
-        //   canvas.width = 0;
-        //   canvas.height = 0;
-        // }
-
-        // if (!cancelled) setPages(renderedPages);
-      } catch (err) {
-        if (cancelled || err?.name === "AbortException") {
-          return;
+          // Existing text extraction functions use product.docxUrl.
+          setProduct((previous) => ({
+            ...previous,
+            docxUrl: docxObjectUrl,
+          }));
         }
+      } catch (err) {
+        if (cancelled) return;
 
-        console.error("PDF loading failed:", err);
-
+        console.error("Book loading failed:", err);
         setError(
-          "We couldn't open this PDF. Check the file path and try again."
+          err.message || "We couldn't open this book. Please try again.",
         );
-
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     }
-
-
-
 
     loadPdf();
 
     return () => {
       cancelled = true;
       loadingTask?.destroy();
+
+      if (docxObjectUrl) {
+        URL.revokeObjectURL(docxObjectUrl);
+      }
     };
-  }, [product?.pdfUrl]);
+  }, [product?.id, product?.pdfUrl]);
 
   function goPrevious() {
     flipBookRef.current?.pageFlip()?.flipPrev();
@@ -2608,15 +2655,12 @@ export default function BookReader() {
   //   }
   // }
 
-
   async function handleReadDocx() {
-
     if (!product?.docxUrl) return;
-
 
     try {
       setDocxLoading(true);
-      setDocxError("")
+      setDocxError("");
 
       const text = await extractDocxText(product.docxUrl);
       setDocxText(text);
@@ -2626,7 +2670,6 @@ export default function BookReader() {
     } finally {
       setDocxLoading(false);
     }
-
   }
 
   async function handleTestOCR() {
@@ -2651,7 +2694,7 @@ export default function BookReader() {
 
   async function handleTestDocxMatch() {
     if (!pdfDocument || !product.docxUrl) {
-      console.error("PDF or DOCX is missing.")
+      console.error("PDF or DOCX is missing.");
       return;
     }
 
@@ -2663,12 +2706,10 @@ export default function BookReader() {
       });
 
       console.log("Final MATCH RESULT:", result);
-
     } catch (error) {
       console.error("DOCX MATCH FAILED:", error);
     }
   }
-
 
   async function handleTestPageBoundaries() {
     if (!pdfDocument || !product?.docxUrl) return;
@@ -2703,7 +2744,7 @@ export default function BookReader() {
       console.log("CLEAN PAGE TEXT:", result.text);
       console.log(
         "MATCH COVERAGE:",
-        `${result.exactMatches}/${result.ocrLines}`
+        `${result.exactMatches}/${result.ocrLines}`,
       );
 
       setExtractedText(result.text);
@@ -2797,7 +2838,6 @@ export default function BookReader() {
   //   }
   // }
 
-
   async function extractCurrentPageText() {
     if (!pdfDocument) return;
 
@@ -2837,7 +2877,6 @@ export default function BookReader() {
   //     alert("Text-to-Speech is not supported in this browser.");
   //     return;
   //   }
-
 
   //   try {
   //     // stop any previous speech
@@ -2880,7 +2919,6 @@ export default function BookReader() {
   //     console.log("TTS PAGE:", pageNumber);
   //     console.log("TTS TEST:", pageText);
 
-
   //   } catch (error) {
   //     console.error("TTS failed: ", error);
   //     alert("Unable to read this page aloud.");
@@ -2907,19 +2945,16 @@ export default function BookReader() {
 
     const firstPage = currentIndex + 1;
 
-
     // Mobile: one page at a time.
     if (orientation === "portrait") {
       return [firstPage];
     }
-
 
     // if (secondPage <= totalPages) {
     //   return [firstPage, secondPage];
     // }
 
     // return [firstPage];
-
 
     // Desktop: cover is displayed alon
     if (currentIndex === 0) {
@@ -2929,12 +2964,8 @@ export default function BookReader() {
     // Desktop: two-page spread
     const secondPage = firstPage + 1;
 
-    return secondPage <= totalPages
-      ? [firstPage, secondPage]
-      : [firstPage];
-
+    return secondPage <= totalPages ? [firstPage, secondPage] : [firstPage];
   }
-
 
   function flipToNextReadingPages() {
     const flipInstance = flipBookRef.current?.pageFlip();
@@ -2956,20 +2987,16 @@ export default function BookReader() {
     flipInstance.flipNext();
 
     return true;
-
   }
 
   function preparePageForSpeech(pageNumber) {
     if (!pdfDocument || !product?.docxUrl) {
-      return Promise.reject(
-        new Error("PDF or DOCX is not ready.")
-      )
+      return Promise.reject(new Error("PDF or DOCX is not ready."));
     }
-
 
     const cache = pagePreparationCacheRef.current;
 
-    // Already prepared or currently preperting 
+    // Already prepared or currently preperting
 
     if (cache.has(pageNumber)) {
       return cache.get(pageNumber);
@@ -2984,15 +3011,14 @@ export default function BookReader() {
     })
       .then((text) => {
         if (!text?.trim()) {
-          throw new Error(
-            `No readable text found on Page ${pageNumber}`
-          )
+          throw new Error(`No readable text found on Page ${pageNumber}`);
         }
 
         console.log("BACKGROUND PREPARATION READY:", pageNumber);
 
         return text.trim();
-      }).catch((error) => {
+      })
+      .catch((error) => {
         //Failed results should not stay cached.
 
         if (cache.get(pageNumber) === preparationPromise) {
@@ -3000,36 +3026,24 @@ export default function BookReader() {
         }
 
         throw error;
-      })
+      });
 
     cache.set(pageNumber, preparationPromise);
 
     return preparationPromise;
-
   }
 
   function preloadUpcomingPage(pageNumber, sessionId) {
-
-    if (
-      !pageNumber ||
-      pageNumber < 1 ||
-      pageNumber > totalPages
-    ) {
+    if (!pageNumber || pageNumber < 1 || pageNumber > totalPages) {
       return;
     }
 
     preparePageForSpeech(pageNumber).catch((error) => {
-
       if (sessionId !== speechSessionRef.current) return;
 
-      console.warn(
-        "BACKGROUND PAGE PREPARATION FAILED:",
-        pageNumber,
-        error,
-      )
-    })
+      console.warn("BACKGROUND PAGE PREPARATION FAILED:", pageNumber, error);
+    });
   }
-
 
   function completeReadingPage(sessionId) {
     if (sessionId !== speechSessionRef.current) return;
@@ -3048,7 +3062,6 @@ export default function BookReader() {
       setTtsStatus("idle");
       return;
     }
-
 
     const lastVisiblePage = visiblePages[visiblePages.length - 1];
 
@@ -3073,13 +3086,10 @@ export default function BookReader() {
     }
   }
 
-
   async function readNextVisiblePage(pageNumber, sessionId) {
-
     const synth = window.speechSynthesis;
 
     try {
-
       if (sessionId !== speechSessionRef.current) return;
 
       setTtsStatus("loading");
@@ -3092,14 +3102,13 @@ export default function BookReader() {
 
       console.log("Using PREPARE PAGE:", pageNumber);
 
-      const pageText = await preparePageForSpeech(pageNumber)
+      const pageText = await preparePageForSpeech(pageNumber);
 
       if (sessionId !== speechSessionRef.current) return;
 
       if (!pageText?.trim()) {
         throw new Error(`No readable text found on page ${pageNumber}`);
       }
-
 
       const chunks = [];
       const maxChunkLength = 200;
@@ -3148,20 +3157,16 @@ export default function BookReader() {
       //   })
       // }
 
-
-
-
       const voice =
         ttsVoices.find(
           (item) =>
             item.name === selectedVoice &&
-            item.lang.toLowerCase().startsWith(
-              ttsLanguage.split("-")[0].toLowerCase()
-            )
+            item.lang
+              .toLowerCase()
+              .startsWith(ttsLanguage.split("-")[0].toLowerCase()),
         ) ||
         ttsVoices.find(
-          (item) =>
-            item.lang.toLowerCase() === ttsLanguage.toLowerCase()
+          (item) => item.lang.toLowerCase() === ttsLanguage.toLowerCase(),
         );
 
       let chunkIndex = 0;
@@ -3194,9 +3199,7 @@ export default function BookReader() {
           return;
         }
 
-        const utterance = new SpeechSynthesisUtterance(
-          chunks[chunkIndex]
-        );
+        const utterance = new SpeechSynthesisUtterance(chunks[chunkIndex]);
 
         utterance.lang = ttsLanguage;
         utterance.rate = ttsSpeed;
@@ -3232,7 +3235,6 @@ export default function BookReader() {
 
       console.log("TTS PAGE:", pageNumber);
       speakNextChunk();
-
     } catch (error) {
       if (sessionId !== speechSessionRef.current) return;
 
@@ -3259,7 +3261,6 @@ export default function BookReader() {
     //   setTtsStatus("playing");
     //   return;
     // }
-
 
     if (ttsStatus === "paused") {
       // console.log("RESUME REQUEST: ", {
@@ -3289,14 +3290,12 @@ export default function BookReader() {
         ttsVoices.find(
           (item) =>
             item.name === selectedVoice &&
-            item.lang.toLowerCase().startsWith(
-              ttsLanguage.split("-")[0].toLowerCase()
-            )
+            item.lang
+              .toLowerCase()
+              .startsWith(ttsLanguage.split("-")[0].toLowerCase()),
         ) ||
-
         ttsVoices.find(
-          (item) =>
-            item.lang.toLowerCase() === ttsLanguage.toLowerCase()
+          (item) => item.lang.toLowerCase() === ttsLanguage.toLowerCase(),
         );
 
       progress.status = "playing";
@@ -3319,7 +3318,7 @@ export default function BookReader() {
         }
 
         const utterance = new SpeechSynthesisUtterance(
-          progress.chunks[progress.chunkIndex]
+          progress.chunks[progress.chunkIndex],
         );
 
         utterance.lang = ttsLanguage;
@@ -3377,38 +3376,36 @@ export default function BookReader() {
     // try {
     //   setTtsStatus("loading");
 
-      // const pageNumber = currentPage + 1;
-      // const pdfPage = await pdfDocument.getPage(pageNumber);
-      // const textContent = await pdfPage.getTextContent();
+    // const pageNumber = currentPage + 1;
+    // const pdfPage = await pdfDocument.getPage(pageNumber);
+    // const textContent = await pdfPage.getTextContent();
 
-      // console.table(
-      //   textContent.items.slice(0, 30).map((item, index) => ({
-      //     index,
-      //     text: item.str,
-      //     fontName: item.fontName,
-      //     hasEOL: item.hasEOL,
-      //   }))
-      // )
+    // console.table(
+    //   textContent.items.slice(0, 30).map((item, index) => ({
+    //     index,
+    //     text: item.str,
+    //     fontName: item.fontName,
+    //     hasEOL: item.hasEOL,
+    //   }))
+    // )
 
-      // const pageNumber = currentPage + 1;
+    // const pageNumber = currentPage + 1;
 
-      // const pageNumber = readingQueueRef.current.shift();
+    // const pageNumber = readingQueueRef.current.shift();
 
-      // const pageText = await getReadablePageText({
-      //   docxUrl: product.docxUrl,
-      //   pdfDocument,
-      //   pageNumber,
-      // });
+    // const pageText = await getReadablePageText({
+    //   docxUrl: product.docxUrl,
+    //   pdfDocument,
+    //   pageNumber,
+    // });
 
+    // if (sessionId !== speechSessionRef.current) return;
 
-      // if (sessionId !== speechSessionRef.current) return;
-
-      // const pageText = textContent.items
-      //   .map((item) => item.str || "")
-      //   .join(" ")
-      //   .replace(/\s+/g, " ")
-      //   .trim();
-
+    // const pageText = textContent.items
+    //   .map((item) => item.str || "")
+    //   .join(" ")
+    //   .replace(/\s+/g, " ")
+    //   .trim();
 
     //   if (!pageText) {
     //     setTtsStatus("idle");
@@ -3489,7 +3486,6 @@ export default function BookReader() {
     //         item.lang.toLowerCase() === ttsLanguage.toLowerCase()
     //     );
 
-
     //   let chunkIndex = 0;
 
     //   const speakNextChunk = () => {
@@ -3524,7 +3520,6 @@ export default function BookReader() {
     //       return;
 
     //     }
-
 
     //     const utterance = new SpeechSynthesisUtterance(
     //       chunks[chunkIndex]
@@ -3609,7 +3604,7 @@ export default function BookReader() {
       chunks: [],
       chunkIndex: 0,
       status: "idle",
-    }
+    };
 
     window.speechSynthesis.cancel();
 
@@ -3632,7 +3627,6 @@ export default function BookReader() {
   //   setTtsStatus("paused");
   // }
 
-
   function handlePauseSpeech() {
     if (!("speechSynthesis" in window)) return;
 
@@ -3647,9 +3641,7 @@ export default function BookReader() {
     window.speechSynthesis.cancel();
 
     setTtsStatus("paused");
-
   }
-
 
   async function handleTranslate() {
     if (!extractedText.trim()) {
@@ -3682,37 +3674,31 @@ export default function BookReader() {
         extractedText,
         (completed, total) => {
           setTranslationProgress(
-            `Translating ${completed} of ${total} chunks...`
+            `Translating ${completed} of ${total} chunks...`,
           );
-        }
+        },
       );
 
       setTranslatedText(translated);
 
       console.log("HINDI TRANSLATION:", translated);
-
     } catch (error) {
       console.error("Translation failed:", error);
 
-      setTranslationError(
-        error?.message || "Unable to translate this page."
-      );
-
+      setTranslationError(error?.message || "Unable to translate this page.");
     } finally {
       setTranslating(false);
       setTranslationProgress("");
     }
   }
 
-
   if (productLoading) {
     return (
       <main className="reader-message">
         <p>Loading your book...</p>
       </main>
-    )
+    );
   }
-
 
   if (!product) {
     return (
@@ -3860,7 +3846,7 @@ export default function BookReader() {
 
                     console.log(
                       "FLIP SOURCE:",
-                      isAutomaticFlip ? "automatic" : "manual"
+                      isAutomaticFlip ? "automatic" : "manual",
                     );
 
                     console.log("VISIBLE PDF PAGES:", visiblePages);
@@ -3891,9 +3877,11 @@ export default function BookReader() {
                     }
 
                     // Manual navigation.
-                    const wasReading = ["playing", "loading", "paused"].includes(
-                      readingProgressRef.current.status
-                    );
+                    const wasReading = [
+                      "playing",
+                      "loading",
+                      "paused",
+                    ].includes(readingProgressRef.current.status);
 
                     handleStopSpeech();
 
@@ -3927,14 +3915,12 @@ export default function BookReader() {
                       shouldRender={Math.abs(index - currentPage) <= 3}
                     />
                   ))}
-
                 </HTMLFlipBook>
               </section>
             </div>
           </div>
 
-          <div style={{ textAlign: "center", margin: "20px 0" }} >
-
+          <div style={{ textAlign: "center", margin: "20px 0" }}>
             {product?.docxUrl && (
               <button
                 type="button"
@@ -3985,22 +3971,19 @@ export default function BookReader() {
             </button>
 
             <div style={{ marginTop: "15px" }}>
+              <label htmlFor="pdf-language">Select Language: </label>
 
-              <label htmlFor="pdf-language">
-                Select Language:{" "}
-              </label>
-
-              <select id="pdf-language"
+              <select
+                id="pdf-language"
                 value={selectedLanguage}
                 onChange={(event) => {
-                  setSelectedLanguage(event.target.value)
+                  setSelectedLanguage(event.target.value);
                   setTranslatedText("");
                   setTranslationError("");
                 }}
               >
                 <option value="en">English</option>
                 <option value="hi">Hindi</option>
-
               </select>
 
               <button
@@ -4045,16 +4028,16 @@ export default function BookReader() {
                     whiteSpace: "pre-wrap",
                     lineHeight: "1.8",
                   }}
-                >{
-                    selectedLanguage === "hi" && translatedText
-                      ? translatedText
-                      : extractedText
-                  }</p>
+                >
+                  {selectedLanguage === "hi" && translatedText
+                    ? translatedText
+                    : extractedText}
+                </p>
 
                 {translationError && (
-                  <p
-                    style={{ color: "red", marginTop: "10px" }}
-                  >{translationError}</p>
+                  <p style={{ color: "red", marginTop: "10px" }}>
+                    {translationError}
+                  </p>
                 )}
               </div>
             )}
@@ -4091,12 +4074,9 @@ export default function BookReader() {
                 </p>
               </div>
             )}
-
-
           </div>
 
           <div className="reader-controls">
-
             <select
               value={ttsLanguage}
               onChange={(event) => {
@@ -4122,9 +4102,9 @@ export default function BookReader() {
 
               {ttsVoices
                 .filter((voice) =>
-                  voice.lang.toLowerCase().startsWith(
-                    ttsLanguage.split("-")[0].toLowerCase()
-                  )
+                  voice.lang
+                    .toLowerCase()
+                    .startsWith(ttsLanguage.split("-")[0].toLowerCase()),
                 )
                 .map((voice) => (
                   <option
@@ -4138,9 +4118,7 @@ export default function BookReader() {
 
             <select
               value={ttsSpeed}
-              onChange={(event) =>
-                setTtsSpeed(Number(event.target.value))
-              }
+              onChange={(event) => setTtsSpeed(Number(event.target.value))}
             >
               <option value={0.75}>0.75× Slow</option>
               <option value={1}>1× Normal</option>
@@ -4175,7 +4153,6 @@ export default function BookReader() {
             >
               ⏹ Stop
             </button>
-
           </div>
 
           <nav className="reader-controls" aria-label="Book navigation">
@@ -4206,6 +4183,3 @@ export default function BookReader() {
     </main>
   );
 }
-
-
-
