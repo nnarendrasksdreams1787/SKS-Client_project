@@ -2,7 +2,6 @@
 
 // export async function getBookById(id) {
 //     const book = products.find((item)=> item.id === id);
-    
 
 //     if (!book) {
 //         throw new Error("Book not found");
@@ -10,7 +9,6 @@
 
 //     return book;
 // }
-
 
 // export async function getBookById(id) {
 //   const response = await fetch(`/api/books/${encodeURIComponent(id)}`);
@@ -22,20 +20,16 @@
 //   return response.json();
 // }
 
-
-
 import { API_BASE_URL } from "../Config/api";
 
 export async function getBookById(id) {
   const response = await fetch(
-    `${API_BASE_URL}/api/products/${encodeURIComponent(id)}`
+    `${API_BASE_URL}/api/products/${encodeURIComponent(id)}`,
   );
 
   if (!response.ok) {
     throw new Error(
-      response.status === 404
-        ? "Book not found"
-        : "Unable to load book"
+      response.status === 404 ? "Book not found" : "Unable to load book",
     );
   }
 
@@ -49,11 +43,21 @@ export async function getBookById(id) {
   return {
     ...book,
     id: Number(book.id),
+
+    // Public preview endpoint
     pdfUrl: book.hasPdf
-      ? `${API_BASE_URL}/api/library/${book.id}/pdf`
+      ? `${API_BASE_URL}/api/products/${book.id}/preview`
       : null,
-    docxUrl: book.hasDocx
-      ? `${API_BASE_URL}/api/library/${book.id}/docx`
+
+    // Do not expose the complete DOCX file publicly
+    docxUrl: null,
+
+    // Limited public preview text API
+    previewTextUrl: book.hasDocx
+      ? `${API_BASE_URL}/api/products/${book.id}/preview-text`
       : null,
+
+    hasPdf: Boolean(book.hasPdf),
+    hasDocx: Boolean(book.hasDocx),
   };
 }

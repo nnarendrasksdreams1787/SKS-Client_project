@@ -593,6 +593,8 @@
 //   }
 // }
 
+
+
 import mammoth from "mammoth";
 import { createWorker } from "tesseract.js";
 
@@ -732,30 +734,91 @@ export async function getBookText({ docxUrl, pdfDocument, pageNumber }) {
 //   );
 // }
 
+// export async function getReadablePageText({
+//   docxUrl,
+//   pdfDocument,
+//   pageNumber,
+// }) {
+//   if (!pdfDocument || !pageNumber) {
+//     throw new Error("PDF document and page number are required.");
+//   }
+
+//   if (!docxUrl) {
+//     throw new Error("Clean DOCX text is unavailable for this book.");
+//   }
+
+//   const result = await extractVerifiedDocxPage({
+//     docxUrl,
+//     pdfDocument,
+//     pageNumber,
+//   });
+
+//   if (!result.text?.trim()) {
+//     throw new Error("No readable text found on this page.");
+//   }
+
+//   return result.text;
+// }
+
 export async function getReadablePageText({
   docxUrl,
   pdfDocument,
   pageNumber,
+  previewTextUrl,
 }) {
   if (!pdfDocument || !pageNumber) {
     throw new Error("PDF document and page number are required.");
   }
 
-  if (!docxUrl) {
-    throw new Error("Clean DOCX text is unavailable for this book.");
+  // Admin and purchased reader: original matching logic.
+  if (docxUrl) {
+    const result = await extractVerifiedDocxPage({
+      docxUrl,
+      pdfDocument,
+      pageNumber,
+    });
+
+    if (!result.text?.trim()) {
+      throw new Error("No readable text found on this page.");
+    }
+
+    return result.text;
   }
 
-  const result = await extractVerifiedDocxPage({
-    docxUrl,
-    pdfDocument,
-    pageNumber,
-  });
+  // Public preview: only first 8 pages.
+  if (previewTextUrl) {
+    if (pageNumber > 8) {
+      throw new Error("Only 8 preview pages are available.");
+    }
 
-  if (!result.text?.trim()) {
-    throw new Error("No readable text found on this page.");
+    const ocrText = await testPageOCR(
+      pdfDocument,
+      pageNumber
+    );
+
+    const response = await fetch(previewTextUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        pageNumber,
+        ocrText,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(
+        data.message || "Unable to prepare preview speech."
+      );
+    }
+
+    return data.data.text;
   }
 
-  return result.text;
+  throw new Error("Clean DOCX text is unavailable for this book.");
 }
 
 // export async function testPageOCR(pdfDocument, pageNumber) {
@@ -1122,3 +1185,6 @@ export async function extractVerifiedDocxPage({
     throw err;
   }
 }
+
+
+

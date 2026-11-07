@@ -2482,10 +2482,145 @@ export default function BookReader() {
   //   };
   // }, [product?.pdfUrl]);
 
+  // useEffect(() => {
+  //   let cancelled = false;
+  //   let loadingTask;
+  //   let docxObjectUrl;
+
+  //   if (!product) return;
+
+  //   async function loadPdf() {
+  //     setLoading(true);
+  //     setError("");
+  //     setPages([]);
+  //     setCurrentPage(0);
+  //     setPdfDocument(null);
+  //     setTotalPages(0);
+  //     pagePreparationCacheRef.current.clear();
+
+  //     if (!product.pdfUrl) {
+  //       setError("This book does not have a PDF available yet.");
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     try {
+  //       // 1. Get logged-in user's token
+  //       const token = sessionStorage.getItem("authToken");
+
+  //       if (!token) {
+  //         throw new Error("Please log in to read this book.");
+  //       }
+
+  //       const headers = {
+  //         Authorization: `Bearer ${token}`,
+  //       };
+
+  //       // 2. Verify purchase/access
+  //       const accessResponse = await fetch(
+  //         `${API_BASE_URL}/api/library/${product.id}/access`,
+  //         { headers },
+  //       );
+
+  //       if (!accessResponse.ok) {
+  //         if (accessResponse.status === 401) {
+  //           throw new Error("Your session has expired. Please log in again.");
+  //         }
+
+  //         if (accessResponse.status === 403) {
+  //           throw new Error("Please purchase this book to read it.");
+  //         }
+
+  //         throw new Error("Unable to verify book access.");
+  //       }
+
+  //       const accessData = await accessResponse.json();
+
+  //       if (accessData?.data?.hasAccess !== true) {
+  //         throw new Error("Please purchase this book to read it.");
+  //       }
+
+  //       // 3. Download protected PDF
+  //       const pdfResponse = await fetch(product.pdfUrl, {
+  //         headers,
+  //       });
+
+  //       if (!pdfResponse.ok) {
+  //         throw new Error(
+  //           pdfResponse.status === 401
+  //             ? "Your session has expired. Please log in again."
+  //             : pdfResponse.status === 403
+  //               ? "You do not have access to this book."
+  //               : "Unable to download the PDF.",
+  //         );
+  //       }
+
+  //       const pdfBuffer = await pdfResponse.arrayBuffer();
+
+  //       if (cancelled) return;
+
+  //       loadingTask = pdfjsLib.getDocument({
+  //         data: pdfBuffer,
+  //       });
+
+  //       const pdf = await loadingTask.promise;
+
+  //       if (cancelled) return;
+
+  //       setPdfDocument(pdf);
+  //       setTotalPages(pdf.numPages);
+
+  //       // 4. Download DOCX with the same authentication
+  //       if (product.docxUrl) {
+  //         const docxResponse = await fetch(product.docxUrl, {
+  //           headers,
+  //         });
+
+  //         if (!docxResponse.ok) {
+  //           throw new Error("Unable to download the DOCX file.");
+  //         }
+
+  //         const docxBlob = await docxResponse.blob();
+
+  //         if (cancelled) return;
+
+  //         docxObjectUrl = URL.createObjectURL(docxBlob);
+
+  //         // Existing text extraction functions use product.docxUrl.
+  //         setProduct((previous) => ({
+  //           ...previous,
+  //           docxUrl: docxObjectUrl,
+  //         }));
+  //       }
+  //     } catch (err) {
+  //       if (cancelled) return;
+
+  //       console.error("Book loading failed:", err);
+  //       setError(
+  //         err.message || "We couldn't open this book. Please try again.",
+  //       );
+  //     } finally {
+  //       if (!cancelled) {
+  //         setLoading(false);
+  //       }
+  //     }
+  //   }
+
+  //   loadPdf();
+
+  //   return () => {
+  //     cancelled = true;
+  //     loadingTask?.destroy();
+
+  //     if (docxObjectUrl) {
+  //       URL.revokeObjectURL(docxObjectUrl);
+  //     }
+  //   };
+  // }, [product?.id, product?.pdfUrl]);
+
   useEffect(() => {
     let cancelled = false;
     let loadingTask;
-    let docxObjectUrl;
 
     if (!product) return;
 
@@ -2496,66 +2631,29 @@ export default function BookReader() {
       setCurrentPage(0);
       setPdfDocument(null);
       setTotalPages(0);
+      setExtractedText("");
+      setDocxText("");
       pagePreparationCacheRef.current.clear();
 
       if (!product.pdfUrl) {
-        setError("This book does not have a PDF available yet.");
+        setError("This book does not have a preview available yet.");
         setLoading(false);
         return;
       }
 
       try {
-        // 1. Get logged-in user's token
-        const token = sessionStorage.getItem("authToken");
+        // Public preview: no login and no purchase token required.
+        const response = await fetch(product.pdfUrl);
 
-        if (!token) {
-          throw new Error("Please log in to read this book.");
-        }
-
-        const headers = {
-          Authorization: `Bearer ${token}`,
-        };
-
-        // 2. Verify purchase/access
-        const accessResponse = await fetch(
-          `${API_BASE_URL}/api/library/${product.id}/access`,
-          { headers },
-        );
-
-        if (!accessResponse.ok) {
-          if (accessResponse.status === 401) {
-            throw new Error("Your session has expired. Please log in again.");
-          }
-
-          if (accessResponse.status === 403) {
-            throw new Error("Please purchase this book to read it.");
-          }
-
-          throw new Error("Unable to verify book access.");
-        }
-
-        const accessData = await accessResponse.json();
-
-        if (accessData?.data?.hasAccess !== true) {
-          throw new Error("Please purchase this book to read it.");
-        }
-
-        // 3. Download protected PDF
-        const pdfResponse = await fetch(product.pdfUrl, {
-          headers,
-        });
-
-        if (!pdfResponse.ok) {
+        if (!response.ok) {
           throw new Error(
-            pdfResponse.status === 401
-              ? "Your session has expired. Please log in again."
-              : pdfResponse.status === 403
-                ? "You do not have access to this book."
-                : "Unable to download the PDF.",
+            response.status === 404
+              ? "Book preview is not available."
+              : "Unable to load book preview.",
           );
         }
 
-        const pdfBuffer = await pdfResponse.arrayBuffer();
+        const pdfBuffer = await response.arrayBuffer();
 
         if (cancelled) return;
 
@@ -2565,37 +2663,23 @@ export default function BookReader() {
 
         const pdf = await loadingTask.promise;
 
-        if (cancelled) return;
+        if (cancelled) {
+          await pdf.destroy();
+          return;
+        }
 
         setPdfDocument(pdf);
         setTotalPages(pdf.numPages);
 
-        // 4. Download DOCX with the same authentication
-        if (product.docxUrl) {
-          const docxResponse = await fetch(product.docxUrl, {
-            headers,
-          });
-
-          if (!docxResponse.ok) {
-            throw new Error("Unable to download the DOCX file.");
-          }
-
-          const docxBlob = await docxResponse.blob();
-
-          if (cancelled) return;
-
-          docxObjectUrl = URL.createObjectURL(docxBlob);
-
-          // Existing text extraction functions use product.docxUrl.
-          setProduct((previous) => ({
-            ...previous,
-            docxUrl: docxObjectUrl,
-          }));
-        }
+        console.log("PUBLIC BOOK PREVIEW LOADED:", {
+          productId: product.id,
+          previewPages: pdf.numPages,
+        });
       } catch (err) {
         if (cancelled) return;
 
-        console.error("Book loading failed:", err);
+        console.error("Book preview loading failed:", err);
+
         setError(
           err.message || "We couldn't open this book. Please try again.",
         );
@@ -2611,10 +2695,6 @@ export default function BookReader() {
     return () => {
       cancelled = true;
       loadingTask?.destroy();
-
-      if (docxObjectUrl) {
-        URL.revokeObjectURL(docxObjectUrl);
-      }
     };
   }, [product?.id, product?.pdfUrl]);
 
@@ -2693,9 +2773,8 @@ export default function BookReader() {
   console.log("DOCX URL:", product?.docxUrl);
 
   async function handleTestDocxMatch() {
-    if (!pdfDocument || !product.docxUrl) {
-      console.error("PDF or DOCX is missing.");
-      return;
+    if (!pdfDocument || (!product?.docxUrl && !product?.previewTextUrl)) {
+      return Promise.reject(new Error("PDF or preview text is not ready."));
     }
 
     try {
@@ -2990,8 +3069,12 @@ export default function BookReader() {
   }
 
   function preparePageForSpeech(pageNumber) {
-    if (!pdfDocument || !product?.docxUrl) {
-      return Promise.reject(new Error("PDF or DOCX is not ready."));
+    // if (!pdfDocument || !product?.docxUrl) {
+    //   return Promise.reject(new Error("PDF or DOCX is not ready."));
+    // }
+
+    if (!pdfDocument || (!product?.docxUrl && !product?.previewTextUrl)) {
+      return Promise.reject(new Error("PDF or preview text is not ready."));
     }
 
     const cache = pagePreparationCacheRef.current;
@@ -3006,6 +3089,7 @@ export default function BookReader() {
 
     const preparationPromise = getReadablePageText({
       docxUrl: product.docxUrl,
+      previewTextUrl: product.previewTextUrl,
       pdfDocument,
       pageNumber,
     })
