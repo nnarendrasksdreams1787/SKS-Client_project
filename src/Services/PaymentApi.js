@@ -66,3 +66,12 @@ export async function reconcilePayment(orderReference) {
     { method: "POST" }
   );
 }
+
+
+export async function verifyPayment(orderReference) {
+  return paymentRequest(
+    `/orders/${encodeURIComponent(orderReference)}/status`,
+    { method: "GET" }
+  );
+}
+

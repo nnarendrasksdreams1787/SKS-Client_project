@@ -24,7 +24,6 @@ export default function ProductSection() {
     "mpsc-history": 18,
   };
 
-
   useEffect(() => {
     let cancelled = false;
 
@@ -60,8 +59,6 @@ export default function ProductSection() {
     };
   }, []);
 
-
-
   const handleBuyNow = async (product) => {
     if (payingProductId !== null) return;
 
@@ -80,10 +77,7 @@ export default function ProductSection() {
     // }
 
     if (!sessionStorage.getItem("authToken")) {
-      sessionStorage.setItem(
-        "sks_pending_purchase",
-        String(productId)
-      );
+      sessionStorage.setItem("sks_pending_purchase", String(productId));
 
       navigate("/register");
       return;
@@ -95,9 +89,7 @@ export default function ProductSection() {
     try {
       // Reuse the same attempt if the user retries.
       const storageKey = `sks_checkout_${productId}`;
-      let attempt = JSON.parse(
-        sessionStorage.getItem(storageKey) || "null"
-      );
+      let attempt = JSON.parse(sessionStorage.getItem(storageKey) || "null");
 
       if (!attempt?.idempotencyKey) {
         attempt = {
@@ -109,12 +101,11 @@ export default function ProductSection() {
       if (!attempt.orderReference) {
         const created = await createPaymentOrder(
           productId,
-          attempt.idempotencyKey
+          attempt.idempotencyKey,
         );
 
         const orderReference =
-          created.order?.orderReference ??
-          created.order?.order_reference;
+          created.order?.orderReference ?? created.order?.order_reference;
 
         if (!orderReference) {
           throw new Error("Order reference missing from backend.");
@@ -128,36 +119,51 @@ export default function ProductSection() {
 
       if (!checkout.checkoutUrl) {
         throw new Error(
-          "Checkout URL unavailable. Check the existing payment status before retrying."
+          "Checkout URL unavailable. Check the existing payment status before retrying.",
         );
       }
 
       const url = new URL(checkout.checkoutUrl);
 
+      // if (
+      //   url.protocol !== "https:" ||
+      //   !(
+      //     url.hostname === "phonepe.com" ||
+      //     url.hostname.endsWith(".phonepe.com")
+      //   )
+      // ) {
+      //   throw new Error("Unexpected payment checkout destination.");
+      // }
+
+      const allowedCheckoutHosts = [
+        "phonepe.com",
+        "www.phonepe.com",
+        "mercury.phonepe.com",
+      ];
+
+      // Mswipe checkout host will be added only after
+      // confirming the exact UAT domain returned by backend.
+
       if (
         url.protocol !== "https:" ||
-        !(
-          url.hostname === "phonepe.com" ||
-          url.hostname.endsWith(".phonepe.com")
+        !allowedCheckoutHosts.some(
+          (host) => url.hostname === host || url.hostname.endsWith(`.${host}`),
         )
       ) {
-        throw new Error("Unexpected payment checkout destination.");
+        throw new Error("Payment checkout destination is not approved.");
       }
-
 
       sessionStorage.removeItem("sks_pending_purchase");
       window.location.assign(url.href);
     } catch (error) {
       setMessage(
         error.message ||
-        "Unable to start payment. Check your order before retrying."
+          "Unable to start payment. Check your order before retrying.",
       );
     } finally {
       setPayingProductId(null);
     }
   };
-
-
 
   // useEffect(() => {
   //   const params = new URLSearchParams(window.location.search);
@@ -203,9 +209,7 @@ export default function ProductSection() {
     if (params.get("resumePurchase") !== "1") return;
     if (loadingProducts) return;
 
-    const pendingProductId = sessionStorage.getItem(
-      "sks_pending_purchase"
-    );
+    const pendingProductId = sessionStorage.getItem("sks_pending_purchase");
 
     const token = sessionStorage.getItem("authToken");
 
@@ -215,7 +219,7 @@ export default function ProductSection() {
     }
 
     const product = products.find(
-      (item) => String(item.id) === pendingProductId
+      (item) => String(item.id) === pendingProductId,
     );
 
     if (!product) {
@@ -227,7 +231,7 @@ export default function ProductSection() {
     window.history.replaceState(
       window.history.state,
       "",
-      window.location.pathname + window.location.hash
+      window.location.pathname + window.location.hash,
     );
 
     handleBuyNow(product);
@@ -237,7 +241,7 @@ export default function ProductSection() {
     setWishlist((current) =>
       current.includes(id)
         ? current.filter((item) => item !== id)
-        : [...current, id]
+        : [...current, id],
     );
   };
 
@@ -276,7 +280,10 @@ export default function ProductSection() {
         {products.map((product) => (
           <article className="product-card" key={product.id}>
             <div className="product-card__image-wrap">
-              <Link to={`/reader/${product.id}`} aria-label={`View ${product.name}`}>
+              <Link
+                to={`/reader/${product.id}`}
+                aria-label={`View ${product.name}`}
+              >
                 <img
                   src={product.image}
                   alt={product.name}
@@ -291,8 +298,9 @@ export default function ProductSection() {
 
               <button
                 type="button"
-                className={`product-wishlist ${wishlist.includes(product.id) ? "is-active" : ""
-                  }`}
+                className={`product-wishlist ${
+                  wishlist.includes(product.id) ? "is-active" : ""
+                }`}
                 onClick={() => toggleWishlist(product.id)}
                 aria-label={
                   wishlist.includes(product.id)
@@ -308,9 +316,7 @@ export default function ProductSection() {
             </div>
 
             <div className="product-card__content">
-              <span className="product-card__category">
-                {product.category}
-              </span>
+              <span className="product-card__category">{product.category}</span>
 
               <Link
                 to={`/reader/${product.id}`}
@@ -348,9 +354,7 @@ export default function ProductSection() {
                 disabled={payingProductId !== null}
                 onClick={() => handleBuyNow(product)}
               >
-                {payingProductId === product.id
-                  ? "Processing..."
-                  : "Buy Now"}
+                {payingProductId === product.id ? "Processing..." : "Buy Now"}
               </button>
             </div>
           </article>

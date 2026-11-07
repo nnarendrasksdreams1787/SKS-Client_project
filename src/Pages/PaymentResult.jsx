@@ -38,7 +38,7 @@ export default function PaymentResult() {
   const [state, setState] = useState({
     loading: true,
     status: "checking",
-    message: "Verifying your payment with PhonePe...",
+    message: "Verifying your payment with the selected gateway...",
     orderReference: null,
   });
 
@@ -122,7 +122,7 @@ export default function PaymentResult() {
             loading: false,
             status: "failed",
             message:
-              "PhonePe reported that this payment failed. Check My Orders before retrying.",
+              "Payment was reported as failed. Check My Orders before retrying.",
             orderReference: attempt.orderReference,
           });
           return;
