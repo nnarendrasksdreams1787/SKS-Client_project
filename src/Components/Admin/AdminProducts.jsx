@@ -3,7 +3,7 @@ import axios from 'axios';
 import "./AdminCSS/AdminProducts.css"
 
 
-const API_URL = "http://localhost:4000/api/admin"
+const API_URL = "http://localhost:4000/api/admin " || "https://sks-serverproject-new.onrender.com/api/admin";
 
 
 const initialProducts = [

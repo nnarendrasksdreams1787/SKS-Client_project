@@ -4,7 +4,7 @@ import axios from "axios";
 import { Link, NavLink, useNavigate } from "react-router-dom"
 import "../../CSS/Auth.css";
 
-const API_URL = "http://localhost:4000/api/admin";
+const API_URL = "http://localhost:4000/api/admin" || "https://sks-serverproject-new.onrender.com/api/admin";
 
 export default function AdminLogin() {
 //   const [referenceId, setReferenceId] = useState("");

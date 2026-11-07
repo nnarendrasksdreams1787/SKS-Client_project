@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, Outlet, NavLink } from 'react-router-dom';
 import "./AdminCSS/AdminLayout.css"
 
-const API_URL = "http://localhost:4000/api/admin";
+const API_URL = "http://localhost:4000/api/admin" || "https://sks-serverproject-new.onrender.com/api/admin";
 
 const menuItems = [
     { label: "Dashboard", path: "/admin/dashboard", icon: "◫" },

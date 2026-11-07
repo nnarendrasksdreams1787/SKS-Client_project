@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import "./AdminCSS/AdminDashboard.css"
 
-const API_URL = "http://localhost:4000/api/admin";
+const API_URL = "http://localhost:4000/api/admin" || "https://sks-serverproject-new.onrender.com/api/admin";
 
 
 

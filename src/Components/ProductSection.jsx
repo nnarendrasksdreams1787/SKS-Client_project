@@ -30,7 +30,7 @@ export default function ProductSection() {
 
     async function loadProducts() {
       try {
-        const response = await fetch("http://localhost:4000/api/products");
+        const response = await fetch("http://localhost:4000/api/products" || "https://sks-serverproject-new.onrender.com/api/products");
 
         if (!response.ok) {
           throw new Error("Unable to load products");

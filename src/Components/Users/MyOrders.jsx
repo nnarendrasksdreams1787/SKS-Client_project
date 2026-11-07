@@ -33,7 +33,7 @@ export default function MyOrders() {
       }
 
       const response = await axios.get(
-        "http://localhost:4000/api/user/orders",
+        "http://localhost:4000/api/user/orders" || "https://sks-serverproject-new.onrender.com/api/user/orders",
         {
           headers: {
             Authorization: `Bearer ${token}`,

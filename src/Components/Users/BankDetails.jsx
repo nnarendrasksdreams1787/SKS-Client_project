@@ -4,7 +4,7 @@ import { Landmark, Plus, X, Pencil } from "lucide-react";
 
 import "../../CSS/BankDetails.css";
 
-const BANK_API = "http://localhost:4000/api/user/bank-accounts";
+const BANK_API = "http://localhost:4000/api/user/bank-accounts" || "https://sks-serverproject-new.onrender.com/api/user/bank-accounts";
 
 const initialForm = {
   beneficiaryName: "",

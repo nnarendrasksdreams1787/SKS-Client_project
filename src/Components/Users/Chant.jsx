@@ -1,5 +1,6 @@
 
-import React, { useEffect, useMemo, useState } from "react";
+// import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Plus,
   Menu,
@@ -10,7 +11,11 @@ import {
   Download,
   X,
   Eye,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
+
+import axios from "axios";
 
 import lordVishnu from "../../assets/Theme/lord vishnu.jpg";
 import hanumanImage from "../../assets/Theme/hanuman.png";
@@ -250,6 +255,9 @@ export default function Chant() {
     readSaved(KEYS.counts, {})
   );
 
+  const [selectedVoice, setSelectedVoice] = useState("kanha");
+  const [isMuted, setIsMuted] = useState(false);
+
   const [history, setHistory] = useState(() =>
     readSaved(KEYS.history, [])
   );
@@ -273,6 +281,122 @@ export default function Chant() {
 
   const [previewEntry, setPreviewEntry] = useState(null);
   const [exportingId, setExportingId] = useState(null);
+
+  const audioRef = useRef(null);
+  const [playingChantId, setPlayingChantId] = useState(null);
+
+  async function playKanhaVoice(text, voice = "kanha") {
+    const token = sessionStorage.getItem("authToken");
+
+    if (!token) {
+      throw new Error("Please login again");
+    }
+
+    const response = await axios.post(
+      "http://localhost:4000/api/chant-tts/speak" || "https://sks-serverproject-new.onrender.com/api/chant-tts/speak",
+      { text, voice },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: "blob",
+        timeout: 45000,
+      }
+    );
+
+    return URL.createObjectURL(response.data);
+  }
+
+  const chantAudio = {
+    shivaya: "/Audio/ShriShivayNamastubhyamm.mp3",
+  };
+
+  function getChantAudio(chant) {
+    const name = String(chant?.name || "")
+      .normalize("NFC")
+      .replace(/[।॥|]/g, "")
+      .replace(/\s+/g, "")
+      .trim();
+
+    if (name.includes("शिवायनमस्तुभ्यम्")) {
+      return chantAudio.shivaya;
+    }
+
+    return null;
+  }
+
+
+  async function handlePlayChant(chant) {
+
+
+
+    if (isMuted) return;
+    // Stop any currently playing audio.
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+
+    // Clicking the same speaker again stops playback.
+    if (playingChantId === chant.id) {
+      setPlayingChantId(null);
+      return;
+    }
+
+    setPlayingChantId(chant.id);
+    setNotice("");
+
+    let audioUrl = null;
+
+    try {
+      // Generate or retrieve cached Kanha audio.
+      audioUrl = await playKanhaVoice(chant.name, selectedVoice);
+
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+
+      const cleanup = () => {
+        URL.revokeObjectURL(audioUrl);
+
+        if (audioRef.current === audio) {
+          audioRef.current = null;
+          setPlayingChantId(null);
+        }
+      };
+
+      audio.onended = cleanup;
+      audio.onerror = cleanup;
+
+      await audio.play();
+    } catch (error) {
+      if (audioUrl) {
+        URL.revokeObjectURL(audioUrl);
+      }
+
+      console.error("Kanha voice playback failed:", error);
+      setPlayingChantId(null);
+      setNotice("Unable to play Kanha voice. Check Console.");
+    }
+  }
+
+
+  function handleToggleMute() {
+    setIsMuted((previous) => !previous);
+
+    if (!isMuted && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
+      setPlayingChantId(null);
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      audioRef.current?.pause();
+      audioRef.current = null;
+    };
+  }, []);
 
   // Parent dashboard hamburger can open the existing Chant drawer.
   useEffect(() => {
@@ -322,8 +446,8 @@ export default function Chant() {
           ? ganeshaImage
           : theme === "swami"
             ? swamiSamarthImage
-          : lordVishnu;
-        
+            : lordVishnu;
+
 
   const currentCount = Math.min(
     MALA_SIZE - 1,
@@ -405,6 +529,10 @@ export default function Chant() {
     if (!selectedChant || showResumeButton) return;
 
     setNotice("");
+    // Play the saved Kanha voice when Chant is clicked.
+    // Play selected mantra using ElevenLabs Kanha TTS.
+    // Jaap counter continues independently of audio playback.
+    void handlePlayChant(selectedChant);
     const nextCount = currentCount + 1;
     const sessionId = pausedJaaps[activeId];
 
@@ -1027,6 +1155,7 @@ export default function Chant() {
           <div className="sks-panel-heading">
             <span aria-hidden="true">ॐ</span>
             <h3>your chants</h3>
+
             <span aria-hidden="true">ॐ</span>
 
           </div>
@@ -1073,6 +1202,22 @@ export default function Chant() {
                     </small>
                   </button>
 
+
+
+                  <button
+                    type="button"
+                    className="sks-chant-speaker"
+                    aria-label={`${playingChantId === chant.id ? "Stop" : "Play"} ${chant.name}`}
+                    title={playingChantId === chant.id ? "Stop Kanha voice" : "Play Kanha voice"}
+                    disabled={false}
+                    onClick={() => handlePlayChant(chant)}
+                  >
+                    {playingChantId === chant.id ? (
+                      <VolumeX size={17} />
+                    ) : (
+                      <Volume2 size={17} />
+                    )}
+                  </button>
                   <button
                     type="button"
                     className="sks-chant-start"
@@ -1192,10 +1337,7 @@ export default function Chant() {
               </span>
             </div>
 
-            <div className="sks-artwork-malas">
-              📿 {completedMalas} Mala
-              {completedMalas === 1 ? "" : "s"} Completed
-            </div>
+           
 
             <div
               className="sks-jaap-progress"
@@ -1250,6 +1392,29 @@ export default function Chant() {
                   Finish Jaap
                 </button>
               )}
+
+
+              <div className="sks-mobile-voice-controls">
+                <button
+                  type="button"
+                  className="sks-voice-mute-btn"
+                  onClick={handleToggleMute}
+                  aria-label={isMuted ? "Unmute" : "Mute"}
+                >
+                  {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
+                </button>
+
+                <select
+                  className="sks-voice-dropdown"
+                  value={selectedVoice}
+                  onChange={(e) => setSelectedVoice(e.target.value)}
+                  aria-label="Select voice"
+                >
+                  <option value="kanha">Child</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
             </div>
 
             {notice && (
@@ -1282,6 +1447,39 @@ export default function Chant() {
               alt=""
               className="sks-history-lotus"
             />
+          </div>
+
+          <div className="sks-history-actions">
+            <div className="sks-history-actions">
+
+              {/* Speaker ON/OFF button */}
+              <button
+                type="button"
+                className="sks-voice-mute-btn"
+                onClick={handleToggleMute}
+                aria-label={isMuted ? "Unmute chant" : "Mute chant"}
+                title={isMuted ? "Unmute" : "Mute"}
+              >
+                {isMuted ? <VolumeX size={15} color="#ffffff" /> : <Volume2 size={15} color="#ffffff" />}
+              </button>
+
+              {/* Male / Female / Child dropdown */}
+              <select
+                className="sks-voice-dropdown"
+                aria-label="Select chant voice"
+                value={selectedVoice}
+                onChange={(e) => setSelectedVoice(e.target.value)}
+              >
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="kanha">Child</option>
+              </select>
+
+              {/* Existing Clear Activity button stays here */}
+
+            </div>
+
+            {/* Existing Clear Activity button yahan rahega */}
           </div>
 
           <button

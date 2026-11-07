@@ -167,7 +167,7 @@ export default function UserLayout() {
         const token = sessionStorage.getItem("authToken");
 
         const response = await axios.get(
-          "http://localhost:4000/api/library/my-books",
+          "http://localhost:4000/api/library/my-books" || "https://sks-serverproject-new.onrender.com/api/library/my-books",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -198,6 +198,40 @@ export default function UserLayout() {
     window.dispatchEvent(
       new CustomEvent("sks:chant-menu", { detail: section }),
     );
+  };
+
+
+   const testKanhaVoice = async () => {
+    try {
+      const token = sessionStorage.getItem("authToken");
+
+      if (!token) {
+        alert("Please login again");
+        return;
+      }
+
+      const response = await axios.get(
+        "http://localhost:4000/api/chant-tts/test-voice" || "https://sks-serverproject-new.onrender.com/api/chant-tts/test-voice",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Kanha Voice Test:", response.data);
+
+      alert(
+        `Connected successfully!\nVoice: ${response.data.voiceName}`
+      );
+    } catch (error) {
+      console.error(
+        "Kanha Voice Test Failed:",
+        error.response?.data || error.message
+      );
+
+      alert("Kanha voice connection failed. Check Console.");
+    }
   };
 
   const handleLogout = () => {
