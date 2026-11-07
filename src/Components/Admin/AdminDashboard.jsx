@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import "./AdminCSS/AdminDashboard.css"
 
-const API_URL = "http://localhost:4000/api/admin" || "https://sks-serverproject-new.onrender.com/api/admin";
+// const API_URL = "http://localhost:4000/api/admin" || "https://sks-serverproject-new.onrender.com/api/admin";
+const API_URL = "https://sks-serverproject-new.onrender.com/api/admin";
 
 
 
@@ -28,6 +29,7 @@ export default function AdminDashboard() {
     async function verifySession() {
       try {
         const response = await axios.get(`${API_URL}/me`, {
+        // const response = await axios.get("https://sks-serverproject-new.onrender.com/me", {
           withCredentials: true,
         });
 

@@ -293,7 +293,8 @@ export default function Chant() {
     }
 
     const response = await axios.post(
-      "http://localhost:4000/api/chant-tts/speak" || "https://sks-serverproject-new.onrender.com/api/chant-tts/speak",
+      // "http://localhost:4000/api/chant-tts/speak" || "https://sks-serverproject-new.onrender.com/api/chant-tts/speak",
+      "https://sks-serverproject-new.onrender.com/api/chant-tts/speak",
       { text, voice },
       {
         headers: {

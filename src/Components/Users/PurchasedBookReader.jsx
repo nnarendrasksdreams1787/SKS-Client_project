@@ -17,7 +17,8 @@ import { getReadablePageText } from "../../Services/BookTextService";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
-const API_URL = "http://localhost:4000" || "https://sks-serverproject-new.onrender.com";
+// const API_URL = "http://localhost:4000" || "https://sks-serverproject-new.onrender.com";
+const API_URL = "https://sks-serverproject-new.onrender.com";
 
 const PurchasedPage = forwardRef(function PurchasedPage(
   { pdfDocument, number, shouldRender },

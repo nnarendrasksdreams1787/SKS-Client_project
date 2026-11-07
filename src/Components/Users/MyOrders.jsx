@@ -33,7 +33,8 @@ export default function MyOrders() {
       }
 
       const response = await axios.get(
-        "http://localhost:4000/api/user/orders" || "https://sks-serverproject-new.onrender.com/api/user/orders",
+        // "http://localhost:4000/api/user/orders" || "https://sks-serverproject-new.onrender.com/api/user/orders",
+        "https://sks-serverproject-new.onrender.com/api/user/orders",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -57,7 +58,7 @@ export default function MyOrders() {
 
       setError(
         err.response?.data?.message ||
-          "Unable to load orders."
+        "Unable to load orders."
       );
     } finally {
       setLoading(false);
@@ -316,7 +317,7 @@ export default function MyOrders() {
 
                     <td>
                       {order.status === "paid" &&
-                      order.receiptUrl ? (
+                        order.receiptUrl ? (
                         <a
                           href={order.receiptUrl}
                           target="_blank"

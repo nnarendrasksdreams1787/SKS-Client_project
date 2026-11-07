@@ -3,7 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./AdminCSS/AdminAllOrders.css";
 
-const API_URL = "http://localhost:4000/api/admin" || "https://sks-serverproject-new.onrender.com/api/admin"
+// const API_URL = "http://localhost:4000/api/admin" || "https://sks-serverproject-new.onrender.com/api/admin"
+const API_URL = "https://sks-serverproject-new.onrender.com/api/admin"
 
 
 

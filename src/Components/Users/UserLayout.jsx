@@ -95,7 +95,8 @@ export default function UserLayout() {
 
       try {
         // const response = await axios.get("http://localhost:4000/api/user/me", {
-        const response = await axios.get(`${USER_API_URL}/me`, {
+        // const response = await axios.get(`${USER_API_URL}/me`, {
+        const response = await axios.get("https://sks-serverproject-new.onrender.com/api/user/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -167,7 +168,8 @@ export default function UserLayout() {
         const token = sessionStorage.getItem("authToken");
 
         const response = await axios.get(
-          "http://localhost:4000/api/library/my-books" || "https://sks-serverproject-new.onrender.com/api/library/my-books",
+          // "http://localhost:4000/api/library/my-books" || "https://sks-serverproject-new.onrender.com/api/library/my-books",
+          "https://sks-serverproject-new.onrender.com/api/library/my-books",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -211,7 +213,8 @@ export default function UserLayout() {
       }
 
       const response = await axios.get(
-        "http://localhost:4000/api/chant-tts/test-voice" || "https://sks-serverproject-new.onrender.com/api/chant-tts/test-voice",
+        // "http://localhost:4000/api/chant-tts/test-voice" || "https://sks-serverproject-new.onrender.com/api/chant-tts/test-voice",
+        "https://sks-serverproject-new.onrender.com/api/chant-tts/test-voice",
         {
           headers: {
             Authorization: `Bearer ${token}`,

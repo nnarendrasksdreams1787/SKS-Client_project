@@ -632,7 +632,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import "./AdminCSS/AdminReferEarn.css";
 
-const API_URL = "http://localhost:4000/api/admin" || "https://sks-serverproject-new.onrender.com/api/admin";
+// const API_URL = "http://localhost:4000/api/admin" || "https://sks-serverproject-new.onrender.com/api/admin";
+const API_URL =  "https://sks-serverproject-new.onrender.com/api/admin";
 const PAGE_SIZE = 5;
 
 const MEMBER_STATUSES = [

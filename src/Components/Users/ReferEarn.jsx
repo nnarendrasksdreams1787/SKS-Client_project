@@ -26,7 +26,8 @@ export default function ReferEarn() {
       setError("");
 
       const response = await axios.get(
-        "http://localhost:4000/api/user/referrals" || "https://sks-serverproject-new.onrender.com/api/user/referrals",
+        // "http://localhost:4000/api/user/referrals" || "https://sks-serverproject-new.onrender.com/api/user/referrals",
+        "https://sks-serverproject-new.onrender.com/api/user/referrals",
         {
           headers: {
             Authorization: `Bearer ${token}`,

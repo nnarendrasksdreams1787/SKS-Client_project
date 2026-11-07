@@ -16,7 +16,8 @@ import "../../CSS/MyWallet.css";
 const PAGE_SIZE = 5;
 
 
-const WALLET_API_URL = "http://localhost:4000/api/user/wallet" || "https://sks-serverproject-new.onrender.com/api/user/wallet";
+// const WALLET_API_URL = "http://localhost:4000/api/user/wallet" || "https://sks-serverproject-new.onrender.com/api/user/wallet";
+const WALLET_API_URL = "https://sks-serverproject-new.onrender.com/api/user/wallet";
 
 // Screenshot summary figures, not calculated from the
 // five sample transactions above.

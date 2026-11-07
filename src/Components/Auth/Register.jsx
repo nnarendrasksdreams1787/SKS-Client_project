@@ -629,7 +629,8 @@ import "../../CSS/Auth.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-const API_URL = "http://localhost:4000/api/auth" || "https://sks-serverproject-new.onrender.com/api/auth";
+// const API_URL = "http://localhost:4000/api/auth" || "https://sks-serverproject-new.onrender.com/api/auth";
+const API_URL = "https://sks-serverproject-new.onrender.com/api/auth";
 // const API_URL = "AUTH_API_URL/api/auth";
 
 // import logo from "../../assets/Theme/logo-register"
