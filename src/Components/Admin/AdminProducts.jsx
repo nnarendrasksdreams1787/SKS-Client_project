@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import axios from 'axios';
-import "./AdminCSS/AdminProducts.css"
-
+import React, { useState, useEffect, useMemo } from "react";
+import axios from "axios";
+import "./AdminCSS/AdminProducts.css";
 
 // const API_URL = "http://localhost:4000/api/admin " || "https://sks-serverproject-new.onrender.com/api/admin";
 const API_URL = "https://sks-serverproject-new.onrender.com/api/admin";
-
 
 const initialProducts = [
   // {
@@ -50,14 +48,13 @@ const initialProducts = [
 //   status: "Active",
 // };
 
-
 const emptyForm = {
   name: "",
   category_id: "",
   price: "",
   stock: "",
   status: "Active",
-}
+};
 
 export default function AdminProducts() {
   // const [products, setProducts] = useState(initialProducts);
@@ -70,13 +67,17 @@ export default function AdminProducts() {
   // const [page, setPage] = useState(1);
   // const [deleteId, setDeleteId] = useState(null);
 
-  const [products, setProducts] = useState(initialProducts)
+  const [products, setProducts] = useState(initialProducts);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [ebook, setEbook] = useState(null);
   const [docx, setDocx] = useState(null);
+
+  const [coverImage, setCoverImage] = useState(null);
+  const [currentCoverImageKey, setCurrentCoverImageKey] = useState(null);
+  const [coverImagePreview, setCoverImagePreview] = useState("");
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
@@ -113,17 +114,14 @@ export default function AdminProducts() {
       } catch (err) {
         if (cancelled) return;
 
-        if (
-          err.response?.status === 401 ||
-          err.response?.status === 403
-        ) {
+        if (err.response?.status === 401 || err.response?.status === 403) {
           window.location.assign("/admin/login");
           return;
         }
 
         setError(
           err.response?.data?.message ||
-          "Unable to load products and categories."
+            "Unable to load products and categories.",
         );
       } finally {
         if (!cancelled) setLoading(false);
@@ -137,6 +135,23 @@ export default function AdminProducts() {
     };
   }, []);
 
+  const API_ORIGIN = API_URL.replace(/\/api\/admin$/, "");
+
+  useEffect(() => {
+    if (!coverImage) {
+      setCoverImagePreview("");
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(coverImage);
+    setCoverImagePreview(objectUrl);
+
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [coverImage]);
+
+  const existingCoverImageUrl = currentCoverImageKey
+    ? `${API_ORIGIN}/api/product-images/${encodeURIComponent(currentCoverImageKey)}`
+    : "";
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -152,32 +167,27 @@ export default function AdminProducts() {
 
       const matchesCategory =
         // category === "All" || product.category === category;
-        category === "All" ||
-        String(product.category_id) === String(category);
+        category === "All" || String(product.category_id) === String(category);
 
-      const matchesStatus =
-        status === "All" || product.status === status;
+      const matchesStatus = status === "All" || product.status === status;
 
       return matchesSearch && matchesCategory && matchesStatus;
     });
   }, [products, search, category, status]);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredProducts.length / pageSize)
-  );
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / pageSize));
 
   const currentProducts = filteredProducts.slice(
     (page - 1) * pageSize,
-    page * pageSize
+    page * pageSize,
   );
 
   const activeCount = products.filter(
-    (product) => product.status === "Active"
+    (product) => product.status === "Active",
   ).length;
 
   const lowStockCount = products.filter(
-    (product) => product.stock > 0 && product.stock <= 10
+    (product) => product.stock > 0 && product.stock <= 10,
   ).length;
 
   // const openAddModal = () => {
@@ -195,6 +205,8 @@ export default function AdminProducts() {
     setDocx(null);
     setError("");
     setModalOpen(true);
+    setCoverImage(null);
+    setCurrentCoverImageKey(null);
   };
 
   const openEditModal = (product) => {
@@ -212,6 +224,8 @@ export default function AdminProducts() {
     setDocx(null);
     setError("");
     setModalOpen(true);
+    setCoverImage(null);
+    setCurrentCoverImageKey(product.cover_image_key || null);
   };
 
   // const handleSubmit = (event) => {
@@ -308,22 +322,23 @@ export default function AdminProducts() {
       payload.append("docx", docx);
     }
 
+    if (coverImage) {
+      payload.append("coverImage", coverImage);
+    }
+
     setSaving(true);
     setError("");
+    setCurrentCoverImageKey(null);
 
     try {
       if (editingId !== null) {
-        await axios.put(
-          `${API_URL}/products/${editingId}`,
-          payload,
-          { withCredentials: true }
-        );
+        await axios.put(`${API_URL}/products/${editingId}`, payload, {
+          withCredentials: true,
+        });
       } else {
-        await axios.post(
-          `${API_URL}/products`,
-          payload,
-          { withCredentials: true }
-        );
+        await axios.post(`${API_URL}/products`, payload, {
+          withCredentials: true,
+        });
       }
 
       const response = await axios.get(`${API_URL}/products`, {
@@ -339,7 +354,7 @@ export default function AdminProducts() {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-        "Unable to save product. Please try again."
+          "Unable to save product. Please try again.",
       );
     } finally {
       setSaving(false);
@@ -363,19 +378,15 @@ export default function AdminProducts() {
       });
 
       setProducts((previous) =>
-        previous.filter((product) => product.id !== deleteId)
-      )
+        previous.filter((product) => product.id !== deleteId),
+      );
 
       setDeleteId(null);
       setPage(1);
+    } catch (err) {
+      setError(err.response?.data?.message || "Unable to delete product.");
     }
-    catch (err) {
-      setError(
-        err.response?.data?.message ||
-        "Unable to delete product."
-      )
-    }
-  }
+  };
 
   const updateField = (event) => {
     const { name, value } = event.target;
@@ -399,11 +410,7 @@ export default function AdminProducts() {
         </button>
       </div>
 
-      {error && (
-        <div role="alert">
-          {error}
-        </div>
-      )}
+      {error && <div role="alert">{error}</div>}
 
       <div className="sks-products-stats">
         <div className="sks-products-stat">
@@ -510,79 +517,103 @@ export default function AdminProducts() {
                   </td>
                 </tr>
               )}
-              {!loading && currentProducts.map((product) => (
-                <tr key={product.id}>
-                  <td>
-                    <div className="sks-products-name">
-                      <div className="sks-products-thumbnail">
-                        <span>▤</span>
+              {!loading &&
+                currentProducts.map((product) => (
+                  <tr key={product.id}>
+                    <td>
+                      <div className="sks-products-name">
+                        {/* <div className="sks-products-thumbnail">
+                          <span>▤</span>
+                        </div> */}
+                        <div className="sks-products-thumbnail">
+                          {product.cover_image_key ? (
+                            <img
+                              src={`${API_ORIGIN}/api/product-images/${encodeURIComponent(
+                                product.cover_image_key,
+                              )}`}
+                              alt={product.name}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                                borderRadius: "7px",
+                              }}
+                              onError={(event) => {
+                                event.currentTarget.style.display = "none";
+                              }}
+                            />
+                          ) : (
+                            <span>▤</span>
+                          )}
+                        </div>
+                        <div>
+                          <strong>{product.name}</strong>
+                          <small>ID: {product.id}</small>
+                        </div>
                       </div>
-                      <div>
-                        <strong>{product.name}</strong>
-                        <small>ID: {product.id}</small>
+                    </td>
+
+                    <td>
+                      <span className="sks-products-category">
+                        {product.category}
+                      </span>
+                    </td>
+
+                    <td className="sks-products-price">
+                      ₹{product.price.toLocaleString("en-IN")}
+                    </td>
+
+                    <td>
+                      <span
+                        className={`sks-products-stock ${
+                          product.stock === 0
+                            ? "out"
+                            : product.stock <= 10
+                              ? "low"
+                              : ""
+                        }`}
+                      >
+                        {product.stock === 0
+                          ? "Out of stock"
+                          : product.stock <= 10
+                            ? `${product.stock} left`
+                            : product.stock}
+                      </span>
+                    </td>
+
+                    <td>
+                      <span
+                        className={`sks-products-status ${
+                          product.status === "Active" ? "active" : "inactive"
+                        }`}
+                      >
+                        {product.status}
+                      </span>
+                    </td>
+
+                    <td>
+                      <div className="sks-products-actions">
+                        <button
+                          type="button"
+                          title="Edit product"
+                          aria-label={`Edit ${product.name}`}
+                          onClick={() => openEditModal(product)}
+                        >
+                          ✎
+                        </button>
+                        <button
+                          type="button"
+                          title="Delete product"
+                          aria-label={`Delete ${product.name}`}
+                          className="delete"
+                          onClick={() => setDeleteId(product.id)}
+                        >
+                          ♲
+                        </button>
                       </div>
-                    </div>
-                  </td>
-
-                  <td>
-                    <span className="sks-products-category">
-                      {product.category}
-                    </span>
-                  </td>
-
-                  <td className="sks-products-price">
-                    ₹{product.price.toLocaleString("en-IN")}
-                  </td>
-
-                  <td>
-                    <span
-                      className={`sks-products-stock ${product.stock === 0
-                        ? "out"
-                        : product.stock <= 10
-                          ? "low"
-                          : ""
-                        }`}
-                    >
-                      {product.stock === 0
-                        ? "Out of stock"
-                        : product.stock <= 10
-                          ? `${product.stock} left`
-                          : product.stock}
-                    </span>
-                  </td>
-
-                  <td>
-                    <span
-                      className={`sks-products-status ${product.status === "Active" ? "active" : "inactive"
-                        }`}
-                    >
-                      {product.status}
-                    </span>
-                  </td>
-
-                  <td>
-                    <div className="sks-products-actions">
-                      <button
-                        type="button"
-                        title="Edit product"
-                        aria-label={`Edit ${product.name}`}
-                        onClick={() => openEditModal(product)}
-                      >
-                        ✎
-                      </button>
-                      <button
-                        type="button"
-                        title="Delete product"
-                        aria-label={`Delete ${product.name}`}
-                        className="delete"
-                        onClick={() => setDeleteId(product.id)}
-                      >
-                        ♲
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                  </tr>
+                ))}
 
               {!loading && currentProducts.length === 0 && (
                 <tr>
@@ -600,9 +631,7 @@ export default function AdminProducts() {
         <div className="sks-products-pagination">
           <p>
             Showing{" "}
-            {filteredProducts.length === 0
-              ? 0
-              : (page - 1) * pageSize + 1}
+            {filteredProducts.length === 0 ? 0 : (page - 1) * pageSize + 1}
             {" - "}
             {Math.min(page * pageSize, filteredProducts.length)} of{" "}
             {filteredProducts.length}
@@ -672,6 +701,47 @@ export default function AdminProducts() {
                   required
                 />
               </label>
+              <label>
+                Product Cover Image (optional)
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0] || null;
+
+                    if (file && file.size > 5 * 1024 * 1024) {
+                      setError("Image must be smaller than 5 MB.");
+                      event.target.value = "";
+                      setCoverImage(null);
+                      return;
+                    }
+
+                    setError("");
+                    setCoverImage(file);
+                  }}
+                />
+                <small>
+                  JPG, PNG or WebP. Maximum size: 5 MB.
+                  {editingId !== null &&
+                    " Leave empty to keep the existing image."}
+                </small>
+                {(coverImagePreview || existingCoverImageUrl) && (
+                  <div style={{ marginTop: "12px" }}>
+                    <img
+                      src={coverImagePreview || existingCoverImageUrl}
+                      alt="Product cover preview"
+                      style={{
+                        width: "110px",
+                        height: "140px",
+                        objectFit: "cover",
+                        borderRadius: "8px",
+                        border: "1px solid #e0e6ef",
+                        display: "block",
+                      }}
+                    />
+                  </div>
+                )}
+              </label>
 
               <label>
                 Category
@@ -684,7 +754,6 @@ export default function AdminProducts() {
                   <option>Learning Kits</option>
                   <option>Study Material</option>
                 </select> */}
-
                 <select
                   name="category_id"
                   value={form.category_id}
@@ -698,9 +767,7 @@ export default function AdminProducts() {
                       {item.name}
                     </option>
                   ))}
-
                 </select>
-
               </label>
 
               <div className="sks-products-form-row">
@@ -735,7 +802,6 @@ export default function AdminProducts() {
 
               <label>
                 E-book PDF {editingId !== null && "(optional)"}
-
                 <input
                   type="file"
                   accept="application/pdf,.pdf"
@@ -744,17 +810,13 @@ export default function AdminProducts() {
                     setEbook(event.target.files?.[0] || null);
                   }}
                 />
-
                 {editingId !== null && (
-                  <small>
-                    Leave empty to keep the existing PDF.
-                  </small>
+                  <small>Leave empty to keep the existing PDF.</small>
                 )}
               </label>
 
               <label>
                 E-book DOCX {editingId !== null && "(optional)"}
-
                 <input
                   type="file"
                   accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -763,7 +825,6 @@ export default function AdminProducts() {
                     setDocx(event.target.files?.[0] || null);
                   }}
                 />
-
                 {editingId !== null && (
                   <small>Leave empty to keep the existing DOCX.</small>
                 )}
@@ -795,8 +856,7 @@ export default function AdminProducts() {
                     ? "Saving..."
                     : editingId !== null
                       ? "Save Changes"
-                      : "Add Product"
-                  }
+                      : "Add Product"}
                 </button>
               </div>
             </form>
@@ -814,8 +874,8 @@ export default function AdminProducts() {
           >
             <h2 id="sks-delete-title">Delete Product?</h2>
             <p>
-              This will permanently remove the product and its PDF if
-              no other product uses that file. Are you sure?
+              This will permanently remove the product and its PDF if no other
+              product uses that file. Are you sure?
             </p>
             <div className="sks-products-modal-actions">
               <button
@@ -825,11 +885,7 @@ export default function AdminProducts() {
               >
                 Cancel
               </button>
-              <button
-                type="button"
-                className="danger"
-                onClick={confirmDelete}
-              >
+              <button type="button" className="danger" onClick={confirmDelete}>
                 Delete Product
               </button>
             </div>

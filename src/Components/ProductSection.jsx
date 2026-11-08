@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Heart, ShoppingBag, Star, ArrowRight } from "lucide-react";
 // import { products } from "../Data/products";
+const API_BASE_URL = "https://sks-serverproject-new.onrender.com";
 import "../ProductSection.css";
 
 import { useNavigate } from "react-router-dom";
@@ -40,15 +41,32 @@ export default function ProductSection() {
 
         const data = await response.json();
 
+        console.log(data);
         // if (!cancelled) {
         //   setProducts(data.products || []);
         // }
 
         if (!cancelled) {
-          const filteredProducts = (data.products || []).filter((product) => {
-            const productId = Number(product.product_id ?? product.id);
-            return productId >= 29;
-          });
+          // const filteredProducts = (data.products || []).filter((product) => {
+          //   const productId = Number(product.product_id ?? product.id);
+          //   return productId >= 29;
+          // });
+
+          // setProducts(filteredProducts);
+          const filteredProducts = (data.products || [])
+            .filter((product) => {
+              const productId = Number(product.product_id ?? product.id);
+              return productId >= 29;
+            })
+            .map((product) => ({
+              ...product,
+
+              image: product.cover_image_key
+                ? `${API_BASE_URL}/api/product-images/${encodeURIComponent(
+                    product.cover_image_key,
+                  )}`
+                : product.image || "",
+            }));
 
           setProducts(filteredProducts);
         }
