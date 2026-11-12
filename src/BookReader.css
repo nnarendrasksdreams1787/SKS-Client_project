@@ -350,6 +350,8 @@
     overflow-x: auto;
     overflow-y: auto;
     overscroll-behavior: contain;
+    
+    touch-action: pan-x pan-y;
     -webkit-overflow-scrolling: touch;
   }
 

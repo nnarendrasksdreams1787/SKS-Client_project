@@ -2501,6 +2501,51 @@ export default function BookReader() {
   const [product, setProduct] = useState(null);
   const [productLoading, setProductLoading] = useState(true);
 
+
+  const pinchRef = useRef({
+    startDistance: 0,
+    startZoom: 100,
+    active: false,
+  });
+
+  function getTouchDistance(touches) {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+
+    return Math.hypot(dx, dy);
+  }
+
+  function handlePinchStart(event) {
+    if (event.touches.length !== 2) return;
+
+    pinchRef.current = {
+      startDistance: getTouchDistance(event.touches),
+      startZoom: zoom,
+      active: true,
+    };
+  }
+
+  function handlePinchMove(event) {
+    if (!pinchRef.current.active || event.touches.length !== 2) return;
+
+    const distance = getTouchDistance(event.touches);
+    const ratio = distance / pinchRef.current.startDistance;
+
+    const nextZoom = Math.max(
+      100,
+      Math.min(200, pinchRef.current.startZoom * ratio),
+    );
+
+    setZoom(Math.round(nextZoom));
+  }
+
+  function handlePinchEnd(event) {
+    if (event.touches.length < 2) {
+      pinchRef.current.active = false;
+    }
+  }
+
+
   function zoomIn() {
     setZoom((current) => Math.min(current + 25, 200));
   }
@@ -4033,7 +4078,12 @@ export default function BookReader() {
             </div>
           </nav>
 
-          <div className="reader-book-viewport">
+          <div className="reader-book-viewport"
+            onTouchStart={handlePinchStart}
+            onTouchMove={handlePinchMove}
+            onTouchEnd={handlePinchEnd}
+            onTouchCancel={handlePinchEnd}
+          >
             {/* <div className="reader-book-zoom" style={{ zoom: zoom / 100 }}> */}
             <div className="reader-book-zoom" style={{ zoom: (zoom / 100) * 1.5 }}>
               {/* <div className="reader-book-zoom" style={{ zoom: Math.max(zoom, 150) / 100 }}> */}
