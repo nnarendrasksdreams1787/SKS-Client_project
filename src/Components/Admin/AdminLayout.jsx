@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { useNavigate, Outlet, NavLink } from 'react-router-dom';
+import { useNavigate, Outlet, NavLink, useLocation } from 'react-router-dom';
 import "./AdminCSS/AdminLayout.css"
 
 // const API_URL = "http://localhost:4000/api/admin" || "https://sks-serverproject-new.onrender.com/api/admin";
@@ -42,6 +42,9 @@ export default function AdminLayout() {
     const [checking, setChecking] = useState(true);
     const [loggingOut, setLoggingOut] = useState(false);
 
+    const location = useLocation();
+    const [menuOpen, setMenuOpen] = useState(false);
+
     useEffect(() => {
         let cancelled = false;
 
@@ -64,6 +67,35 @@ export default function AdminLayout() {
         };
     }, [navigate]);
 
+
+
+    useEffect(() => {
+        setMenuOpen(false);
+    }, [location.pathname]);
+
+
+    useEffect(() => {
+        if (!menuOpen) return;
+
+        const handleEscape = (event) => {
+            if (event.key === "Escape") setMenuOpen(false);
+        }
+
+        const handleResize = () => {
+            if (window.innerWidth > 1024) setMenuOpen(false);
+        }
+
+        document.addEventListener("keydown", handleEscape);
+        window.addEventListener("resize", handleResize);
+
+
+        return () => {
+            document.addEventListener("keydown", handleEscape);
+            window.removeEventListener("resize", handleResize);
+        }
+    }, [menuOpen])
+
+
     async function handleLogout() {
         if (loggingOut) return;
 
@@ -83,6 +115,7 @@ export default function AdminLayout() {
         }
     }
 
+
     if (checking || !admin) {
         return (
             <div className="sks-admin-shell-loading">
@@ -94,13 +127,30 @@ export default function AdminLayout() {
 
     return (
         <div className="sks-admin-layout">
-            <aside className="sks-admin-sidebar">
+            {menuOpen && (
+                <button
+                    type="button"
+                    className="sks-admin-mobile-overlay"
+                    aria-label="Close admin menu"
+                    onClick={() => setMenuOpen(false)}
+                />
+            )}
+            <aside id="sks-admin-mobile-navigation" className={`sks-admin-sidebar ${menuOpen ? "is-open" : ""}`}>
                 <div className="sks-admin-brand">
                     <div className="sks-admin-brand-logo">S</div>
                     <div>
                         <h2>SKS Dream</h2>
                         <span>ADMIN PANEL</span>
                     </div>
+
+                    <button
+                        type="button"
+                        className="sks-admin-mobile-close"
+                        aria-label="Close menu"
+                        onClick={() => setMenuOpen(false)}
+                    >
+                        ✕
+                    </button>
                 </div>
 
                 <div className="sks-admin-menu-label">MAIN MENU</div>
@@ -114,6 +164,8 @@ export default function AdminLayout() {
                                 `sks-admin-menu-link ${isActive ? "active" : ""
                                 }`
                             }
+
+                            onClick={() => setMenuOpen(false)}
                         >
                             <span className="sks-admin-menu-icon">
                                 {item.icon}
@@ -147,6 +199,18 @@ export default function AdminLayout() {
 
             <div className="sks-admin-main">
                 <header className="sks-admin-topbar">
+                    <button
+                        type="button"
+                        className="sks-admin-mobile-toggle"
+                        aria-label="Open admin menu"
+                        aria-controls="sks-admin-mobile-navigation"
+                        aria-expanded={menuOpen}
+                        onClick={() => setMenuOpen(true)}
+                    >
+                        <span />
+                        <span />
+                        <span />
+                    </button>
                     <div>
                         <span>SKS Dream</span>
                         <span className="sks-admin-breadcrumb-separator">

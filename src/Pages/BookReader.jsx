@@ -2223,32 +2223,146 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 //   );
 // });
 
+// const FlipPage = forwardRef(function FlipPage(
+//   { pdfDocument, number, shouldRender },
+//   ref,
+// ) {
+//   const canvasRef = useRef(null);
+
+//   useEffect(() => {
+//     if (!pdfDocument || !shouldRender) return;
+
+//     let cancelled = false;
+//     let renderTask;
+
+//     async function renderPage() {
+//       try {
+//         const pdfPage = await pdfDocument.getPage(number);
+
+//         if (cancelled) return;
+
+//         const canvas = canvasRef.current;
+//         if (!canvas) return;
+
+//         const viewport = pdfPage.getViewport({ scale: 1.5 });
+//         const context = canvas.getContext("2d");
+
+//         canvas.width = Math.ceil(viewport.width);
+//         canvas.height = Math.ceil(viewport.height);
+
+//         renderTask = pdfPage.render({
+//           canvasContext: context,
+//           viewport,
+//         });
+
+//         await renderTask.promise;
+//       } catch (error) {
+//         if (error?.name !== "RenderingCancelledException") {
+//           console.error("Page rendering failed:", error);
+//         }
+//       }
+//     }
+
+//     renderPage();
+
+//     return () => {
+//       cancelled = true;
+//       renderTask?.cancel();
+//     };
+//   }, [pdfDocument, number, shouldRender]);
+
+//   return (
+//     <div className="flip-page" ref={ref}>
+//       <div className="flip-page-content">
+//         <canvas ref={canvasRef} />
+//       </div>
+//       <span className="flip-page-number">{number}</span>
+//     </div>
+//   );
+// });
+
+
+
+
+
 const FlipPage = forwardRef(function FlipPage(
-  { pdfDocument, number, shouldRender },
+  { pdfDocument, number, shouldRender, zoom },
   ref,
 ) {
   const canvasRef = useRef(null);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     if (!pdfDocument || !shouldRender) return;
 
     let cancelled = false;
-    let renderTask;
+    let renderTask = null;
+    let frameId = null;
+    let resizeObserver = null;
+    let renderVersion = 0;
 
     async function renderPage() {
+      const version = ++renderVersion;
+
+      if (renderTask) {
+        renderTask.cancel();
+        try {
+          await renderTask.promise;
+        } catch {
+          // Previous render was cancelled.
+        }
+        renderTask = null;
+      }
+
+      if (cancelled || version !== renderVersion) return;
+
       try {
         const pdfPage = await pdfDocument.getPage(number);
 
-        if (cancelled) return;
+        if (cancelled || version !== renderVersion) return;
 
         const canvas = canvasRef.current;
-        if (!canvas) return;
+        const container = containerRef.current;
 
-        const viewport = pdfPage.getViewport({ scale: 1.5 });
+        if (!canvas || !container) return;
+
+        const displayWidth = container.getBoundingClientRect().width;
+
+        if (displayWidth <= 0) return;
+
+        const baseViewport = pdfPage.getViewport({ scale: 1 });
+
+        // Account for screen density while limiting memory usage.
+        const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 2), 2.5);
+
+        const targetScale =
+          (displayWidth / baseViewport.width) * dpr;
+
+        // Avoid excessively large canvas allocations.
+        const maxPixels = 12000000;
+        const maxDimension = 4096;
+
+        const scaleLimit = Math.min(
+          maxDimension / baseViewport.width,
+          maxDimension / baseViewport.height,
+          Math.sqrt(
+            maxPixels /
+            (baseViewport.width * baseViewport.height)
+          ),
+        );
+
+        const renderScale = Math.min(targetScale, scaleLimit);
+        const viewport = pdfPage.getViewport({
+          scale: renderScale,
+        });
+
         const context = canvas.getContext("2d");
+        if (!context) return;
 
         canvas.width = Math.ceil(viewport.width);
         canvas.height = Math.ceil(viewport.height);
+
+        if (cancelled || version !== renderVersion) return;
 
         renderTask = pdfPage.render({
           canvasContext: context,
@@ -2256,30 +2370,72 @@ const FlipPage = forwardRef(function FlipPage(
         });
 
         await renderTask.promise;
+
+        if (!cancelled && version === renderVersion) {
+          console.log("SHARP PDF RENDER:", {
+            page: number,
+            zoom,
+            displayWidth: Math.round(displayWidth),
+            canvasWidth: canvas.width,
+            canvasHeight: canvas.height,
+            dpr,
+          });
+        }
       } catch (error) {
-        if (error?.name !== "RenderingCancelledException") {
+        if (
+          !cancelled &&
+          version === renderVersion &&
+          error?.name !== "RenderingCancelledException"
+        ) {
           console.error("Page rendering failed:", error);
         }
       }
     }
 
-    renderPage();
+    function scheduleRender() {
+      if (frameId !== null) {
+        cancelAnimationFrame(frameId);
+      }
+
+      frameId = requestAnimationFrame(() => {
+        frameId = null;
+        renderPage();
+      });
+    }
+
+    const container = containerRef.current;
+
+    if (container) {
+      resizeObserver = new ResizeObserver(scheduleRender);
+      resizeObserver.observe(container);
+    }
+
+    scheduleRender();
 
     return () => {
       cancelled = true;
+      renderVersion += 1;
+
+      if (frameId !== null) {
+        cancelAnimationFrame(frameId);
+      }
+
+      resizeObserver?.disconnect();
       renderTask?.cancel();
     };
-  }, [pdfDocument, number, shouldRender]);
+  }, [pdfDocument, number, shouldRender, zoom]);
 
   return (
     <div className="flip-page" ref={ref}>
-      <div className="flip-page-content">
+      <div className="flip-page-content" ref={containerRef}>
         <canvas ref={canvasRef} />
       </div>
+
       <span className="flip-page-number">{number}</span>
     </div>
   );
 });
+
 
 export default function BookReader() {
   const { id } = useParams();
@@ -3864,7 +4020,8 @@ export default function BookReader() {
           </nav>
 
           <div className="reader-book-viewport">
-            <div className="reader-book-zoom" style={{ zoom: zoom / 100 }}>
+            {/* <div className="reader-book-zoom" style={{ zoom: zoom / 100 }}> */}
+            <div className="reader-book-zoom" style={{ zoom: Math.max(zoom, 150) / 100 }}>
               <section className="book-stage" aria-label="Interactive book">
                 <HTMLFlipBook
                   ref={flipBookRef}
@@ -3997,6 +4154,7 @@ export default function BookReader() {
                       pdfDocument={pdfDocument}
                       number={index + 1}
                       shouldRender={Math.abs(index - currentPage) <= 3}
+                      zoom={zoom}
                     />
                   ))}
                 </HTMLFlipBook>
