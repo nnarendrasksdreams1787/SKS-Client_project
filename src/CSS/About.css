@@ -1131,3 +1131,132 @@
     transform: none;
   }
 }
+
+
+
+
+/* =========================================
+   ABOUT STORY — TABLET RESPONSIVE
+========================================= */
+
+@media (min-width: 651px) and (max-width: 1024px) {
+
+  .about-story-section {
+    padding: 50px 0 65px;
+  }
+
+  .about-story-grid {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 28px;
+    align-items: start;
+  }
+
+  .about-krishna-image img {
+    width: 100%;
+    min-height: 0;
+    max-height: none;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .about-story-content {
+    min-width: 0;
+  }
+
+  .original-story-content {
+    font-size: 15px;
+    line-height: 1.9;
+    overflow-wrap: break-word;
+  }
+}
+
+/* =========================================
+   ABOUT STORY — MOBILE RESPONSIVE
+========================================= */
+
+@media (max-width: 650px) {
+
+  .about-story-section {
+    padding: 36px 0 55px;
+  }
+
+  .about-story-section .about-container {
+    width: calc(100% - 32px);
+    max-width: 520px;
+    margin-inline: auto;
+  }
+
+  .about-story-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+  }
+
+  .about-krishna-image {
+    width: 100%;
+    max-width: 420px;
+    margin-inline: auto;
+    padding: 0 10px 10px 0;
+  }
+
+  .about-krishna-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    object-fit: contain;
+    border-radius: 16px;
+  }
+
+  .image-gold-frame {
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-radius: 0 0 16px 0;
+  }
+
+  .about-story-content {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .about-story-content .about-section-label {
+    display: block;
+    margin-bottom: 16px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+  }
+
+  .original-story-content {
+    width: 100%;
+    font-family: "Noto Serif Devanagari", "Nirmala UI", serif;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 2;
+    text-align: left;
+    white-space: pre-line;
+    overflow-wrap: break-word;
+    color: var(--about-text);
+  }
+}
+
+/* =========================================
+   VERY SMALL MOBILE
+========================================= */
+
+@media (max-width: 375px) {
+
+  .about-story-section .about-container {
+    width: calc(100% - 24px);
+  }
+
+  .about-story-grid {
+    gap: 22px;
+  }
+
+  .original-story-content {
+    font-size: 14px;
+    line-height: 1.95;
+  }
+}

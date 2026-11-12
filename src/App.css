@@ -652,6 +652,26 @@
   border-radius: 8px;
 }
 
+
+
+.Section-Dividers {
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 78px;
+}
+
+.Section-Dividers img {
+  /* width: 70%; */
+
+  width: 80%;
+  height: 50vh;
+}
+
+
+
+
 /* ==============================
    CATEGORY GRID
 ================================ */
@@ -834,6 +854,21 @@
 ================================ */
 
 @media (max-width: 760px) {
+
+  /* This is the for image change we did  */
+  .hero {
+    background-image:  linear-gradient(
+        rgba(255, 255, 255, 0.55),
+        rgba(255, 255, 255, 0.55)
+      ),
+      url("./assets/Theme/main-background2.png");
+    background-size: 530px 600px;
+    background-position: center top;
+    /* background-position: right top; */
+    background-repeat: no-repeat;
+    
+  }
+
   .hero-inner {
     min-height: auto;
     grid-template-columns: minmax(0, 1fr);
@@ -896,6 +931,15 @@
     min-height: 100px;
     font-size: 11px;
   }
+
+  .Section-Dividers{
+    height: 60px;
+    margin-top: 30px;
+  }
+
+  .Section-Dividers img{
+    height: 30vh;
+  }
 }
 
 /* ==============================
@@ -941,19 +985,26 @@
     gap: 6px;
     font-size: 8px;
     letter-spacing: 0.4px;
+    display: flex;
+    width: 75vw;
   }
 
   .hero h1 {
-    font-size: clamp(36px, 10vw, 44px);
-    letter-spacing: -1px;
+    /* font-size: clamp(36px, 10vw, 44px);
+    letter-spacing: -1px; */
+    font-size: 30px;
+    line-height: 35px;
+    width: 75vw;
   }
 
   .hero-trust {
-    gap: 15px 10px;
+    gap: 15px 90px;
+    width: 150px;
   }
 
   .hero-trust > div {
-    gap: 6px;
+    gap: 10px;
+    width: 100px;
   }
 
   .hero-trust small {
@@ -970,6 +1021,7 @@
     bottom: 16px;
     gap: 7px;
     padding: 10px;
+    display: none;
   }
 
   .hero-caption strong {
@@ -1006,6 +1058,25 @@
     min-height: 39px;
     padding-inline: 12px;
     font-size: 11px;
+  }
+
+  .hero-description {
+    width: 300px;
+  }
+
+  .hero-buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+
+   .Section-Dividers{
+    height: 60px;
+    margin-top: 30px;
+  }
+
+  .Section-Dividers img{
+    height: 30vh;
   }
 }
 
@@ -1054,17 +1125,3 @@
   }
 } */
 
-.Section-Dividers {
-  height: 100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 78px;
-}
-
-.Section-Dividers img {
-  /* width: 70%; */
-
-  width: 80%;
-  height: 50vh;
-}

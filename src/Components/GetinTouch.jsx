@@ -1,14 +1,14 @@
 import React from 'react'
 import {
-  Phone,
-  Mail,
-  MessageCircle,
-  Clock3,
-  CalendarDays,
-  Zap,
-  BadgeIndianRupee,
-  UserRoundPlus,
-  Headphones
+    Phone,
+    Mail,
+    MessageCircle,
+    Clock3,
+    CalendarDays,
+    Zap,
+    BadgeIndianRupee,
+    UserRoundPlus,
+    Headphones
 } from "lucide-react";
 
 
@@ -20,6 +20,7 @@ export default function GetinTouch() {
                 padding: "75px 24px",
                 fontFamily: "'DM Sans', sans-serif",
             }}
+            className="GetInTouchParent"
         >
             <div
                 style={{

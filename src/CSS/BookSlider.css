@@ -108,3 +108,13 @@
 .home-book-showcase .sks-book-slider-dots {
   display: none;
 }
+
+@media (max-width: 500px) {
+  .sks-book-slider-image {
+    height: 460px;
+  }
+
+  .GetInTouchParent{
+    padding: 50px 24px !important;
+  }
+}
