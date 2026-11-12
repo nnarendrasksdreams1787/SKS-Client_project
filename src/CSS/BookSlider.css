@@ -118,3 +118,15 @@
     padding: 50px 24px !important;
   }
 }
+
+
+@media  (min-width: 500px) and (max-width: 818px)  {
+  .GetInTouchParent_Form{
+    justify-content: center !important;
+  }
+
+  .sks-book-slider-image{
+    height: 700px;
+    object-fit: fill;
+  }
+}

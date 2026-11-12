@@ -32,6 +32,7 @@ export default function GetinTouch() {
                     justifyContent: "space-between",
                     gap: "50px",
                 }}
+                className="GetInTouchParent_Form"
             >
                 {/* LEFT SIDE */}
                 <div style={{ flex: "1 1 360px", minWidth: 0 }}>

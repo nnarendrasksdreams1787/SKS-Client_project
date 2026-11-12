@@ -1170,6 +1170,15 @@
   }
 }
 
+@media (min-width: 650px) and (max-width:817px) {
+
+  
+  .about-krishna-image img{
+    height: 600px;
+        object-fit: cover;
+  }
+}
+
 /* =========================================
    ABOUT STORY — MOBILE RESPONSIVE
 ========================================= */

@@ -652,8 +652,6 @@
   border-radius: 8px;
 }
 
-
-
 .Section-Dividers {
   height: 100px;
   display: flex;
@@ -668,9 +666,6 @@
   width: 80%;
   height: 50vh;
 }
-
-
-
 
 /* ==============================
    CATEGORY GRID
@@ -854,19 +849,15 @@
 ================================ */
 
 @media (max-width: 760px) {
-
   /* This is the for image change we did  */
   .hero {
-    background-image:  linear-gradient(
-        rgba(255, 255, 255, 0.55),
-        rgba(255, 255, 255, 0.55)
-      ),
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.55)),
       url("./assets/Theme/main-background2.png");
-    background-size: 530px 600px;
+    background-size: 740px 600px;
     background-position: center top;
     /* background-position: right top; */
     background-repeat: no-repeat;
-    
   }
 
   .hero-inner {
@@ -876,13 +867,37 @@
     padding-block: 32px;
   }
 
+  .hero-eyebrow {
+    gap: 6px;
+    font-size: 8px;
+    letter-spacing: 0.4px;
+    display: flex;
+    width: 75vw;
+  }
+
   .hero h1 {
-    font-size: clamp(40px, 8vw, 58px);
-    letter-spacing: -1.2px;
+    /* font-size: clamp(40px, 8vw, 58px); */
+    /* font-size: 30px;
+    line-height: 35px;
+    width: 75vw;
+
+    letter-spacing: -1.2px; */
+
+    font-size: 38px;
+    line-height: 36px;
+    width: 53vw;
+    letter-spacing: 0.8px;
   }
 
   .hero-description {
     max-width: 560px;
+    width: 400px;
+  }
+
+  .hero-buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
   }
 
   .hero-art {
@@ -893,6 +908,16 @@
 
   .hero-image {
     height: clamp(230px, 55vw, 340px);
+  }
+
+  .hero-trust {
+    gap: 15px 145px;
+    width: 200px;
+  }
+
+  .hero-trust > div {
+    gap: 10px;
+    width: 100px;
   }
 
   .store-search {
@@ -932,12 +957,12 @@
     font-size: 11px;
   }
 
-  .Section-Dividers{
+  .Section-Dividers {
     height: 60px;
     margin-top: 30px;
   }
 
-  .Section-Dividers img{
+  .Section-Dividers img {
     height: 30vh;
   }
 }
@@ -947,6 +972,10 @@
 ================================ */
 
 @media (max-width: 430px) {
+  .hero {
+    background-size: 530px 600px;
+  }
+
   .header-inner {
     min-height: 64px;
     gap: 6px;
@@ -1070,12 +1099,12 @@
     flex-wrap: nowrap;
   }
 
-   .Section-Dividers{
+  .Section-Dividers {
     height: 60px;
     margin-top: 30px;
   }
 
-  .Section-Dividers img{
+  .Section-Dividers img {
     height: 30vh;
   }
 }
@@ -1124,4 +1153,3 @@
     height: 180px;
   }
 } */
-

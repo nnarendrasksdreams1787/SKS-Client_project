@@ -118,7 +118,9 @@
   text-decoration: underline;
 
   box-shadow: 0 8px 18px rgba(182, 75, 204, 0.22);
-  transition: background 0.25s ease, transform 0.25s ease;
+  transition:
+    background 0.25s ease,
+    transform 0.25s ease;
 }
 
 .home-book-showcase-button:hover {
@@ -134,7 +136,9 @@
   }
 
   .home-book-showcase-features {
-    gap: 8px;
+    /* gap: 8px; */
+    position: relative;
+    right: 26px;
   }
 
   .home-book-showcase-feature {
