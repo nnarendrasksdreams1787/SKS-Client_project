@@ -2291,6 +2291,7 @@ const FlipPage = forwardRef(function FlipPage(
 ) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
+  // const lastRenderWidthRef = useRef(null);
 
   useEffect(() => {
     if (!pdfDocument || !shouldRender) return;
@@ -2326,9 +2327,21 @@ const FlipPage = forwardRef(function FlipPage(
 
         if (!canvas || !container) return;
 
-        const displayWidth = container.getBoundingClientRect().width;
+        // const displayWidth = container.getBoundingClientRect().width;
+
+        // User layout width, not the animated/ transformed width
+
+        const displayWidth =
+          container.offsetWidth * ((zoom / 100) * 1.5);
 
         if (displayWidth <= 0) return;
+        // const roundedWidth = Math.round(displayWidth);
+
+        // if (lastRenderWidthRef.current === roundedWidth) {
+        //   return;
+        // }
+
+        // lastRenderWidthRef.current = roundedWidth;
 
         const baseViewport = pdfPage.getViewport({ scale: 1 });
 
@@ -2414,6 +2427,7 @@ const FlipPage = forwardRef(function FlipPage(
 
     return () => {
       cancelled = true;
+      // lastRenderWidthRef.current = null;
       renderVersion += 1;
 
       if (frameId !== null) {
@@ -4021,7 +4035,8 @@ export default function BookReader() {
 
           <div className="reader-book-viewport">
             {/* <div className="reader-book-zoom" style={{ zoom: zoom / 100 }}> */}
-            <div className="reader-book-zoom" style={{ zoom: Math.max(zoom, 150) / 100 }}>
+            <div className="reader-book-zoom" style={{ zoom: (zoom / 100) * 1.5 }}>
+              {/* <div className="reader-book-zoom" style={{ zoom: Math.max(zoom, 150) / 100 }}> */}
               <section className="book-stage" aria-label="Interactive book">
                 <HTMLFlipBook
                   ref={flipBookRef}
