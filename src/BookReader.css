@@ -333,4 +333,44 @@
   .reader-page::after {
     opacity: 0.5;
   }
+
+  .reader-page {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .reader-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .reader-book-viewport {
+    width: 100%;
+    max-height: 75dvh;
+    overflow-x: auto;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .reader-book-zoom {
+    min-width: 0;
+  }
+
+  .book-stage {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 320px;
+    padding: 8px;
+  }
+
+  .reader-zoom-toolbar {
+    box-sizing: border-box;
+    width: calc(100% - 24px);
+    margin-inline: auto;
+  }
+
+  .reader-zoom-actions {
+    flex-wrap: wrap;
+  }
 }
