@@ -2546,49 +2546,6 @@ export default function BookReader() {
   }
 
 
-  const bookViewportRef = useRef(null);
-  const [horizontalScroll, setHorizontalScroll] = useState({
-    left: 0,
-    max: 0,
-  });
-
-  function updateHorizontalScroll() {
-    const viewport = bookViewportRef.current;
-    if (!viewport) return;
-
-    setHorizontalScroll({
-      left: viewport.scrollLeft,
-      max: Math.max(0, viewport.scrollWidth - viewport.clientWidth),
-    });
-  }
-
-  function moveBookHorizontally(value) {
-    const viewport = bookViewportRef.current;
-    if (!viewport) return;
-
-    viewport.scrollLeft = Number(value);
-    updateHorizontalScroll();
-  }
-
-  useEffect(() => {
-    const viewport = bookViewportRef.current;
-    if (!viewport) return;
-
-    const frame = requestAnimationFrame(updateHorizontalScroll);
-    const observer = new ResizeObserver(updateHorizontalScroll);
-
-    observer.observe(viewport);
-
-    const content = viewport.querySelector(".reader-book-zoom");
-    if (content) observer.observe(content);
-
-    return () => {
-      cancelAnimationFrame(frame);
-      observer.disconnect();
-    };
-  }, [zoom, totalPages]);
-
-
   function zoomIn() {
     setZoom((current) => Math.min(current + 25, 200));
   }
@@ -4122,7 +4079,6 @@ export default function BookReader() {
           </nav>
 
           <div className="reader-book-viewport"
-            onScroll={updateHorizontalScroll}
             onTouchStart={handlePinchStart}
             onTouchMove={handlePinchMove}
             onTouchEnd={handlePinchEnd}
@@ -4269,30 +4225,7 @@ export default function BookReader() {
                 </HTMLFlipBook>
               </section>
             </div>
-
           </div>
-          {zoom > 100 && horizontalScroll.max > 0 && (
-            <div
-              className="reader-mobile-pan"
-              aria-label="Move zoomed book horizontally"
-            >
-              <span className="reader-mobile-pan-icon">‹</span>
-
-              <input
-                type="range"
-                min="0"
-                max={horizontalScroll.max}
-                step="1"
-                value={Math.min(horizontalScroll.left, horizontalScroll.max)}
-                onChange={(event) =>
-                  moveBookHorizontally(event.target.value)
-                }
-                aria-label="Horizontal book position"
-              />
-
-              <span className="reader-mobile-pan-icon">›</span>
-            </div>
-          )}
 
           <div style={{ textAlign: "center", margin: "20px 0" }}>
             {product?.docxUrl && (
