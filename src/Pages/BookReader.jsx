@@ -4083,6 +4083,13 @@ export default function BookReader() {
             onTouchMove={handlePinchMove}
             onTouchEnd={handlePinchEnd}
             onTouchCancel={handlePinchEnd}
+
+            style={{
+              touchAction: "pan-x pan-y",
+              overflowX: "auto",
+              overflowY: "auto"
+              
+            }}
           >
             {/* <div className="reader-book-zoom" style={{ zoom: zoom / 100 }}> */}
             <div className="reader-book-zoom" style={{ zoom: (zoom / 100) * 1.5 }}>
@@ -4103,6 +4110,9 @@ export default function BookReader() {
                   drawShadow
                   flippingTime={650}
                   maxShadowOpacity={0.45}
+                  disabledFlipClick
+                  swipeDistance={30}
+                  useMouseEvents={false}
                   // onFlip={(event) => {
                   //   // window.speechSynthesis.cancel();
                   //   // handleStopSpeech();

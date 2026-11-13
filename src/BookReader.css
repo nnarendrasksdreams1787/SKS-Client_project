@@ -376,3 +376,24 @@
     flex-wrap: wrap;
   }
 }
+
+
+@media (max-width: 600px) {
+  .reader-book-viewport {
+    width: 100%;
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .reader-book-zoom {
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .reader-book-zoom .book-stage {
+    width: max-content;
+    min-width: 100%;
+  }
+}
