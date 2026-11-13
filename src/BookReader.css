@@ -376,3 +376,18 @@
     flex-wrap: wrap;
   }
 }
+
+
+/* Mobile: horizontal scrolling only when zoomed */
+@media (max-width: 600px) {
+  .reader-book-viewport {
+    overflow-x: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .reader-book-zoom {
+    width: max-content;
+    min-width: 100%;
+  }
+}
