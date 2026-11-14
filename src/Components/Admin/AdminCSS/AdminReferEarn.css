@@ -343,7 +343,7 @@
 .admin-refer-code button {
   display: grid;
   place-items: center;
-  width: 27px;
+  width: 40px;
   height: 27px;
   color: #657690;
   background: #fff;
@@ -1029,7 +1029,7 @@
 .admin-refer-actions button {
   display: grid;
   place-items: center;
-  min-width: 30px;
+  min-width: 40px;
   min-height: 30px;
   padding: 5px 9px;
   color: #315dba;

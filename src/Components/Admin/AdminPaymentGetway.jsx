@@ -364,7 +364,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { API_BASE_URL } from "../../Config/api";
 import "./AdminCSS/AdminPaymentGetway.css";
 
-const BASE_URL = `${API_BASE_URL}/api/admin/payment-gateways`;
+// const BASE_URL = `${API_BASE_URL}/api/admin/payment-gateways`;
+const BASE_URL =
+  "https://sks-serverproject-new.onrender.com/api/admin/payment-gateways";
 const ENVIRONMENT = "test";
 
 async function gatewayRequest(path = "", options = {}) {

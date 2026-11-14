@@ -419,10 +419,13 @@ export default function AdminMyNetwork() {
                     </span>
                   </td> */}
 
-                  <div>
+                  {/* <div>
                     <span>Direct referrals</span>
                     <strong>{selectedMember.directReferrals}</strong>
-                  </div>
+                  </div> */}
+                  <td className="admin-network-referrals">
+                    {member.directReferrals}
+                  </td>
 
                   <td className="admin-network-date">{member.joined}</td>
 

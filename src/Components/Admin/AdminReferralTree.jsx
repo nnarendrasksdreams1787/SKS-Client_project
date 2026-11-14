@@ -1,87 +1,91 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import "./AdminCSS/AdminReferralTree.css";
+import { ADMIN_API_URL } from "../../Config/api";
 
-const initialMembers = [
-  {
-    id: "SKS001",
-    name: "Narendra Sharma",
-    email: "narendra@example.com",
-    parentId: null,
-    joined: "2026-08-01",
-    status: "Active",
-    referrals: 3,
-  },
-  {
-    id: "SKS002",
-    name: "Rahul Sharma",
-    email: "rahul@example.com",
-    parentId: "SKS001",
-    joined: "2026-08-05",
-    status: "Active",
-    referrals: 2,
-  },
-  {
-    id: "SKS003",
-    name: "Sneha Joshi",
-    email: "sneha@example.com",
-    parentId: "SKS001",
-    joined: "2026-08-08",
-    status: "Active",
-    referrals: 1,
-  },
-  {
-    id: "SKS004",
-    name: "Amit Verma",
-    email: "amit@example.com",
-    parentId: "SKS001",
-    joined: "2026-08-10",
-    status: "Pending",
-    referrals: 0,
-  },
-  {
-    id: "SKS005",
-    name: "Vikas More",
-    email: "vikas@example.com",
-    parentId: "SKS002",
-    joined: "2026-08-15",
-    status: "Active",
-    referrals: 1,
-  },
-  {
-    id: "SKS006",
-    name: "Neha Kulkarni",
-    email: "neha@example.com",
-    parentId: "SKS002",
-    joined: "2026-08-18",
-    status: "Active",
-    referrals: 0,
-  },
-  {
-    id: "SKS007",
-    name: "Priya Patil",
-    email: "priya@example.com",
-    parentId: "SKS003",
-    joined: "2026-08-20",
-    status: "Pending",
-    referrals: 0,
-  },
-  {
-    id: "SKS008",
-    name: "Karan Deshmukh",
-    email: "karan@example.com",
-    parentId: "SKS005",
-    joined: "2026-08-25",
-    status: "Active",
-    referrals: 0,
-  },
-];
 
-const formatDate = (value) =>
-  new Date(`${value}T00:00:00`).toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
+// const initialMembers = [
+//   {
+//     id: "SKS001",
+//     name: "Narendra Sharma",
+//     email: "narendra@example.com",
+//     parentId: null,
+//     joined: "2026-08-01",
+//     status: "Active",
+//     referrals: 3,
+//   },
+//   {
+//     id: "SKS002",
+//     name: "Rahul Sharma",
+//     email: "rahul@example.com",
+//     parentId: "SKS001",
+//     joined: "2026-08-05",
+//     status: "Active",
+//     referrals: 2,
+//   },
+//   {
+//     id: "SKS003",
+//     name: "Sneha Joshi",
+//     email: "sneha@example.com",
+//     parentId: "SKS001",
+//     joined: "2026-08-08",
+//     status: "Active",
+//     referrals: 1,
+//   },
+//   {
+//     id: "SKS004",
+//     name: "Amit Verma",
+//     email: "amit@example.com",
+//     parentId: "SKS001",
+//     joined: "2026-08-10",
+//     status: "Pending",
+//     referrals: 0,
+//   },
+//   {
+//     id: "SKS005",
+//     name: "Vikas More",
+//     email: "vikas@example.com",
+//     parentId: "SKS002",
+//     joined: "2026-08-15",
+//     status: "Active",
+//     referrals: 1,
+//   },
+//   {
+//     id: "SKS006",
+//     name: "Neha Kulkarni",
+//     email: "neha@example.com",
+//     parentId: "SKS002",
+//     joined: "2026-08-18",
+//     status: "Active",
+//     referrals: 0,
+//   },
+//   {
+//     id: "SKS007",
+//     name: "Priya Patil",
+//     email: "priya@example.com",
+//     parentId: "SKS003",
+//     joined: "2026-08-20",
+//     status: "Pending",
+//     referrals: 0,
+//   },
+//   {
+//     id: "SKS008",
+//     name: "Karan Deshmukh",
+//     email: "karan@example.com",
+//     parentId: "SKS005",
+//     joined: "2026-08-25",
+//     status: "Active",
+//     referrals: 0,
+//   },
+// ];
+
+// const formatDate = (value) =>
+//   new Date(`${value}T00:00:00`).toLocaleDateString("en-IN", {
+//     day: "2-digit",
+//     month: "short",
+//     year: "numeric",
+//   });
+
+
 
 function getInitials(name) {
   return name
@@ -96,21 +100,129 @@ function getInitials(name) {
 
 export default function AdminReferralTree() {
 
-   const [members] = useState(initialMembers);
+  //  const [members] = useState(initialMembers);
+  // const [search, setSearch] = useState("");
+  // const [levelFilter, setLevelFilter] = useState("All");
+  // const [statusFilter, setStatusFilter] = useState("All");
+  // const [expanded, setExpanded] = useState(
+  //   () => new Set(["SKS001", "SKS002", "SKS003", "SKS005"])
+  // );
+  // const [selectedMember, setSelectedMember] = useState(null);
+
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   const [search, setSearch] = useState("");
   const [levelFilter, setLevelFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
-  const [expanded, setExpanded] = useState(
-    () => new Set(["SKS001", "SKS002", "SKS003", "SKS005"])
-  );
+
+  const [expanded, setExpanded] = useState(new Set());
   const [selectedMember, setSelectedMember] = useState(null);
+
+  const [viewMode, setViewMode] = useState("vertical");
+
+
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadReferrals() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const token = sessionStorage.getItem("authToken");
+
+        const response = await fetch(
+          `${ADMIN_API_URL}/referrals?limit=100&page=1`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/json",
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            credentials: "include",
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Unable to load referral members");
+        }
+
+        const totalPages = data.pagination?.totalPages || 1;
+
+        const remainingPages = await Promise.all(
+          Array.from({ length: totalPages - 1 }, (_, index) =>
+            fetch(
+              `${ADMIN_API_URL}/referrals?limit=100&page=${index + 2}`,
+              {
+                headers: {
+                  Accept: "application/json",
+                  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                },
+                credentials: "include",
+              }
+            ).then(async (res) => {
+              const result = await res.json();
+
+              if (!res.ok) {
+                throw new Error(result.message || "Unable to load referral members");
+              }
+
+              return result.referrals || [];
+            })
+          )
+        );
+
+        const allMembers = [
+          ...(data.referrals || []),
+          ...remainingPages.flat(),
+        ];
+
+        if (!cancelled) {
+          const normalizedMembers = allMembers.map((member) => ({
+            id: String(member.user_id),
+            name: member.full_name || "Unknown Member",
+            email: "",
+            mobile: member.mobile || "",
+            parentId: member.sponsor_id ? String(member.sponsor_id) : null,
+            joined: member.created_at,
+            status: member.status || "pending",
+            referrals: Number(member.direct_referrals || 0),
+            referralCode: member.referral_code || "",
+            sponsorName: member.sponsor_name || "",
+          }));
+
+          setMembers(normalizedMembers);
+          setExpanded(new Set());
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err.message || "Something went wrong while loading referrals");
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadReferrals();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const membersById = useMemo(
     () => new Map(members.map((member) => [member.id, member])),
     [members]
   );
 
-  
+
   const childrenByParent = useMemo(() => {
     const result = new Map();
 
@@ -147,16 +259,17 @@ export default function AdminReferralTree() {
     return members.filter((member) => {
       const matchesSearch =
         !query ||
-        member.name.toLowerCase().includes(query) ||
-        member.id.toLowerCase().includes(query) ||
-        member.email.toLowerCase().includes(query);
+        String(member.name || "").toLowerCase().includes(query) ||
+        String(member.id || "").toLowerCase().includes(query) ||
+        String(member.mobile || "").toLowerCase().includes(query) ||
+        String(member.referralCode || "").toLowerCase().includes(query);
 
       const matchesLevel =
         levelFilter === "All" ||
         levelById.get(member.id) === Number(levelFilter);
 
       const matchesStatus =
-        statusFilter === "All" || member.status === statusFilter;
+        statusFilter === "All" || String(member.status || "").toLowerCase() === statusFilter;
 
       return matchesSearch && matchesLevel && matchesStatus;
     });
@@ -179,12 +292,20 @@ export default function AdminReferralTree() {
     return result;
   }, [matchingMembers, membersById]);
 
+  // const activeCount = members.filter(
+  //   (member) => member.status === "Active"
+  // ).length;
+
+  // const pendingCount = members.filter(
+  //   (member) => member.status === "Pending"
+  // ).length;
+
   const activeCount = members.filter(
-    (member) => member.status === "Active"
+    (member) => String(member.status).toLowerCase() === "active"
   ).length;
 
   const pendingCount = members.filter(
-    (member) => member.status === "Pending"
+    (member) => String(member.status).toLowerCase() === "pending"
   ).length;
 
   const rootMembers = childrenByParent.get(null) || [];
@@ -229,9 +350,8 @@ export default function AdminReferralTree() {
     return (
       <li className="referral-tree-node" key={member.id}>
         <article
-          className={`referral-member-card ${
-            selectedMember?.id === member.id ? "referral-member-selected" : ""
-          }`}
+          className={`referral-member-card ${selectedMember?.id === member.id ? "referral-member-selected" : ""
+            }`}
         >
           <div className="referral-member-top">
             <div className="referral-member-avatar">
@@ -239,7 +359,8 @@ export default function AdminReferralTree() {
             </div>
 
             <span
-              className={`referral-member-status referral-member-status-${member.status.toLowerCase()}`}
+              // className={`referral-member-status referral-member-status-${member.status.toLowerCase()}`}
+              className={`referral-member-status referral-member-status-${String(member.status || "pending").toLowerCase()}`}
             >
               {member.status}
             </span>
@@ -253,7 +374,10 @@ export default function AdminReferralTree() {
             {member.name}
           </button>
 
-          <span className="referral-member-id">{member.id}</span>
+          {/* <span className="referral-member-id">{member.id}</span> */}
+          <span className="referral-member-id">
+            {member.referralCode || member.id}
+          </span>
 
           <div className="referral-member-meta">
             <span>Level {level}</span>
@@ -291,7 +415,30 @@ export default function AdminReferralTree() {
     );
   }
 
+  if (loading) {
+    return (
+      <main className="admin-referral-tree">
+        <div className="referral-tree-empty">
+          <strong>Loading referral network...</strong>
+        </div>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="admin-referral-tree">
+        <div className="referral-tree-empty">
+          <strong>Unable to load referral network</strong>
+          <p>{error}</p>
+        </div>
+      </main>
+    );
+  }
+
   return (
+
+
     <main className="admin-referral-tree">
       <header className="referral-tree-heading">
         <div>
@@ -349,6 +496,27 @@ export default function AdminReferralTree() {
             <h2>Member Hierarchy</h2>
             <p>Select a member to view their profile details.</p>
           </div>
+          {/* <span className="referral-tree-count">
+            {matchingMembers.length} matching members
+          </span> */}
+          <div className="referral-tree-heading-actions">
+            <button
+              type="button"
+              className={viewMode === "vertical" ? "view-active" : ""}
+              onClick={() => setViewMode("vertical")}
+            >
+              Vertical Tree
+            </button>
+
+            <button
+              type="button"
+              className={viewMode === "horizontal" ? "view-active" : ""}
+              onClick={() => setViewMode("horizontal")}
+            >
+              Horizontal Tree
+            </button>
+          </div>
+
           <span className="referral-tree-count">
             {matchingMembers.length} matching members
           </span>
@@ -359,7 +527,7 @@ export default function AdminReferralTree() {
             <span aria-hidden="true">⌕</span>
             <input
               type="search"
-              placeholder="Search name, member ID or email..."
+              placeholder="Search name, member ID, mobile or referral code..."
               value={search}
               onChange={(event) => setSearch(event.target.value)}
             />
@@ -370,10 +538,16 @@ export default function AdminReferralTree() {
             value={levelFilter}
             onChange={(event) => setLevelFilter(event.target.value)}
           >
-            <option value="All">All Levels</option>
+            {/* <option value="All">All Levels</option>
             <option value="1">Level 1</option>
             <option value="2">Level 2</option>
-            <option value="3">Level 3</option>
+            <option value="3">Level 3</option> */}
+            <option value="All">All Levels</option>
+            {Array.from({ length: 10 }, (_, index) => (
+              <option key={index + 1} value={String(index + 1)}>
+                Level {index + 1}
+              </option>
+            ))}
           </select>
 
           <select
@@ -381,9 +555,13 @@ export default function AdminReferralTree() {
             value={statusFilter}
             onChange={(event) => setStatusFilter(event.target.value)}
           >
-            <option value="All">All Statuses</option>
+            {/* <option value="All">All Statuses</option>
             <option value="Active">Active</option>
-            <option value="Pending">Pending</option>
+            <option value="Pending">Pending</option> */}
+            <option value="All">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="pending">Pending</option>
+            <option value="blocked">Blocked</option>
           </select>
         </div>
 
@@ -393,7 +571,7 @@ export default function AdminReferralTree() {
           <span>Click a member's name or View Profile for details.</span>
         </div>
 
-        <div className="referral-tree-canvas">
+        <div className={`referral-tree-canvas ${viewMode === "horizontal" ? "is-horizontal" : ""} `}>
           {rootMembers.some((member) => visibleIds.has(member.id)) ? (
             <ul className="referral-tree-root">
               {rootMembers
@@ -453,9 +631,18 @@ export default function AdminReferralTree() {
             </div>
 
             <div className="referral-profile-fields">
-              <div>
+              {/* <div>
                 <span>Email Address</span>
                 <strong>{selectedMember.email}</strong>
+              </div> */}
+              <div>
+                <span>Mobile Number</span>
+                <strong>{selectedMember.mobile || "—"}</strong>
+              </div>
+
+              <div>
+                <span>Referral Code</span>
+                <strong>{selectedMember.referralCode || "—"}</strong>
               </div>
               <div>
                 <span>Sponsor</span>

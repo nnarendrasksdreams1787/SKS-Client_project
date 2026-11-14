@@ -106,7 +106,21 @@ export default function AdminMyWallet() {
         }
 
         setWallet(data.summary || null);
-        setTransactions(data.transactions || []);
+        // setTransactions(data.transactions || []);
+
+        const normalizedTransations = (data.transactions || []).map((item) => ({
+          ...item,
+          id: item.txn_id,
+          date: item.paid_at || item.created_at,
+          type: item.event_type || item.status || "",
+          referenceId: item.gateway_txn_id || "",
+          referenceType: item.gateway_txn_id || item.gateway || "",
+          status: item.status || "",
+          description: item.description || item.product_names || "Order payment",
+        }))
+
+        setTransactions(normalizedTransations);
+
       } catch (err) {
         console.error("Admin wallet fetch error:", err);
         setError(err.message || "Unable to load wallet details.");
@@ -133,10 +147,17 @@ export default function AdminMyWallet() {
   // const walletBalance = completedCredits - completedDebits;
 
 
-  const walletBalance = Number(wallet?.balance || 0);
-  const completedCredits = Number(wallet?.totalCredit || 0);
-  const completedDebits = Number(wallet?.totalDebit || 0);
-  const pendingAmount = Number(wallet?.reservedBalance || 0);
+  // const walletBalance = Number(wallet?.balance || 0);
+  // const completedCredits = Number(wallet?.totalCredit || 0);
+  // const completedDebits = Number(wallet?.totalDebit || 0);
+  // const pendingAmount = Number(wallet?.reservedBalance || 0);
+
+  const totalSales = Number(wallet?.totalSales || 0);
+  const totalCollections = Number(wallet?.totalCollections || 0);
+  const totalCommissions = Number(wallet?.totalCommissions || 0);
+  const totalWithdrawals = Number(wallet?.totalWithdrawals || 0);
+  const successfulPayments = Number(wallet?.successfulPayments || 0);
+  const totalOrders = Number(wallet?.totalOrders || 0);
 
   // const filteredTransactions = useMemo(() => {
   //   const query = search.trim().toLowerCase();
@@ -157,19 +178,42 @@ export default function AdminMyWallet() {
   //   });
   // }, [transactions, search, typeFilter, statusFilter]);
 
+  // const filteredTransactions = useMemo(() => {
+  //   const query = search.trim().toLowerCase();
+
+  //   return transactions.filter((item) => {
+  //     const matchesSearch =
+  //       !query ||
+  //       String(item.id).toLowerCase().includes(query) ||
+  //       String(item.description).toLowerCase().includes(query) ||
+  //       String(item.referenceId || "").toLowerCase().includes(query);
+
+  //     const matchesType =
+  //       typeFilter === "All" ||
+  //       item.type.toLowerCase() === typeFilter.toLowerCase();
+
+  //     return matchesSearch && matchesType;
+  //   });
+  // }, [transactions, search, typeFilter]);
+
   const filteredTransactions = useMemo(() => {
     const query = search.trim().toLowerCase();
 
     return transactions.filter((item) => {
+      const transactionId = String(item.id ?? "").toLowerCase();
+      const description = String(item.description ?? "").toLowerCase();
+      const reference = String(item.referenceId ?? "").toLowerCase();
+      const eventType = String(item.type ?? "").toLowerCase();
+
       const matchesSearch =
         !query ||
-        String(item.id).toLowerCase().includes(query) ||
-        String(item.description).toLowerCase().includes(query) ||
-        String(item.referenceId || "").toLowerCase().includes(query);
+        transactionId.includes(query) ||
+        description.includes(query) ||
+        reference.includes(query);
 
       const matchesType =
         typeFilter === "All" ||
-        item.type.toLowerCase() === typeFilter.toLowerCase();
+        eventType === typeFilter.toLowerCase();
 
       return matchesSearch && matchesType;
     });
@@ -195,11 +239,12 @@ export default function AdminMyWallet() {
         <div className="admin-wallet-heading">
           <div>
             <h1>My Wallet</h1>
-            <p>View your wallet balance and transaction history.</p>
+            {/* <p>View your wallet balance and transaction history.</p> */}
+            <p>Overview of SKS Dream business collections and financial activity.</p>
           </div>
         </div>
 
-        <div className="admin-wallet-summary">
+        {/* <div className="admin-wallet-summary">
           <div className="admin-wallet-card admin-wallet-card-balance">
             <div className="admin-wallet-card-top">
               <span>Available Balance</span>
@@ -229,13 +274,51 @@ export default function AdminMyWallet() {
 
           <div className="admin-wallet-card">
             <div className="admin-wallet-card-top">
-              {/* <span>Pending Amount</span> */}
+              
               <span>Reserved Amount</span>
               <span className="admin-wallet-icon pending-icon">◷</span>
             </div>
             <h2>{currency(pendingAmount)}</h2>
-            {/* <p>Transactions awaiting processing</p> */}
+           
             <p>Amount currently reserved in your wallet</p>
+          </div>
+        </div> */}
+
+        <div className="admin-wallet-summary">
+          <div className="admin-wallet-card admin-wallet-card-balance">
+            <div className="admin-wallet-card-top">
+              <span>Total Sales</span>
+              <span className="admin-wallet-icon">₹</span>
+            </div>
+            <h2>{currency(totalSales)}</h2>
+            <p>{totalOrders} paid orders</p>
+          </div>
+
+          <div className="admin-wallet-card">
+            <div className="admin-wallet-card-top">
+              <span>Payment Collections</span>
+              <span className="admin-wallet-icon credit-icon">↙</span>
+            </div>
+            <h2>{currency(totalCollections)}</h2>
+            <p>{successfulPayments} successful payments</p>
+          </div>
+
+          <div className="admin-wallet-card">
+            <div className="admin-wallet-card-top">
+              <span>Total Commissions</span>
+              <span className="admin-wallet-icon debit-icon">↗</span>
+            </div>
+            <h2>{currency(totalCommissions)}</h2>
+            <p>Approved member commissions</p>
+          </div>
+
+          <div className="admin-wallet-card">
+            <div className="admin-wallet-card-top">
+              <span>Paid Withdrawals</span>
+              <span className="admin-wallet-icon pending-icon">◷</span>
+            </div>
+            <h2>{currency(totalWithdrawals)}</h2>
+            <p>Completed member payouts</p>
           </div>
         </div>
 
@@ -409,7 +492,7 @@ export default function AdminMyWallet() {
                         </span>
                       </td>
 
-                      <td
+                      {/* <td
                         className={
                           isCredit
                             ? "wallet-amount-credit"
@@ -418,9 +501,19 @@ export default function AdminMyWallet() {
                       >
                         {isCredit ? "+" : "-"}
                         {currency(Number(item.amount || 0))}
+                      </td> */}
+                      <td
+                        className={
+                          eventType === "credit" || eventType === "release"
+                            ? "wallet-amount-credit"
+                            : "wallet-amount-debit"
+                        }
+                      >
+                        {eventType === "credit" || eventType === "release" ? "+" : "-"}
+                        {currency(Number(item.amount || 0))}
                       </td>
 
-                      <td>{item.referenceType || "—"}</td>
+                      <td>{item.referenceId || item.referenceType || "—"}</td>
 
                       <td>
                         <button

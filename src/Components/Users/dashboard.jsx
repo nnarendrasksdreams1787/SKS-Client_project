@@ -161,14 +161,19 @@ export default function Dashboard() {
         )}
 
         {/* Bank Details Button */}
-        <button
+        {/* <button
           type="button"
           className="sks-dashboard-bank-btn"
           disabled
           title="Bank Details module coming soon"
+        > */}
+        <Link
+          to="/bank-details"
+          className="sks-dashboard-bank-btn"
         >
           Add Bank Account →
-        </button>
+        </Link>
+        {/* </button> */}
       </section>
 
       {/* Loading State */}

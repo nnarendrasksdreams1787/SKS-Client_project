@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Heart, ShoppingBag, Star, ArrowRight } from "lucide-react";
 // import { products } from "../Data/products";
-const API_BASE_URL = "https://sks-serverproject-new.onrender.com";
+
+// const API_BASE_URL = "https://sks-serverproject-new.onrender.com";
+import { API_BASE_URL } from "../Config/api";
 import "../ProductSection.css";
 
 import { useNavigate } from "react-router-dom";
@@ -31,9 +33,11 @@ export default function ProductSection() {
     async function loadProducts() {
       try {
         // const response = await fetch("http://localhost:4000/api/products");
-        const response = await fetch(
-          "https://sks-serverproject-new.onrender.com/api/products",
-        );
+        // const response = await fetch(
+        //   "https://sks-serverproject-new.onrender.com/api/products",
+        // );
+
+        const response = await fetch(`${API_BASE_URL}/api/products`);
 
         if (!response.ok) {
           throw new Error("Unable to load products");
@@ -63,8 +67,8 @@ export default function ProductSection() {
 
               image: product.cover_image_key
                 ? `${API_BASE_URL}/api/product-images/${encodeURIComponent(
-                    product.cover_image_key,
-                  )}`
+                  product.cover_image_key,
+                )}`
                 : product.image || "",
             }));
 
@@ -168,6 +172,7 @@ export default function ProductSection() {
         "phonepe.com",
         "www.phonepe.com",
         "mercury.phonepe.com",
+        "dcuat.mswipetech.co.in",
       ];
 
       // Mswipe checkout host will be added only after
@@ -187,7 +192,7 @@ export default function ProductSection() {
     } catch (error) {
       setMessage(
         error.message ||
-          "Unable to start payment. Check your order before retrying.",
+        "Unable to start payment. Check your order before retrying.",
       );
     } finally {
       setPayingProductId(null);
@@ -313,12 +318,25 @@ export default function ProductSection() {
                 to={`/reader/${product.id}`}
                 aria-label={`View ${product.name}`}
               >
-                <img
+                {/* <img
                   src={product.image}
                   alt={product.name}
                   className="product-card__image"
                   loading="lazy"
-                />
+                /> */}
+
+                {product.image ? (
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="product-card__image"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="product-card__image">
+                    <span>Cover image unavailable</span>
+                  </div>
+                )}
               </Link>
 
               {product.badge && (
@@ -327,9 +345,8 @@ export default function ProductSection() {
 
               <button
                 type="button"
-                className={`product-wishlist ${
-                  wishlist.includes(product.id) ? "is-active" : ""
-                }`}
+                className={`product-wishlist ${wishlist.includes(product.id) ? "is-active" : ""
+                  }`}
                 onClick={() => toggleWishlist(product.id)}
                 aria-label={
                   wishlist.includes(product.id)
