@@ -54,7 +54,7 @@ const navItems = [
   { name: "My Orders", path: "/user/myorders", Icon: ShoppingCart },
   { name: "My Wallet", path: "/user/mywallet", Icon: Wallet },
   { name: "Bank Details", path: "/user/bankdetails", Icon: Landmark },
-  { name: "Chant", path: "/user/chant", Icon: Flower2 },
+  // { name: "Chant", path: "/user/chant", Icon: Flower2 },
   { name: "Settings", path: null, Icon: Settings },
 ];
 
@@ -65,7 +65,7 @@ const pageTitles = {
   "/user/myorders": "My Orders",
   "/user/mywallet": "My Wallet",
   "/user/bankdetails": "Bank Details",
-  "/user/chant": "Chant & Jaap Counter",
+  // "/user/chant": "Chant & Jaap Counter",
 };
 
 export default function UserLayout() {

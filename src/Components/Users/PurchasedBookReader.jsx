@@ -11,6 +11,7 @@ import HTMLFlipBook from "react-pageflip";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import "../../BookReader.css";
+import Chant from "./Chant"
 
 import { getReadablePageText } from "../../Services/BookTextService";
 
@@ -111,6 +112,8 @@ export default function PurchasedBookReader() {
 
   const [docxUrl, setDocxUrl] = useState("");
 
+  const [isChantProduct, setIsChantProduct] = useState(false);
+
   useEffect(() => {
     const controller = new AbortController();
     let loadingTask;
@@ -125,6 +128,7 @@ export default function PurchasedBookReader() {
       setTotalPages(0);
       setCurrentPage(0);
       setDocxUrl("");
+      setIsChantProduct(false);
 
       try {
         const token = sessionStorage.getItem("authToken");
@@ -157,6 +161,11 @@ export default function PurchasedBookReader() {
         );
 
         setBookTitle(purchasedBook?.title || "My Purchased Book");
+
+        if (Number(productId) === 1){
+          setIsChantProduct(true);
+          return;
+        }
 
         // Download the protected PDF with authentication.
         const pdfResponse = await axios.get(
@@ -709,6 +718,10 @@ console.log("TTS TEXT START:", text.slice(0, 500));
         Preparing your purchased book...
       </div>
     );
+  }
+
+  if (isChantProduct) {
+    return <Chant />
   }
 
   if (error || !pdfDocument) {

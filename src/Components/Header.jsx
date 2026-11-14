@@ -86,7 +86,7 @@ function Header() {
 
           <div className="mobile-account-links">
             <a href="/login">Login</a>
-            {/* <a href="/register">Register</a> */}
+            <a href="/register">Register</a>
 
           </div>
 
@@ -111,9 +111,9 @@ function Header() {
             Login
           </a>
 
-          {/* <a href="/register" className="button button-gold desktop-account">
+          <a href="/register" className="button button-gold desktop-account">
             Register
-          </a> */}
+          </a>
 
           <button
             className="header-icon menu-toggle"

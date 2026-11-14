@@ -46,6 +46,7 @@ import PaymentResult from "./Pages/PaymentResult"
 import ProductSection from "./Components/ProductSection";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
+import ChantProductPreview from './Pages/ChantProductPreview'
 
 // import BookReaderrs from "./Pages/BookReaderrs"
 
@@ -105,11 +106,17 @@ export default function Routing() {
           <Route path="myorders" element={<MyOrders />} />
           <Route path="mywallet" element={<MyWallet />} />
           <Route path="bankdetails" element={<BankDetails />} />
-          <Route path="chant" element={<Chant />} />
+          {/* <Route path="chant" element={<Chant />} /> */}
+          <Route
+            path="chant"
+            element={<Navigate to="/user/books/1" replace />}
+          />
 
           <Route path="books/:productId" element={<PurchasedBookReader />} />
 
         </Route>
+
+        <Route path="/chant-preview"  element={<ChantProductPreview/>} />
 
 
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />

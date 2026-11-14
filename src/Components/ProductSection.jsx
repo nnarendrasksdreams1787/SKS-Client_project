@@ -60,7 +60,8 @@ export default function ProductSection() {
           const filteredProducts = (data.products || [])
             .filter((product) => {
               const productId = Number(product.product_id ?? product.id);
-              return productId >= 29;
+              // return productId >= 29;
+              return productId === 1 || productId >= 29;
             })
             .map((product) => ({
               ...product,
@@ -149,6 +150,7 @@ export default function ProductSection() {
       }
 
       const checkout = await initiatePayment(attempt.orderReference);
+      
 
       if (!checkout.checkoutUrl) {
         throw new Error(
@@ -315,7 +317,8 @@ export default function ProductSection() {
           <article className="product-card" key={product.id}>
             <div className="product-card__image-wrap">
               <Link
-                to={`/reader/${product.id}`}
+                // to={ Number(product.id) === 1 ? "/product" : `/reader/${product.id}`}
+                to={ Number(product.id) === 1 ? "/chant-preview" : `/reader/${product.id}`}
                 aria-label={`View ${product.name}`}
               >
                 {/* <img
@@ -365,7 +368,8 @@ export default function ProductSection() {
               <span className="product-card__category">{product.category}</span>
 
               <Link
-                to={`/reader/${product.id}`}
+                // to={ Number(product.id) === 1 ? "/product" : `/reader/${product.id}`}
+                to={ Number(product.id) === 1 ? "/chant-preview" : `/reader/${product.id}`}
                 className="product-card__title"
               >
                 {product.name}

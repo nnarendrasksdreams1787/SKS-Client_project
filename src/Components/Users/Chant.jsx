@@ -1338,7 +1338,7 @@
 //               </span>
 //             </div>
 
-           
+
 
 //             <div
 //               className="sks-jaap-progress"
@@ -1941,12 +1941,18 @@ function formatDate(date) {
   });
 }
 
-export default function Chant() {
+// export default function Chant() {
+export default function Chant({ previewMode = false }) {
   // ---------------------------------------
   // SAVED CHANTS
   // ---------------------------------------
 
   const [chants, setChants] = useState(() => {
+
+    if (previewMode) {
+      return DEFAULT_CHANTS;
+    }
+
     const savedChants = readSaved(KEYS.chants, []);
 
     const normalizeName = (value) =>
@@ -1979,28 +1985,35 @@ export default function Chant() {
 
 
   const [selectedChantId, setSelectedChantId] = useState(() => {
+
+    if (previewMode) return DEFAULT_CHANTS[0].id;
+
     const savedId = readSaved(KEYS.selected, "");
 
     return savedId || DEFAULT_CHANTS[0].id;
   });
 
   const [counts, setCounts] = useState(() =>
-    readSaved(KEYS.counts, {})
+    // readSaved(KEYS.counts, {})
+    previewMode ? {} : readSaved(KEYS.counts, {})
   );
 
   const [selectedVoice, setSelectedVoice] = useState("kanha");
   const [isMuted, setIsMuted] = useState(false);
 
   const [history, setHistory] = useState(() =>
-    readSaved(KEYS.history, [])
+    // readSaved(KEYS.history, [])
+    previewMode ? [] : readSaved(KEYS.history, [])
   );
   const [pausedJaaps, setPausedJaaps] = useState(() =>
-    readSaved(KEYS.paused, {})
+    // readSaved(KEYS.paused, {})
+    previewMode ? {} : readSaved(KEYS.paused, {})
   );
 
 
   const [resumedJaaps, setResumedJaaps] = useState(() =>
-    readSaved("sks_jaap_resumed", {})
+    // readSaved("sks_jaap_resumed", {})
+    previewMode ? {} : readSaved("sks_jaap_resumed", {})
   );
 
   // ---------------------------------------
@@ -2062,7 +2075,10 @@ export default function Chant() {
 
   async function handlePlayChant(chant) {
 
-
+    if (previewMode) {
+      setNotice("🔒 Voice playback is available after purchasing Chant.");
+      return;
+    }
 
     if (isMuted) return;
     // Stop any currently playing audio.
@@ -2228,32 +2244,44 @@ export default function Chant() {
   // ---------------------------------------
 
   useEffect(() => {
+    if (previewMode) return;
+
     localStorage.setItem(KEYS.chants, JSON.stringify(chants));
-  }, [chants]);
+  }, [chants, previewMode]);
 
   useEffect(() => {
+    if (previewMode) return;
+
     localStorage.setItem(KEYS.selected, JSON.stringify(selectedChantId)
     );
-  }, [selectedChantId]);
+  }, [selectedChantId, previewMode]);
 
   useEffect(() => {
+    if (previewMode) return;
+
     localStorage.setItem(KEYS.counts, JSON.stringify(counts));
-  }, [counts]);
+  }, [counts, previewMode]);
 
   useEffect(() => {
+    if (previewMode) return;
+
     localStorage.setItem(KEYS.history, JSON.stringify(history));
-  }, [history]);
+  }, [history, previewMode]);
 
 
   useEffect(() => {
+    if (previewMode) return;
+
     localStorage.setItem(KEYS.paused, JSON.stringify(pausedJaaps)
     );
-  }, [pausedJaaps]);
+  }, [pausedJaaps, previewMode]);
 
   useEffect(() => {
+    if (previewMode) return;
+
     localStorage.setItem("sks_jaap_resumed", JSON.stringify(resumedJaaps)
     );
-  }, [resumedJaaps]);
+  }, [resumedJaaps, previewMode]);
 
   // ---------------------------------------
   // CHANT +1
@@ -2261,6 +2289,23 @@ export default function Chant() {
 
   function handleChant() {
     if (!selectedChant || showResumeButton) return;
+
+    // Public preview: demo counter only
+    if (previewMode) {
+      if (currentCount >= 10) {
+        setNotice("🔒 Purchase Chant to unlock the complete 108 Jaap Counter.");
+        return;
+      }
+
+      setCounts((previous) => ({
+        ...previous,
+        [activeId]: currentCount + 1,
+      }));
+
+      setNotice("");
+      return;
+    }
+
 
     setNotice("");
     // Play the saved Kanha voice when Chant is clicked.
@@ -2322,6 +2367,17 @@ export default function Chant() {
   // ---------------------------------------
 
   function handleReset() {
+
+    if (previewMode) {
+      setCounts((previous) => ({
+        ...previous,
+        [activeId]: 0,
+      }));
+
+      setNotice("Demo counter reset.");
+      return;
+    }
+
     if (!selectedChant || (currentCount === 0 && !showResumeButton)) return;
     if (!window.confirm("Reset current Mala progress? Completed Malas will remain saved.")) return;
 
@@ -2350,6 +2406,12 @@ export default function Chant() {
   // ---------------------------------------
 
   function handleEndJaap() {
+
+    if (previewMode) {
+      setNotice("🔒 Complete Jaap history is available after purchasing Chant.");
+      return;
+    }
+
     if (!selectedChant || currentCount === 0 || showResumeButton) return;
 
     const sessionId = pausedJaaps[activeId];
@@ -2383,6 +2445,8 @@ export default function Chant() {
   // ---------------------------------------
 
   function handleResumeJaap() {
+    if (previewMode) return;
+
     if (!selectedChant || !showResumeButton) return;
 
     // Old entries were saved before pause IDs existed; restore their count.
@@ -2465,6 +2529,7 @@ export default function Chant() {
   // ---------------------------------------
 
   function handleClearActivity() {
+    if (previewMode) return;
     if (history.length === 0) return;
 
     const confirmed = window.confirm(
@@ -2486,6 +2551,8 @@ export default function Chant() {
   // ---------------------------------------
 
   function openBook(entry) {
+    if (previewMode) return;
+
     if (!entry || entry.status !== "Completed") {
       return;
     }
@@ -2498,6 +2565,8 @@ export default function Chant() {
   // ---------------------------------------
 
   async function downloadMala(entry) {
+    if (previewMode) return;
+
     if (!entry || entry.status !== "Completed") return;
     if (exportingId !== null) return;
 
@@ -2695,13 +2764,17 @@ export default function Chant() {
           <strong>🙏 Jaap Counter</strong>
           <span>{selectedChant?.name || "Select a mantra"}</span>
         </div>
-        <button
-          type="button"
-          className="sks-mobile-history-shortcut"
-          onClick={() => setMobileDrawer("history")}
-        >
-          History
-        </button>
+
+        {!previewMode && (
+
+          <button
+            type="button"
+            className="sks-mobile-history-shortcut"
+            onClick={() => setMobileDrawer("history")}
+          >
+            History
+          </button>
+        )}
       </div>
 
       {mobileDrawer && (
@@ -2727,16 +2800,20 @@ export default function Chant() {
             <X size={20} />
           </button>
         </div>
-        <button
-          type="button"
-          className="sks-mobile-add-chant"
-          onClick={() => {
-            setMobileDrawer(null);
-            setShowAddForm(true);
-          }}
-        >
-          <Plus size={16} /> Add Chant
-        </button>
+
+        {!previewMode && (
+          <button
+            type="button"
+            className="sks-mobile-add-chant"
+            onClick={() => {
+              setMobileDrawer(null);
+              setShowAddForm(true);
+            }}
+          >
+            <Plus size={16} /> Add Chant
+          </button>
+        )}
+
         <div className="sks-mobile-drawer-tabs">
           <button
             type="button"
@@ -2745,13 +2822,16 @@ export default function Chant() {
           >
             📿 Select Jaap
           </button>
-          <button
-            type="button"
-            className={mobileDrawer === "history" ? "is-active" : ""}
-            onClick={() => setMobileDrawer("history")}
-          >
-            📊 Activity
-          </button>
+          {!previewMode && (
+
+            <button
+              type="button"
+              className={mobileDrawer === "history" ? "is-active" : ""}
+              onClick={() => setMobileDrawer("history")}
+            >
+              📊 Activity
+            </button>
+          )}
         </div>
         <div className="sks-mobile-drawer-content">
           {mobileDrawer === "chants" && (
@@ -2771,17 +2851,21 @@ export default function Chant() {
                     <span>{chant.name}</span>
                     <small>{completedByChant[chant.id] || 0} completed Mala(s)</small>
                   </button>
-                  <button
-                    type="button"
-                    className="sks-mobile-mantra-delete"
-                    aria-label={`Delete ${chant.name}`}
-                    onClick={() => handleDeleteChant(chant.id)}
-                  ><Trash2 size={16} /></button>
+
+                  {!previewMode && (
+
+                    <button
+                      type="button"
+                      className="sks-mobile-mantra-delete"
+                      aria-label={`Delete ${chant.name}`}
+                      onClick={() => handleDeleteChant(chant.id)}
+                    ><Trash2 size={16} /></button>
+                  )}
                 </div>
               ))}
             </div>
           )}
-          {mobileDrawer === "history" && (
+          {!previewMode && mobileDrawer === "history" && (
             <div className="sks-mobile-history-list">
               <button type="button" className="sks-mobile-clear-history"
                 onClick={handleClearActivity} disabled={!history.length}>
@@ -2826,21 +2910,24 @@ export default function Chant() {
           </div>
         </div>
 
-        <button
-          type="button"
-          className="sks-premium-button"
-          onClick={() =>
-            setShowAddForm((value) => !value)
-          }
-        >
-          <Plus size={17} />
-          Add Chant
-        </button>
+        {!previewMode && (
+
+          <button
+            type="button"
+            className="sks-premium-button"
+            onClick={() =>
+              setShowAddForm((value) => !value)
+            }
+          >
+            <Plus size={17} />
+            Add Chant
+          </button>
+        )}
       </div>
 
       {/* ADD CHANT FORM */}
 
-      {showAddForm && (
+      {!previewMode && showAddForm && (
         <form
           className="sks-add-chant-form"
           onSubmit={handleAddChant}
@@ -2965,15 +3052,17 @@ export default function Chant() {
                       : "Start Jaap"}
                   </button>
 
-                  <button
-                    type="button"
-                    className="sks-chant-delete"
-                    aria-label={`Delete ${chant.name}`}
-                    title={`Delete ${chant.name}`}
-                    onClick={() => handleDeleteChant(chant.id)}
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  {!previewMode && (
+                    <button
+                      type="button"
+                      className="sks-chant-delete"
+                      aria-label={`Delete ${chant.name}`}
+                      title={`Delete ${chant.name}`}
+                      onClick={() => handleDeleteChant(chant.id)}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                 </div>
               );
             })}
@@ -3111,44 +3200,52 @@ export default function Chant() {
                 Reset
               </button>
 
+
               {showResumeButton ? (
                 <button type="button" onClick={handleResumeJaap}>
                   <Flag size={15} />
                   Resume Jaap
                 </button>
               ) : (
-                <button
-                  type="button"
-                  onClick={handleEndJaap}
-                  disabled={!selectedChant || currentCount === 0}
-                >
-                  <Flag size={15} />
-                  Finish Jaap
-                </button>
+
+                !previewMode && (
+
+                  <button
+                    type="button"
+                    onClick={handleEndJaap}
+                    disabled={!selectedChant || currentCount === 0}
+                  >
+                    <Flag size={15} />
+                    Finish Jaap
+                  </button>
+                )
               )}
 
+              {!previewMode && (
 
-              <div className="sks-mobile-voice-controls">
-                <button
-                  type="button"
-                  className="sks-voice-mute-btn"
-                  onClick={handleToggleMute}
-                  aria-label={isMuted ? "Unmute" : "Mute"}
-                >
-                  {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
-                </button>
 
-                <select
-                  className="sks-voice-dropdown"
-                  value={selectedVoice}
-                  onChange={(e) => setSelectedVoice(e.target.value)}
-                  aria-label="Select voice"
-                >
-                  <option value="kanha">Child</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                </select>
-              </div>
+                <div className="sks-mobile-voice-controls">
+                  <button
+                    type="button"
+                    className="sks-voice-mute-btn"
+                    onClick={handleToggleMute}
+                    aria-label={isMuted ? "Unmute" : "Mute"}
+                  >
+                    {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
+                  </button>
+
+                  <select
+                    className="sks-voice-dropdown"
+                    value={selectedVoice}
+                    onChange={(e) => setSelectedVoice(e.target.value)}
+                    aria-label="Select voice"
+                  >
+                    <option value="kanha">Child</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+              )}
             </div>
 
             {notice && (
@@ -3165,168 +3262,173 @@ export default function Chant() {
 
       {/* RECENT JAAP ACTIVITY */}
 
-      <div className="sks-jaap-history">
-        <div className="sks-history-header">
-          <div className="sks-history-title">
-            <img
-              src={lotusImage}
-              alt=""
-              className="sks-history-lotus"
-            />
+      {!previewMode && (
 
-            <h3>Recent Jaap Activity</h3>
 
-            <img
-              src={lotusImage}
-              alt=""
-              className="sks-history-lotus"
-            />
-          </div>
+        <div className="sks-jaap-history">
+          <div className="sks-history-header">
+            <div className="sks-history-title">
+              <img
+                src={lotusImage}
+                alt=""
+                className="sks-history-lotus"
+              />
 
-          <div className="sks-history-actions">
-            <div className="sks-history-actions">
+              <h3>Recent Jaap Activity</h3>
 
-              {/* Speaker ON/OFF button */}
-              <button
-                type="button"
-                className="sks-voice-mute-btn"
-                onClick={handleToggleMute}
-                aria-label={isMuted ? "Unmute chant" : "Mute chant"}
-                title={isMuted ? "Unmute" : "Mute"}
-              >
-                {isMuted ? <VolumeX size={15} color="#ffffff" /> : <Volume2 size={15} color="#ffffff" />}
-              </button>
-
-              {/* Male / Female / Child dropdown */}
-              <select
-                className="sks-voice-dropdown"
-                aria-label="Select chant voice"
-                value={selectedVoice}
-                onChange={(e) => setSelectedVoice(e.target.value)}
-              >
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="kanha">Child</option>
-              </select>
-
-              {/* Existing Clear Activity button stays here */}
-
+              <img
+                src={lotusImage}
+                alt=""
+                className="sks-history-lotus"
+              />
             </div>
 
-            {/* Existing Clear Activity button yahan rahega */}
+            <div className="sks-history-actions">
+              <div className="sks-history-actions">
+
+                {/* Speaker ON/OFF button */}
+                <button
+                  type="button"
+                  className="sks-voice-mute-btn"
+                  onClick={handleToggleMute}
+                  aria-label={isMuted ? "Unmute chant" : "Mute chant"}
+                  title={isMuted ? "Unmute" : "Mute"}
+                >
+                  {isMuted ? <VolumeX size={15} color="#ffffff" /> : <Volume2 size={15} color="#ffffff" />}
+                </button>
+
+                {/* Male / Female / Child dropdown */}
+                <select
+                  className="sks-voice-dropdown"
+                  aria-label="Select chant voice"
+                  value={selectedVoice}
+                  onChange={(e) => setSelectedVoice(e.target.value)}
+                >
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="kanha">Child</option>
+                </select>
+
+                {/* Existing Clear Activity button stays here */}
+
+              </div>
+
+              {/* Existing Clear Activity button yahan rahega */}
+            </div>
+            {!previewMode && (
+              <button
+                type="button"
+                className="sks-clear-activity-btn"
+                onClick={handleClearActivity}
+                disabled={history.length === 0 || exportingId !== null}
+                title="Clear all Jaap activity"
+              >
+                <Trash2 size={15} />
+                Clear Activity
+              </button>
+            )}
           </div>
 
-          <button
-            type="button"
-            className="sks-clear-activity-btn"
-            onClick={handleClearActivity}
-            disabled={history.length === 0 || exportingId !== null}
-            title="Clear all Jaap activity"
-          >
-            <Trash2 size={15} />
-            Clear Activity
-          </button>
-        </div>
-
-        <div className="sks-history-table-wrap">
-          <table className="sks-history-table">
-            <thead>
-              <tr>
-                <th>Date &amp; Time</th>
-                <th>Chant</th>
-                <th>Repetition (Malas)</th>
-                <th>Status</th>
-                <th>Jaap Book / PDF</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {history.length === 0 ? (
+          <div className="sks-history-table-wrap">
+            <table className="sks-history-table">
+              <thead>
                 <tr>
-                  <td
-                    colSpan="5"
-                    className="sks-history-empty"
-                  >
-                    <BookOpen size={19} />
-                    Your Jaap activity will appear here.
-                  </td>
+                  <th>Date &amp; Time</th>
+                  <th>Chant</th>
+                  <th>Repetition (Malas)</th>
+                  <th>Status</th>
+                  <th>Jaap Book / PDF</th>
                 </tr>
-              ) : (
-                history.map((entry) => (
-                  <tr key={entry.id}>
-                    <td>
-                      {formatDate(entry.date)}
-                    </td>
+              </thead>
 
-                    <td>
-                      {entry.chantName}
-                    </td>
-
-                    <td>
-                      {entry.repetitions}
-                    </td>
-
-                    <td>
-                      <span
-                        className={`sks-status ${entry.status === "Completed"
-                          ? "is-completed"
-                          : "is-incomplete"
-                          }`}
-                      >
-                        {entry.status}
-                      </span>
-
-                      {entry.status ===
-                        "Not Completed" && (
-                          <small className="sks-incomplete-count">
-                            {entry.jaapCount}/108 Jaap
-                          </small>
-                        )}
-                    </td>
-
-                    <td>
-                      {entry.status === "Completed" ? (
-                        <div className="sks-book-row-actions">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              openBook(entry)
-                            }
-                          >
-                            <Eye size={14} />
-                            View Book
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              downloadMala(entry)
-                            }
-                            disabled={
-                              exportingId !== null
-                            }
-                          >
-                            <Download size={14} />
-
-                            {exportingId === entry.id
-                              ? "Creating..."
-                              : "PDF"}
-                          </button>
-                        </div>
-                      ) : (
-                        <span className="sks-book-pending">
-                          Complete 108 Jaap to unlock
-                        </span>
-                      )}
+              <tbody>
+                {history.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="5"
+                      className="sks-history-empty"
+                    >
+                      <BookOpen size={19} />
+                      Your Jaap activity will appear here.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                ) : (
+                  history.map((entry) => (
+                    <tr key={entry.id}>
+                      <td>
+                        {formatDate(entry.date)}
+                      </td>
 
+                      <td>
+                        {entry.chantName}
+                      </td>
+
+                      <td>
+                        {entry.repetitions}
+                      </td>
+
+                      <td>
+                        <span
+                          className={`sks-status ${entry.status === "Completed"
+                            ? "is-completed"
+                            : "is-incomplete"
+                            }`}
+                        >
+                          {entry.status}
+                        </span>
+
+                        {entry.status ===
+                          "Not Completed" && (
+                            <small className="sks-incomplete-count">
+                              {entry.jaapCount}/108 Jaap
+                            </small>
+                          )}
+                      </td>
+
+                      <td>
+                        {entry.status === "Completed" ? (
+                          <div className="sks-book-row-actions">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                openBook(entry)
+                              }
+                            >
+                              <Eye size={14} />
+                              View Book
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                downloadMala(entry)
+                              }
+                              disabled={
+                                exportingId !== null
+                              }
+                            >
+                              <Download size={14} />
+
+                              {exportingId === entry.id
+                                ? "Creating..."
+                                : "PDF"}
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="sks-book-pending">
+                            Complete 108 Jaap to unlock
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      )}
       {/* SINGLE SCROLLABLE JAAP BOOK */}
 
       {previewEntry && (
