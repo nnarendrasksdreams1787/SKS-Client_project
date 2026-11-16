@@ -593,8 +593,6 @@
 //   }
 // }
 
-
-
 import mammoth from "mammoth";
 import { createWorker } from "tesseract.js";
 
@@ -791,10 +789,7 @@ export async function getReadablePageText({
       throw new Error("Only 8 preview pages are available.");
     }
 
-    const ocrText = await testPageOCR(
-      pdfDocument,
-      pageNumber
-    );
+    const ocrText = await testPageOCR(pdfDocument, pageNumber);
 
     const response = await fetch(previewTextUrl, {
       method: "POST",
@@ -810,9 +805,7 @@ export async function getReadablePageText({
     const data = await response.json();
 
     if (!response.ok || !data.success) {
-      throw new Error(
-        data.message || "Unable to prepare preview speech."
-      );
+      throw new Error(data.message || "Unable to prepare preview speech.");
     }
 
     return data.data.text;
@@ -874,6 +867,26 @@ export async function testPageOCR(pdfDocument, pageNumber) {
   ) {
     throw new Error("Valid PDF document and page number are required.");
   }
+  // Diagnostic only: check whether PDF has a usable text layer.
+  // Do not bypass OCR yet.
+  try {
+    const pdfPage = await pdfDocument.getPage(pageNumber);
+
+    console.time(`PDF TEXT LAYER ${pageNumber}`);
+    const textContent = await pdfPage.getTextContent();
+
+    const pdfText = textContent.items
+      .map((item) => item.str || "")
+      .join(" ")
+      .trim();
+
+    console.timeEnd(`PDF TEXT LAYER ${pageNumber}`);
+
+    console.log("PDF TEXT LENGTH:", pdfText.length);
+    console.log("PDF TEXT SAMPLE:", pdfText.slice(0, 300));
+  } catch (error) {
+    console.warn("PDF text layer check failed:", error);
+  }
 
   let pageCache = ocrPageCache.get(pdfDocument);
 
@@ -885,7 +898,8 @@ export async function testPageOCR(pdfDocument, pageNumber) {
   if (!pageCache.has(pageNumber)) {
     const request = (async () => {
       const page = await pdfDocument.getPage(pageNumber);
-      const viewport = page.getViewport({ scale: 2 });
+      // const viewport = page.getViewport({ scale: 2 });
+      const viewport = page.getViewport({ scale: 1.5 });
 
       const canvas = document.createElement("canvas");
 
@@ -954,8 +968,21 @@ export async function testDocxPageMatch({ docxUrl, pdfDocument, pageNumber }) {
     throw new Error("DOCX URL, PDF document and page number are required.");
   }
 
+  const startTime = performance.now();
+
+  console.time(`OCR PAGE ${pageNumber}`);
   const ocrText = await testPageOCR(pdfDocument, pageNumber);
+  console.timeEnd(`OCR PAGE ${pageNumber}`);
+
+  console.time(`DOCX PAGE ${pageNumber}`);
   const docxText = await extractDocxText(docxUrl);
+  console.timeEnd(`DOCX PAGE ${pageNumber}`);
+
+  console.log(
+    `TOTAL PREPARATION PAGE ${pageNumber}:`,
+    ((performance.now() - startTime) / 1000).toFixed(2),
+    "seconds",
+  );
 
   const ocrLines = ocrText
     .split("\n")
@@ -1103,9 +1130,14 @@ export async function extractVerifiedDocxPage({
 
       const matchRatio = ocrLines > 0 ? exactMatches / ocrLines : 0;
 
+      // const requiredMatches = Math.min(
+      //   10,
+      //   Math.max(5, Math.ceil(ocrLines * 0.7)),
+      // );
+
       const requiredMatches = Math.min(
         10,
-        Math.max(5, Math.ceil(ocrLines * 0.7)),
+        Math.max(2, Math.ceil(ocrLines * 0.7)),
       );
 
       if (exactMatches < requiredMatches || matchRatio < 0.7) {
@@ -1185,6 +1217,3 @@ export async function extractVerifiedDocxPage({
     throw err;
   }
 }
-
-
-

@@ -48,6 +48,10 @@ import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import ChantProductPreview from './Pages/ChantProductPreview'
 
+import ManagerLayout from "./Components/Manager/ManagerLayout"
+import AccountLayout from "./Components/Accounts/AccountsLayout"
+import AccountsLogin from "./Components/Accounts/AccountsLogin"
+
 // import BookReaderrs from "./Pages/BookReaderrs"
 
 export default function Routing() {
@@ -127,12 +131,22 @@ export default function Routing() {
         <Route path="/order-cancellation" element={<OrderCancellation />} />
 
 
-
+        
 
 
         <Route path="/doc-test" element={<DocxExtractionTest />} />
 
         <Route path="/payment/result" element={<PaymentResult />} />
+
+
+
+
+        <Route path="/manager"  element={<ManagerLayout />}/>
+
+        <Route path="/accounts/*" element={<AccountLayout />} />
+        <Route path="/accounts/login" element={<AccountsLogin />} />
+
+
       </Routes>
 
 

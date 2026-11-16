@@ -1,0 +1,468 @@
+
+/* SKS DREAM - Manager Bank Details */
+
+.manager-bank-details {
+  --mbd-navy: #071b30;
+  --mbd-teal: #0d766e;
+  --mbd-border: #e5e8ed;
+  --mbd-muted: #64748b;
+
+  width: 100%;
+  min-width: 0;
+  padding: 24px;
+  color: var(--mbd-navy);
+  box-sizing: border-box;
+}
+
+.manager-bank-details *,
+.manager-bank-details *::before,
+.manager-bank-details *::after {
+  box-sizing: border-box;
+}
+
+.manager-bank-details .mbd-heading {
+  margin-bottom: 24px;
+}
+
+.manager-bank-details .mbd-heading h1 {
+  margin: 0 0 7px;
+  font-size: 27px;
+  font-weight: 800;
+}
+
+.manager-bank-details .mbd-heading p {
+  margin: 0;
+  color: var(--mbd-muted);
+  font-size: 14px;
+}
+
+/* Statistics */
+
+.manager-bank-details .mbd-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* .manager-bank-details .mbd-stat {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 22px;
+  border: 1px solid var(--mbd-border);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 5px 20px rgba(7, 27, 48, 0.04);
+}  */
+
+
+.manager-bank-details .mbd-stat {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 22px;
+
+  background: #fffdf9;
+  border: 1px solid #e9dfce;
+  border-radius: 16px;
+
+  box-shadow: 0 4px 16px rgba(7, 27, 48, 0.035);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.manager-bank-details .mbd-stat:hover {
+  border-color: #dfc48e;
+  box-shadow: 0 5px 18px rgba(7, 27, 48, 0.06);
+}
+
+.manager-bank-details .mbd-stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 13px;
+}
+
+.manager-bank-details .mbd-stat-icon.blue {
+  background: #e8f0ff;
+  color: #2563eb;
+}
+
+.manager-bank-details .mbd-stat-icon.green {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.manager-bank-details .mbd-stat-icon.amber {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.manager-bank-details .mbd-stat p {
+  margin: 0 0 6px;
+  color: var(--mbd-muted);
+  font-size: 13px;
+}
+
+.manager-bank-details .mbd-stat strong {
+  font-size: 27px;
+  font-weight: 800;
+}
+
+/* Panel */
+
+.manager-bank-details .mbd-panel {
+  overflow: hidden;
+  border: 1px solid var(--mbd-border);
+  border-radius: 17px;
+  background: #fff;
+  box-shadow: 0 5px 22px rgba(7, 27, 48, 0.04);
+}
+
+.manager-bank-details .mbd-panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 22px;
+}
+
+.manager-bank-details .mbd-panel-heading h2 {
+  margin: 0 0 5px;
+  font-size: 19px;
+}
+
+.manager-bank-details .mbd-panel-heading p {
+  margin: 0;
+  color: var(--mbd-muted);
+  font-size: 13px;
+}
+
+.manager-bank-details .mbd-count {
+  padding: 7px 12px;
+  border-radius: 20px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Search and filter */
+
+.manager-bank-details .mbd-filters {
+  display: flex;
+  gap: 12px;
+  padding: 0 22px 20px;
+}
+
+.manager-bank-details .mbd-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  padding: 0 14px;
+  border: 1px solid var(--mbd-border);
+  border-radius: 10px;
+  color: var(--mbd-muted);
+}
+
+.manager-bank-details .mbd-search input {
+  width: 100%;
+  height: 45px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--mbd-navy);
+  font-size: 13px;
+}
+
+.manager-bank-details .mbd-filters select {
+  min-width: 160px;
+  padding: 0 13px;
+  border: 1px solid var(--mbd-border);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--mbd-navy);
+}
+
+/* Table */
+
+.manager-bank-details .mbd-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.manager-bank-details .mbd-table {
+  width: 100%;
+  min-width: 920px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.manager-bank-details .mbd-table th {
+  padding: 15px;
+  background: #f4f7f7;
+  color: #41566d;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.manager-bank-details .mbd-table td {
+  padding: 15px;
+  border-top: 1px solid #edf0f4;
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+.manager-bank-details .mbd-table tbody tr:hover {
+  background: #f8fbfa;
+}
+
+.manager-bank-details .mbd-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 180px;
+}
+
+.manager-bank-details .mbd-user-avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #e8f5f2;
+  color: var(--mbd-teal);
+}
+
+.manager-bank-details .mbd-user strong {
+  display: block;
+  font-size: 12px;
+}
+
+.manager-bank-details .mbd-user small {
+  display: block;
+  margin-top: 4px;
+  color: var(--mbd-muted);
+  font-size: 11px;
+}
+
+.manager-bank-details .mbd-reference {
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.manager-bank-details .mbd-account-number {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.manager-bank-details .mbd-status {
+  display: inline-flex;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.manager-bank-details .mbd-status.verified {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.manager-bank-details .mbd-status.unverified {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.manager-bank-details .mbd-view {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid #d7e7e2;
+  border-radius: 9px;
+  background: #eef7f4;
+  color: #08776c;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.manager-bank-details .mbd-view:hover {
+  background: #dff0e9;
+}
+
+/* Empty and error states */
+
+.manager-bank-details .mbd-empty {
+  padding: 55px 20px;
+  color: var(--mbd-muted);
+  text-align: center;
+  font-size: 14px;
+}
+
+.manager-bank-details .mbd-error {
+  color: #b91c1c;
+}
+
+/* Modal */
+
+.manager-bank-details .mbd-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 18px;
+  background: rgba(7, 27, 48, 0.55);
+}
+
+.manager-bank-details .mbd-modal {
+  width: min(100%, 540px);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px;
+  border-radius: 17px;
+  background: #fff;
+  box-shadow: 0 25px 65px rgba(0, 0, 0, 0.2);
+}
+
+.manager-bank-details .mbd-modal-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 22px;
+}
+
+.manager-bank-details .mbd-modal-heading span {
+  color: var(--mbd-muted);
+  font-size: 12px;
+}
+
+.manager-bank-details .mbd-modal-heading h2 {
+  margin: 5px 0 0;
+  font-size: 22px;
+}
+
+.manager-bank-details .mbd-modal-heading button {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.manager-bank-details .mbd-modal-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.manager-bank-details .mbd-modal-fields > div {
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid var(--mbd-border);
+  border-radius: 10px;
+}
+
+.manager-bank-details .mbd-modal-fields span {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--mbd-muted);
+  font-size: 11px;
+}
+
+.manager-bank-details .mbd-modal-fields strong {
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+
+.manager-bank-details .mbd-close {
+  width: 100%;
+  margin-top: 22px;
+  padding: 12px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--mbd-navy);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .manager-bank-details .mbd-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .manager-bank-details {
+    padding: 14px;
+  }
+
+  .manager-bank-details .mbd-heading h1 {
+    font-size: 23px;
+  }
+
+  .manager-bank-details .mbd-stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .manager-bank-details .mbd-stat {
+    padding: 15px;
+  }
+
+  .manager-bank-details .mbd-panel-heading {
+    padding: 16px;
+  }
+
+  .manager-bank-details .mbd-filters {
+    flex-direction: column;
+    padding: 0 16px 16px;
+  }
+
+  .manager-bank-details .mbd-filters select {
+    height: 44px;
+  }
+
+  .manager-bank-details .mbd-modal-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =========================================
+   MANAGER DASHBOARD - SALES TYPOGRAPHY
+   ========================================= */
+
+/* Match Sales heading font */
+.manager-dashboard h1,
+.manager-dashboard h2,
+.manager-dashboard h3 {
+  font-family: Georgia, "Times New Roman", serif !important;
+}
+
+/* Match Sales statistic labels and values */
+.manager-dashboard .md-stat,
+.manager-dashboard .md-stat p,
+.manager-dashboard .md-stat strong {
+  font-family: Georgia, "Times New Roman", serif !important;
+}
+
+/* Match Sales card text */
+.manager-dashboard .md-overview,
+.manager-dashboard .md-overview h2,
+.manager-dashboard .md-overview p {
+  font-family: Georgia, "Times New Roman", serif !important;
+}
+

@@ -376,3 +376,21 @@
     flex-wrap: wrap;
   }
 }
+
+
+
+/* Purchased Book Reader - desktop only */
+/* Purchased Reader - Desktop zoom scrolling */
+@media (min-width: 769px) {
+  .purchased-reader-page .reader-book-viewport {
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+
+  .purchased-reader-page.zoomed-reading .reader-book-viewport {
+    max-height: 85vh;
+    overflow-x: auto;
+    overflow-y: auto;
+  }
+}

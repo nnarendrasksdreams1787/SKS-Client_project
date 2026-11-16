@@ -1,0 +1,1412 @@
+
+/* ==========================================
+   SKS DREAM — ACCOUNTS PANEL
+   CLEAN WARM CREAM + WHITE THEME
+   ========================================== */
+
+.acc-shell {
+  --acc-cream: #f8f2e8;
+  --acc-white: #ffffff;
+  --acc-teal: #0d766e;
+  --acc-gold: #c69232;
+  --acc-navy: #071b30;
+  --acc-muted: #71808b;
+  --acc-border: #e9e2d9;
+
+  display: flex;
+  min-height: 100vh;
+  background: var(--acc-cream);
+  color: var(--acc-navy);
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* ================= SIDEBAR ================= */
+
+.acc-sidebar {
+  width: 230px;
+  flex: 0 0 230px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-right: 1px solid #e9e2d9;
+  box-shadow: 4px 0 20px rgba(7, 27, 48, 0.07);
+  transition: width 0.25s ease, flex-basis 0.25s ease;
+  z-index: 20;
+}
+
+.acc-brand {
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border-bottom: 1px solid #f0ebe5;
+}
+
+.acc-brand-name {
+  color: var(--acc-navy);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.acc-brand small {
+  color: var(--acc-muted);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+}
+
+.acc-menu-title {
+  padding: 24px 18px 12px;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 1.8px;
+  color: #9b9fa5;
+}
+
+.acc-navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 0 12px;
+}
+
+.acc-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 45px;
+  padding: 11px 14px;
+  border-radius: 11px;
+  border: 1px solid transparent;
+  border-left: 3px solid transparent;
+  background: transparent;
+  color: var(--acc-teal);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.acc-nav-link:hover {
+  background: #fff5e8;
+  border-left-color: var(--acc-gold);
+  box-shadow: 0 3px 10px rgba(7, 27, 48, 0.04);
+}
+
+.acc-nav-link.acc-nav-active {
+  background: #fff7ec;
+  border-color: #f0e4d2;
+  border-left: 3px solid var(--acc-gold);
+  color: #075e57;
+}
+
+.acc-nav-icon,
+.acc-nav-link svg {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+  color: var(--acc-gold);
+  stroke: var(--acc-gold);
+}
+
+.acc-sidebar-footer {
+  margin-top: auto;
+  padding: 20px;
+  border-top: 1px solid #f0ebe5;
+  color: var(--acc-muted);
+  font-size: 11px;
+}
+
+.acc-status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  background: var(--acc-teal);
+  border-radius: 50%;
+}
+
+/* Collapse control — existing JSX class */
+
+.acc-collapse-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--acc-border);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--acc-teal);
+  cursor: pointer;
+}
+
+.acc-collapse-button:hover {
+  background: #fff5e8;
+}
+
+/* Collapsed sidebar — requires class on shell */
+
+.acc-shell.acc-collapsed .acc-sidebar {
+  width: 76px;
+  flex-basis: 76px;
+}
+
+.acc-shell.acc-collapsed .acc-nav-text,
+.acc-shell.acc-collapsed .acc-sidebar-footer,
+.acc-shell.acc-collapsed .acc-brand,
+.acc-shell.acc-collapsed .acc-menu-title {
+  display: none;
+}
+
+.acc-shell.acc-collapsed .acc-navigation {
+  padding-top: 22px;
+}
+
+.acc-shell.acc-collapsed .acc-nav-link {
+  justify-content: center;
+  padding: 12px;
+}
+
+/* ================= MAIN AREA ================= */
+
+.acc-main {
+  flex: 1;
+  min-width: 0;
+  background: var(--acc-cream);
+}
+
+.acc-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px 26px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--acc-border);
+}
+
+.acc-header h1 {
+  margin: 4px 0 0;
+  font-size: 20px;
+  color: var(--acc-navy);
+}
+
+.acc-header-eyebrow,
+.acc-eyebrow {
+  color: var(--acc-teal);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+}
+
+.acc-readonly-badge,
+.acc-preview-badge {
+  margin-left: auto;
+  padding: 8px 13px;
+  border-radius: 20px;
+  background: #eaf4f1;
+  color: var(--acc-teal);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.acc-content {
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 26px 24px;
+  background: var(--acc-cream);
+}
+
+/* ================= PAGE HEADINGS ================= */
+
+.acc-page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 26px;
+}
+
+.acc-page-heading h2 {
+  margin: 8px 0;
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.acc-page-heading p,
+.acc-tax-card p,
+.acc-asset-card p {
+  color: var(--acc-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* ================= SUMMARY CARDS ================= */
+
+.acc-users-page {
+  width: 100%;
+  min-width: 0;
+}
+
+.acc-users-heading {
+  margin-bottom: 25px;
+}
+
+.acc-users-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  margin-bottom: 22px;
+}
+
+.acc-users-stat-card {
+  min-width: 0;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid var(--acc-border);
+  border-radius: 16px;
+  box-shadow: 0 5px 18px rgba(7, 27, 48, 0.055);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.acc-users-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(7, 27, 48, 0.11);
+}
+
+.acc-users-stat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 18px;
+  color: #425466;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.acc-users-stat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: var(--acc-gold);
+}
+
+.acc-users-stat-icon svg,
+.acc-users-stat-icon i {
+  color: var(--acc-gold);
+  stroke: var(--acc-gold);
+}
+
+.acc-users-stat-card > strong {
+  display: block;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.acc-users-stat-card > small {
+  display: block;
+  margin-top: 7px;
+  font-size: 10px;
+  color: var(--acc-muted);
+}
+
+/* ================= WHITE CONTENT PANELS ================= */
+
+.acc-users-directory,
+.acc-panel,
+.acc-tax-card,
+.acc-asset-card {
+  background: #ffffff;
+  border: 1px solid var(--acc-border);
+  border-radius: 16px;
+  box-shadow: 0 5px 18px rgba(7, 27, 48, 0.055);
+}
+
+.acc-users-directory,
+.acc-panel {
+  overflow: hidden;
+}
+
+.acc-panel {
+  margin-bottom: 22px;
+}
+
+.acc-panel-heading,
+.acc-users-directory-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 20px 22px;
+  border-bottom: 1px solid #eee9e3;
+}
+
+.acc-panel-heading h3,
+.acc-users-directory-header h3 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.acc-panel-heading span,
+.acc-users-directory-header p {
+  color: var(--acc-muted);
+  font-size: 12px;
+}
+
+.acc-users-directory-header p {
+  margin: 6px 0 0;
+}
+
+/* ================= SEARCH & FILTER ================= */
+
+.acc-users-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+}
+
+.acc-users-search {
+  flex: 1;
+  min-width: 0;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 13px;
+  background: #ffffff;
+  border: 1px solid #dedfdc;
+  border-radius: 10px;
+}
+
+.acc-users-search > span {
+  color: #8194a2;
+  font-size: 20px;
+}
+
+.acc-users-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--acc-navy);
+  font-size: 12px;
+}
+
+.acc-users-search:focus-within {
+  border-color: var(--acc-teal);
+  box-shadow: 0 0 0 3px rgba(13, 118, 110, 0.09);
+}
+
+.acc-users-filter {
+  min-width: 145px;
+  height: 42px;
+  padding: 0 12px;
+  background: #ffffff;
+  border: 1px solid #dedfdc;
+  border-radius: 10px;
+  color: var(--acc-navy);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* ================= USER TABLE ================= */
+
+.acc-users-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.acc-users-table {
+  width: 100%;
+  min-width: 850px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.acc-users-table thead {
+  background: #f8f8f7;
+}
+
+.acc-users-table th {
+  padding: 14px;
+  color: #536575;
+  font-size: 10px;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 1px solid #ece9e5;
+}
+
+.acc-users-table td {
+  padding: 13px 14px;
+  color: #253c50;
+  font-size: 11px;
+  border-bottom: 1px solid #f0ece7;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.acc-users-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.acc-users-table tbody tr:hover {
+  background: #fff7ec;
+}
+
+.acc-users-person {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.acc-users-avatar {
+  display: none;
+}
+
+.acc-users-person-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.acc-users-person-info strong {
+  font-size: 12px;
+  color: var(--acc-navy);
+}
+
+.acc-users-person-info small {
+  font-size: 10px;
+  color: var(--acc-muted);
+}
+
+.acc-users-reference {
+  display: inline-block;
+  padding: 6px 9px;
+  background: #e9f3f0;
+  color: var(--acc-teal);
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.acc-users-money {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.acc-users-bank-count {
+  display: inline-flex;
+  justify-content: center;
+  min-width: 26px;
+  padding: 5px 8px;
+  border-radius: 7px;
+  background: #f2f4f3;
+  font-weight: 700;
+}
+
+.acc-users-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.acc-users-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.acc-users-status-active {
+  background: #e8f7ef;
+  color: #16804b;
+}
+
+.acc-users-status-other {
+  background: #fff2e5;
+  color: #b46a14;
+}
+
+/* ================= PAGINATION ================= */
+
+.acc-users-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-top: 1px solid #eee9e3;
+  color: var(--acc-muted);
+  font-size: 11px;
+}
+
+.acc-users-page-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.acc-users-page-actions button {
+  padding: 8px 12px;
+  background: #ffffff;
+  border: 1px solid #dedfdc;
+  border-radius: 8px;
+  color: var(--acc-navy);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.acc-users-page-actions button:hover:not(:disabled) {
+  background: #fff5e8;
+  border-color: var(--acc-gold);
+}
+
+.acc-users-page-actions button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ================= TAXES ================= */
+
+.acc-tax-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+  gap: 16px;
+  padding: 22px;
+}
+
+.acc-tax-card {
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.acc-tax-card:hover,
+.acc-asset-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 9px 24px rgba(7, 27, 48, 0.10);
+}
+
+.acc-tax-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.acc-tax-card-top strong {
+  font-size: 14px;
+}
+
+.acc-tax-card-top span {
+  color: var(--acc-muted);
+  font-size: 11px;
+}
+
+.acc-tax-rate {
+  margin-top: 20px;
+  color: var(--acc-teal);
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.acc-info-note {
+  margin: 0 22px 22px;
+  padding: 15px;
+  border-radius: 10px;
+  background: #faf6ef;
+  color: #536575;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* ================= ASSETS ================= */
+
+.acc-asset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.acc-asset-card {
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.acc-asset-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  background: transparent;
+  color: var(--acc-gold);
+}
+
+.acc-asset-icon svg {
+  stroke: var(--acc-gold);
+}
+
+.acc-asset-card h3 {
+  margin: 16px 0 8px;
+  font-size: 17px;
+}
+
+.acc-coming-soon {
+  display: inline-block;
+  margin-top: 12px;
+  color: #9a6700;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.acc-empty-state,
+.acc-users-message,
+.acc-users-empty {
+  padding: 40px 22px;
+  text-align: center;
+  color: var(--acc-muted);
+  font-size: 12px;
+}
+
+.acc-users-error {
+  color: #b42318;
+}
+
+/* ================= MOBILE MENU ================= */
+
+.acc-menu-button {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 12px;
+  background: #ffffff;
+  border: 1px solid var(--acc-border);
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.acc-backdrop {
+  display: none;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 1150px) {
+  .acc-users-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .acc-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 230px;
+    min-height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 101;
+  }
+
+  .acc-sidebar.acc-sidebar-open {
+    transform: translateX(0);
+  }
+
+  .acc-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 27, 48, 0.4);
+    border: 0;
+    z-index: 100;
+  }
+
+  .acc-menu-button {
+    display: inline-flex;
+  }
+
+  .acc-header {
+    padding: 16px;
+  }
+
+  .acc-header h1 {
+    font-size: 18px;
+  }
+
+  .acc-content {
+    padding: 20px 15px;
+  }
+
+  .acc-page-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .acc-tax-grid {
+    padding: 15px;
+  }
+
+  .acc-shell.acc-collapsed .acc-sidebar {
+    width: 230px;
+    flex-basis: 230px;
+  }
+
+  .acc-shell.acc-collapsed .acc-nav-text,
+  .acc-shell.acc-collapsed .acc-sidebar-footer,
+  .acc-shell.acc-collapsed .acc-brand,
+  .acc-shell.acc-collapsed .acc-menu-title {
+    display: initial;
+  }
+}
+
+@media (max-width: 650px) {
+  .acc-users-stats {
+    gap: 10px;
+  }
+
+  .acc-users-stat-card {
+    padding: 15px;
+  }
+
+  .acc-users-stat-card > strong {
+    font-size: 21px;
+  }
+
+  .acc-users-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 15px;
+  }
+
+  .acc-users-filter {
+    width: 100%;
+  }
+
+  .acc-users-pagination {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .acc-users-page-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .acc-users-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Sidebar top alignment fix */
+.acc-sidebar {
+  padding-top: 18px;
+}
+
+.acc-menu-title {
+  padding: 0 16px;
+  margin-bottom: 18px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: #8c98a4;
+}
+
+.acc-navigation {
+  padding: 0 12px;
+  gap: 8px;
+}
+
+/* Sidebar navigation */
+.acc-nav-link {
+  min-height: 46px;
+  border-radius: 10px;
+}
+
+/* Hide mobile menu button on desktop */
+@media (min-width: 769px) {
+  .acc-menu-button {
+    display: none !important;
+  }
+}
+
+
+/* =====================================
+   ACCOUNTS SIDEBAR TOP — FINAL FIX
+   ===================================== */
+
+.acc-sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 72px;
+  padding: 16px 18px;
+  box-sizing: border-box;
+}
+
+.acc-sidebar-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #98a2ad;
+}
+
+.acc-collapse-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border: 1px solid #e7e9eb;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #0d766e;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.acc-collapse-button:hover {
+  background: #f8f2e8;
+  border-color: #c69232;
+  color: #c69232;
+}
+
+/* Desktop par X hide */
+.acc-sidebar-mobile-close {
+  display: none;
+}
+
+/* Sidebar collapsed state */
+.acc-shell.acc-collapsed .acc-sidebar-top {
+  justify-content: center;
+  padding: 16px 8px;
+}
+
+.acc-shell.acc-collapsed .acc-sidebar-label {
+  display: none;
+}
+
+/* Navigation spacing */
+.acc-navigation {
+  padding: 0 12px;
+  gap: 8px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .acc-sidebar-top {
+    padding: 16px;
+  }
+
+  .acc-sidebar-mobile-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid #e7e9eb;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #071b30;
+    cursor: pointer;
+  }
+
+  .acc-collapse-button {
+    display: none;
+  }
+
+  .acc-shell.acc-collapsed .acc-sidebar-label {
+    display: inline;
+  }
+
+  .acc-shell.acc-collapsed .acc-sidebar-top {
+    justify-content: space-between;
+    padding: 16px;
+  }
+}
+
+/* Desktop: remove empty header space */
+@media (min-width: 769px) {
+  .acc-header {
+    display: none;
+  }
+}
+
+/* Mobile: retain hamburger header */
+@media (max-width: 768px) {
+  .acc-header {
+    display: flex;
+    min-height: 58px;
+  }
+}
+
+/* Larger premium golden summary icons */
+
+.acc-users-stat-icon {
+  width: 42px !important;
+  height: 42px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #C69232 !important;
+}
+
+.acc-users-stat-icon svg {
+  width: 26px !important;
+  height: 26px !important;
+  stroke: #C69232 !important;
+  stroke-width: 1.8;
+}
+
+
+
+/* =========================================
+   ASSETS PAGE — MATCH USER ACCOUNTS DESIGN
+   ========================================= */
+
+.acc-assets-page .acc-assets-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin: 26px 0 22px;
+}
+
+.acc-assets-page .acc-assets-stat-card {
+  min-width: 0;
+  min-height: 156px;
+  box-sizing: border-box;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #e9e3dc;
+  border-radius: 16px;
+  box-shadow: 0 5px 16px rgba(7, 27, 48, 0.035);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.acc-assets-page .acc-assets-stat-card:hover {
+  transform: translateY(-3px);
+  border-color: #d8c8ad;
+  box-shadow: 0 10px 24px rgba(7, 27, 48, 0.09);
+}
+
+.acc-assets-page .acc-assets-stat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+  margin-bottom: 12px;
+}
+
+.acc-assets-page .acc-assets-stat-top > span:first-child {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #071b30;
+}
+
+.acc-assets-page .acc-assets-stat-icon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  color: #c69232 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.acc-assets-page .acc-assets-stat-icon svg {
+  width: 26px;
+  height: 26px;
+  stroke: #c69232 !important;
+  stroke-width: 1.8;
+  transition: transform 0.2s ease;
+}
+
+.acc-assets-page .acc-assets-stat-card:hover
+.acc-assets-stat-icon svg {
+  transform: scale(1.08);
+}
+
+.acc-assets-page .acc-assets-stat-card > strong {
+  display: block;
+  margin-top: auto;
+  font-size: 25px;
+  font-weight: 750;
+  line-height: 1.3;
+  color: #071b30;
+}
+
+.acc-assets-page .acc-assets-stat-card > small {
+  display: block;
+  margin-top: 7px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #73839a;
+}
+
+/* TRANSACTION SUMMARY */
+
+.acc-assets-page .acc-assets-summary {
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e9e3dc;
+  border-radius: 16px;
+}
+
+.acc-assets-page .acc-assets-summary-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px;
+  border-bottom: 1px solid #f0ece6;
+}
+
+.acc-assets-page .acc-assets-summary-heading h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #071b30;
+}
+
+.acc-assets-page .acc-assets-summary-heading p {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: #73839a;
+}
+
+.acc-assets-page .acc-assets-summary-heading > span {
+  font-size: 11px;
+  color: #8793a3;
+  white-space: nowrap;
+}
+
+.acc-assets-page .acc-assets-transactions {
+  padding: 8px 24px;
+}
+
+.acc-assets-page .acc-assets-transaction-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 60px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0ece6;
+  transition: background 0.2s ease;
+}
+
+.acc-assets-page .acc-assets-transaction-row:last-child {
+  border-bottom: none;
+}
+
+.acc-assets-page .acc-assets-transaction-label {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 13px;
+  color: #34465a;
+}
+
+.acc-assets-page .acc-assets-transaction-label svg {
+  flex-shrink: 0;
+  color: #c69232;
+}
+
+.acc-assets-page .acc-assets-transaction-row > strong {
+  font-size: 15px;
+  font-weight: 700;
+  color: #071b30;
+  white-space: nowrap;
+}
+
+.acc-assets-page .acc-assets-error {
+  color: #b42318;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1100px) {
+  .acc-assets-page .acc-assets-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .acc-assets-page .acc-assets-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .acc-assets-page .acc-assets-stat-card {
+    min-height: 140px;
+  }
+
+  .acc-assets-page .acc-assets-summary-heading,
+  .acc-assets-page .acc-assets-transactions {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .acc-assets-page .acc-assets-summary-heading > span {
+    display: none;
+  }
+}
+
+
+/* =========================================
+   TAXES — PREMIUM MINIMAL THEME
+   ========================================= */
+
+.acc-taxes-page .acc-taxes-panel {
+  background: #ffffff;
+  border: 1px solid #e9e3dc;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 5px 18px rgba(7, 27, 48, 0.035);
+}
+
+.acc-taxes-page .acc-tax-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+  padding: 22px;
+}
+
+.acc-taxes-page .acc-tax-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 204px;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #e9e3dc;
+  border-radius: 16px;
+  box-shadow: 0 5px 16px rgba(7, 27, 48, 0.035);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.acc-taxes-page .acc-tax-card:hover {
+  transform: translateY(-3px);
+  border-color: #d8c8ad;
+  box-shadow: 0 10px 24px rgba(7, 27, 48, 0.09);
+}
+
+.acc-taxes-page .acc-tax-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.acc-taxes-page .acc-tax-card-top strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: #071b30;
+}
+
+.acc-taxes-page .acc-tax-card-icon {
+  flex-shrink: 0;
+  color: #c69232;
+  stroke: #c69232;
+  background: transparent;
+  transition: transform 0.2s ease;
+}
+
+.acc-taxes-page .acc-tax-card:hover .acc-tax-card-icon {
+  transform: scale(1.08);
+}
+
+.acc-taxes-page .acc-tax-rate {
+  font-size: 28px;
+  font-weight: 750;
+  line-height: 1.25;
+  color: #071b30;
+}
+
+.acc-taxes-page .acc-tax-card > p {
+  margin: 12px 0 18px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #73839a;
+}
+
+.acc-taxes-page .acc-tax-edit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  align-self: flex-start;
+  margin-top: auto;
+  padding: 9px 13px;
+  border: 1px solid #d8e5e2;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #0d766e;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.acc-taxes-page .acc-tax-edit-button:hover {
+  background: #eaf5f1;
+  border-color: #0d766e;
+}
+
+.acc-taxes-page .acc-tax-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.acc-taxes-page .acc-tax-edit label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #34465a;
+}
+
+.acc-taxes-page .acc-tax-edit input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #cbd5d8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #071b30;
+  font-size: 14px;
+}
+
+.acc-taxes-page .acc-tax-edit input:focus {
+  outline: 2px solid #0d766e;
+  outline-offset: 1px;
+}
+
+.acc-taxes-page .acc-tax-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.acc-taxes-page .acc-tax-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 9px 11px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.acc-taxes-page .acc-tax-save {
+  background: #0d766e;
+  border: 1px solid #0d766e;
+  color: #ffffff;
+}
+
+.acc-taxes-page .acc-tax-save:hover {
+  background: #095f59;
+}
+
+.acc-taxes-page .acc-tax-cancel {
+  background: #ffffff;
+  border: 1px solid #e0e3e5;
+  color: #34465a;
+}
+
+.acc-taxes-page button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.acc-taxes-page .acc-tax-alert,
+.acc-taxes-page .acc-tax-loading {
+  margin: 0;
+  padding: 14px 24px;
+}
+
+.acc-taxes-page .acc-tax-error {
+  color: #b42318;
+}
+
+.acc-taxes-page .acc-tax-success {
+  color: #087568;
+}
+
+.acc-taxes-page .acc-tax-card button:focus-visible {
+  outline: 2px solid #0d766e;
+  outline-offset: 3px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1200px) {
+  .acc-taxes-page .acc-tax-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 800px) {
+  .acc-taxes-page .acc-tax-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .acc-taxes-page .acc-tax-grid {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+
+  .acc-taxes-page .acc-tax-card {
+    min-height: 180px;
+  }
+}
+
+.acc-sidebar {
+  background: #071B30 !important;
+}
