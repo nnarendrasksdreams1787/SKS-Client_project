@@ -598,18 +598,64 @@ import { createWorker } from "tesseract.js";
 
 const docxTextCache = new Map();
 
-const ocrPageCache = new WeakMap();
-let ocrWorkerPromise = null;
+// const ocrPageCache = new WeakMap();
+// let ocrWorkerPromise = null;
 
-async function getOCRWorker() {
-  if (!ocrWorkerPromise) {
-    ocrWorkerPromise = createWorker(["mar", "hin"]).catch((err) => {
-      ocrWorkerPromise = null;
-      throw err;
+// async function getOCRWorker() {
+//   if (!ocrWorkerPromise) {
+//     ocrWorkerPromise = createWorker(["mar", "hin"]).catch((err) => {
+//       ocrWorkerPromise = null;
+//       throw err;
+//     });
+//   }
+
+//   return ocrWorkerPromise;
+// }
+
+const ocrPageCache = new WeakMap();
+// let ocrWorkerPromise = null;
+const ocrWorkerPromise = new Map();
+
+function getOCRLanguage(language) {
+  const lang = String(language || "").toLowerCase();
+
+  if (lang.startsWith("en")) return "eng";
+  if (lang.startsWith("mr")) return "mar";
+  if (lang.startsWith("hi")) return "hin";
+
+  return "mar+hin";
+}
+
+// async function getOCRWorker() {
+//   if (!ocrWorkerPromise) {
+//     ocrWorkerPromise = createWorker(["mar", "hin"]).catch((err) => {
+//       ocrWorkerPromise = null;
+//       throw err;
+//     });
+//   }
+
+//   return ocrWorkerPromise;
+// }
+
+async function getOCRWorker(language = "mr-IN") {
+  const ocrLanguage = getOCRLanguage(language);
+
+  if (!ocrWorkerPromise.has(ocrLanguage)) {
+    // const workerPromise = createWorker([ocrLanguage]).catch((error) => {
+    const workerPromise = createWorker(
+      ocrLanguage === "mar+hin" ? ["mar", "hin"] : [ocrLanguage],
+    ).catch((error) => {
+      ocrWorkerPromise.delete(ocrLanguage);
+      throw error;
     });
+
+    ocrWorkerPromise.set(ocrLanguage, workerPromise);
+    console.log("OCR LANGUAGE SELECTED:", ocrLanguage);
   }
 
-  return ocrWorkerPromise;
+  console.log("OCR LANGUAGE SELECTED:", ocrLanguage);
+
+  return ocrWorkerPromise.get(ocrLanguage);
 }
 
 export async function extractDocxText(docxUrl) {
@@ -763,6 +809,7 @@ export async function getReadablePageText({
   pdfDocument,
   pageNumber,
   previewTextUrl,
+  language = "mr-IN",
 }) {
   if (!pdfDocument || !pageNumber) {
     throw new Error("PDF document and page number are required.");
@@ -774,6 +821,7 @@ export async function getReadablePageText({
       docxUrl,
       pdfDocument,
       pageNumber,
+      language,
     });
 
     if (!result.text?.trim()) {
@@ -789,7 +837,8 @@ export async function getReadablePageText({
       throw new Error("Only 8 preview pages are available.");
     }
 
-    const ocrText = await testPageOCR(pdfDocument, pageNumber);
+    // const ocrText = await testPageOCR(pdfDocument, pageNumber);
+    const ocrText = await testPageOCR(pdfDocument, pageNumber, language);
 
     const response = await fetch(previewTextUrl, {
       method: "POST",
@@ -858,7 +907,7 @@ export async function getReadablePageText({
 //   }
 // }
 
-export async function testPageOCR(pdfDocument, pageNumber) {
+export async function testPageOCR(pdfDocument, pageNumber, language = "mr-IN") {
   if (
     !pdfDocument ||
     !Number.isInteger(pageNumber) ||
@@ -895,7 +944,9 @@ export async function testPageOCR(pdfDocument, pageNumber) {
     ocrPageCache.set(pdfDocument, pageCache);
   }
 
-  if (!pageCache.has(pageNumber)) {
+  const cacheKey = `${pageNumber}:${getOCRLanguage(language)}`;
+  // if (!pageCache.has(pageNumber)) {
+  if (!pageCache.has(cacheKey)) {
     const request = (async () => {
       const page = await pdfDocument.getPage(pageNumber);
       // const viewport = page.getViewport({ scale: 2 });
@@ -918,7 +969,8 @@ export async function testPageOCR(pdfDocument, pageNumber) {
           viewport,
         }).promise;
 
-        const worker = await getOCRWorker();
+        // const worker = await getOCRWorker();
+        const worker = await getOCRWorker(language);
         const result = await worker.recognize(canvas);
 
         return {
@@ -931,11 +983,13 @@ export async function testPageOCR(pdfDocument, pageNumber) {
       }
     })();
 
-    pageCache.set(pageNumber, request);
+    // pageCache.set(pageNumber, request);
+    pageCache.set(cacheKey, request);
   }
 
   try {
-    const result = await pageCache.get(pageNumber);
+    // const result = await pageCache.get(pageNumber);
+    const result = await pageCache.get(cacheKey);
 
     console.log("OCR PAGE:", pageNumber);
     console.log("OCR CONFIDENCE:", result.confidence);
@@ -943,17 +997,21 @@ export async function testPageOCR(pdfDocument, pageNumber) {
 
     return result.text;
   } catch (error) {
-    pageCache.delete(pageNumber);
+    // pageCache.delete(pageNumber);
+    pageCache.delete(cacheKey);
     throw error;
   }
 }
 
 function normalizeForMatching(text) {
-  return text
-    .normalize("NFC")
-    .replace(/[\u200B-\u200D\uFEFF]/g, "")
-    .replace(/[^\p{L}\p{N}]/gu, "")
-    .toLowerCase();
+  return (
+    text
+      .normalize("NFC")
+      .replace(/[\u200B-\u200D\uFEFF]/g, "")
+      // .replace(/[^\p{L}\p{N}]/gu, "")
+      .replace(/[^\p{L}\p{M}\p{N}]/gu, "")
+      .toLowerCase()
+  );
 }
 
 function getTextParagraphs(text) {
@@ -963,7 +1021,12 @@ function getTextParagraphs(text) {
     .filter((paragraph) => paragraph.length > 20);
 }
 
-export async function testDocxPageMatch({ docxUrl, pdfDocument, pageNumber }) {
+export async function testDocxPageMatch({
+  docxUrl,
+  pdfDocument,
+  pageNumber,
+  language = "mr-IN",
+}) {
   if (!docxUrl || !pdfDocument || !pageNumber) {
     throw new Error("DOCX URL, PDF document and page number are required.");
   }
@@ -971,7 +1034,9 @@ export async function testDocxPageMatch({ docxUrl, pdfDocument, pageNumber }) {
   const startTime = performance.now();
 
   console.time(`OCR PAGE ${pageNumber}`);
-  const ocrText = await testPageOCR(pdfDocument, pageNumber);
+  // const ocrText = await testPageOCR(pdfDocument, pageNumber);
+  const ocrText = await testPageOCR(pdfDocument, pageNumber, language);
+  // const ocrText = await testPageOCR(pdfDocument, pageNumber, language, "mr-IN");
   console.timeEnd(`OCR PAGE ${pageNumber}`);
 
   console.time(`DOCX PAGE ${pageNumber}`);
@@ -1074,7 +1139,8 @@ function normalizeWithPositions(text) {
     const normalized = originalCharacter
       .normalize("NFC")
       .replace(/[\u200B-\u200D\uFEFF]/g, "")
-      .replace(/[^\p{L}\p{N}]/gu, "")
+      // .replace(/[^\p{L}\p{N}]/gu, "")
+      .replace(/[^\p{L}\p{M}\p{N}]/gu, "")
       .toLowerCase();
 
     for (const character of normalized) {
@@ -1091,10 +1157,16 @@ function normalizeWithPositions(text) {
 
 const cleanPageTextCache = new WeakMap();
 
+// export async function extractVerifiedDocxPage({
+//   docxUrl,
+//   pdfDocument,
+//   pageNumber,
+// }) {
 export async function extractVerifiedDocxPage({
   docxUrl,
   pdfDocument,
   pageNumber,
+  language,
 }) {
   if (!docxUrl || !pdfDocument || !pageNumber) {
     throw new Error("PDF, DOCX and page number are required.");
@@ -1107,14 +1179,15 @@ export async function extractVerifiedDocxPage({
     cleanPageTextCache.set(pdfDocument, documentCache);
   }
 
-  const cacheKey = `${docxUrl}:${pageNumber}`;
-
+  // const cacheKey = `${docxUrl}:${pageNumber}`;
+  const cacheKey = `${docxUrl}:${pageNumber}:${getOCRLanguage(language)}`;
   if (!documentCache.has(cacheKey)) {
     const request = (async () => {
       const matchResult = await testDocxPageMatch({
         docxUrl,
         pdfDocument,
         pageNumber,
+        language,
       });
 
       const { matches, ocrLines, exactMatches } = matchResult;
@@ -1140,7 +1213,13 @@ export async function extractVerifiedDocxPage({
         Math.max(2, Math.ceil(ocrLines * 0.7)),
       );
 
-      if (exactMatches < requiredMatches || matchRatio < 0.7) {
+      // if (exactMatches < requiredMatches || matchRatio < 0.7) {
+      //   throw new Error(
+      //     "Page matching confidence is too low. Reading stopped.",
+      //   );
+      // }
+
+      if (exactMatches < requiredMatches || matchRatio < 0.5) {
         throw new Error(
           "Page matching confidence is too low. Reading stopped.",
         );

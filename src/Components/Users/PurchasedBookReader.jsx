@@ -1372,6 +1372,7 @@ export default function PurchasedBookReader() {
         docxUrl,
         pdfDocument,
         pageNumber,
+        language: selectedOCRLanguage,
       });
 
       console.log("PURCHASED BOOK PAGE:", pageNumber);
@@ -1399,7 +1400,9 @@ export default function PurchasedBookReader() {
 
         const preferred =
           voices.find((voice) => voice.lang.toLowerCase() === "mr-in") ||
-          voices.find((voice) => voice.lang.toLowerCase() === "hi-in") ||
+          voices.find((voice) => voice.lang.toLowerCase().startsWith("mr")) ||
+          voices.find((voice) => voice.lang.toLowerCase() === "en-in") ||
+          voices.find((voice) => voice.lang.toLowerCase().startsWith("en")) ||
           voices.find((voice) => voice.lang.toLowerCase().startsWith("hi")) ||
           voices[0];
 
@@ -1579,6 +1582,53 @@ export default function PurchasedBookReader() {
     return chunks;
   }
 
+  // const selectedSpeechVoice = speechVoices.find(
+  //   (item) => item.voiceURI === selectedVoice
+  // );
+
+  // const selectedOCRLanguage = selectedSpeechVoice?.lang || "mr-IN";
+
+  const selectedSpeechVoice = speechVoices.find(
+    (item) => item.voiceURI === selectedVoice
+  );
+
+  // OCR language is based on the book, not the selected TTS voice.
+  const selectedOCRLanguage = "mr-IN";
+
+
+  // function preparePageForSpeech(pageNumber) {
+  //   if (!docxUrl || !pdfDocument) {
+  //     return Promise.reject(new Error("PDF or DOCX is not ready."));
+  //   }
+
+  //   const cache = pagePreparationCacheRef.current;
+
+  //   if (cache.has(pageNumber)) {
+  //     return cache.get(pageNumber);
+  //   }
+
+  //   const promise = getReadablePageText({
+  //     docxUrl,
+  //     pdfDocument,
+  //     pageNumber,
+  //     language: selectedOCRLanguage,
+  //   })
+  //     .then((text) => {
+  //       if (!text?.trim()) {
+  //         throw new Error(`Page ${pageNumber}: no verified text.`);
+  //       }
+  //       return text;
+  //     })
+  //     .catch((error) => {
+  //       if (cache.get(pageNumber) === promise) {
+  //         cache.delete(pageNumber);
+  //       }
+  //       throw error;
+  //     });
+
+  //   cache.set(pageNumber, promise);
+  //   return promise;
+  // }
 
 
   function preparePageForSpeech(pageNumber) {
@@ -1586,33 +1636,45 @@ export default function PurchasedBookReader() {
       return Promise.reject(new Error("PDF or DOCX is not ready."));
     }
 
+    const language = selectedOCRLanguage;
     const cache = pagePreparationCacheRef.current;
 
-    if (cache.has(pageNumber)) {
-      return cache.get(pageNumber);
+    const cacheKey = `${pageNumber}:${language}`;
+
+    if (cache.has(cacheKey)) {
+      return cache.get(cacheKey);
     }
 
     const promise = getReadablePageText({
       docxUrl,
       pdfDocument,
       pageNumber,
+      language,
     })
       .then((text) => {
         if (!text?.trim()) {
           throw new Error(`Page ${pageNumber}: no verified text.`);
         }
+
+        console.log("PAGE OCR LANGUAGE:", language);
+        console.log("PAGE EXTRACTED TEXT:", text.slice(0, 500));
+
         return text;
       })
       .catch((error) => {
-        if (cache.get(pageNumber) === promise) {
-          cache.delete(pageNumber);
+        if (cache.get(cacheKey) === promise) {
+          cache.delete(cacheKey);
         }
+
         throw error;
       });
 
-    cache.set(pageNumber, promise);
+    cache.set(cacheKey, promise);
+
     return promise;
   }
+
+
 
 
   async function startSpeaking() {
@@ -1994,7 +2056,13 @@ export default function PurchasedBookReader() {
           <select
             id="purchased-voice"
             value={selectedVoice}
-            onChange={(event) => setSelectedVoice(event.target.value)}
+            // onChange={(event) => setSelectedVoice(event.target.value)}
+            onChange={(event) => {
+              stopSpeaking();
+              pagePreparationCacheRef.current.clear();
+              setSelectedVoice(event.target.value);
+              setSpeakingError("");
+            }}
             style={{ maxWidth: 220, padding: 8 }}
           >
             {speechVoices.map((voice) => (

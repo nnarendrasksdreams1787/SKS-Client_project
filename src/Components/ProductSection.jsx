@@ -61,7 +61,7 @@ export default function ProductSection() {
             .filter((product) => {
               const productId = Number(product.product_id ?? product.id);
               // return productId >= 29;
-              return productId === 1 || productId >= 29;
+              return productId === 1 || productId === 9 || productId >= 29;
             })
             .map((product) => ({
               ...product,

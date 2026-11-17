@@ -3143,10 +3143,21 @@ export default function BookReader() {
 
       const pageNumber = currentPage + 1;
 
+      // const cleanText = await getReadablePageText({
+      //   docxUrl: product?.docxUrl,
+      //   pdfDocument,
+      //   pageNumber,
+      // });
+
       const cleanText = await getReadablePageText({
         docxUrl: product?.docxUrl,
         pdfDocument,
         pageNumber,
+        language:
+          product?.language ||
+          product?.languageCode ||
+          product?.bookLanguage ||
+          "mr-IN",
       });
 
       setExtractedText(cleanText);
@@ -3302,11 +3313,22 @@ export default function BookReader() {
 
     console.log("BACKGROUND PREPARATION START:", pageNumber);
 
+    // const preparationPromise = getReadablePageText({
+    //   docxUrl: product.docxUrl,
+    //   previewTextUrl: product.previewTextUrl,
+    //   pdfDocument,
+    //   pageNumber,
+    // })
     const preparationPromise = getReadablePageText({
       docxUrl: product.docxUrl,
       previewTextUrl: product.previewTextUrl,
       pdfDocument,
       pageNumber,
+      language:
+        product?.language ||
+        product?.languageCode ||
+        product?.bookLanguage ||
+        "mr-IN",
     })
       .then((text) => {
         if (!text?.trim()) {
