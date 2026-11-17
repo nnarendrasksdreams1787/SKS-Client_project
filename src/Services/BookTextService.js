@@ -684,8 +684,54 @@ export async function extractDocxText(docxUrl) {
   }
 }
 
+
+
+
+const bookLanguageCache = new Map();
+
+export async function detectBookOCRLanguage(docxUrl) {
+  if (!docxUrl) {
+    return "mr-IN";
+  }
+
+  if (!bookLanguageCache.has(docxUrl)) {
+    const request = (async () => {
+      const text = await extractDocxText(docxUrl);
+
+      const devanagariCount =
+        (text.match(/[\u0900-\u097F]/g) || []).length;
+
+      const englishCount =
+        (text.match(/[A-Za-z]/g) || []).length;
+
+      const detectedLanguage =
+        devanagariCount >= englishCount ? "mr-IN" : "en-US";
+
+      console.log("BOOK LANGUAGE DETECTED:", detectedLanguage);
+      console.log("DEVANAGARI CHARACTERS:", devanagariCount);
+      console.log("ENGLISH CHARACTERS:", englishCount);
+
+      return detectedLanguage;
+    })();
+
+    bookLanguageCache.set(docxUrl, request);
+  }
+
+  try {
+    return await bookLanguageCache.get(docxUrl);
+  } catch (error) {
+    bookLanguageCache.delete(docxUrl);
+    throw error;
+  }
+}
+
+
+
+
+
 export async function getBookText({ docxUrl, pdfDocument, pageNumber }) {
   if (docxUrl) {
+
     const text = await extractDocxText(docxUrl);
 
     return {
@@ -809,7 +855,8 @@ export async function getReadablePageText({
   pdfDocument,
   pageNumber,
   previewTextUrl,
-  language = "mr-IN",
+  // language = "mr-IN",
+  language,
 }) {
   if (!pdfDocument || !pageNumber) {
     throw new Error("PDF document and page number are required.");
@@ -817,11 +864,12 @@ export async function getReadablePageText({
 
   // Admin and purchased reader: original matching logic.
   if (docxUrl) {
+    const detectedLanguage = await detectBookOCRLanguage(docxUrl);
     const result = await extractVerifiedDocxPage({
       docxUrl,
       pdfDocument,
       pageNumber,
-      language,
+      language: detectedLanguage,
     });
 
     if (!result.text?.trim()) {

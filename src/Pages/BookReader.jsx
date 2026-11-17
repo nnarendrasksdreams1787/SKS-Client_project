@@ -3153,11 +3153,7 @@ export default function BookReader() {
         docxUrl: product?.docxUrl,
         pdfDocument,
         pageNumber,
-        language:
-          product?.language ||
-          product?.languageCode ||
-          product?.bookLanguage ||
-          "mr-IN",
+        language: "mr-IN",
       });
 
       setExtractedText(cleanText);
@@ -3324,11 +3320,7 @@ export default function BookReader() {
       previewTextUrl: product.previewTextUrl,
       pdfDocument,
       pageNumber,
-      language:
-        product?.language ||
-        product?.languageCode ||
-        product?.bookLanguage ||
-        "mr-IN",
+      language: "mr-IN",
     })
       .then((text) => {
         if (!text?.trim()) {

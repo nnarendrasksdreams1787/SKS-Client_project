@@ -1214,6 +1214,11 @@ export default function PurchasedBookReader() {
 
   const autoFlipTargetRef = useRef(null);
 
+  // 
+
+  const autoFlipTimeoutRef = useRef(null);
+  const autoFlipRetryRef = useRef(0);
+
   const pagePreparationCacheRef = useRef(new Map());
   const pendingSpeechContinuationRef = useRef(null);
 
@@ -1230,6 +1235,8 @@ export default function PurchasedBookReader() {
     let docxObjectUrl;
 
     async function loadPurchasedBook() {
+      pagePreparationCacheRef.current.clear();
+
       setLoading(true);
       setError("");
       setBookTitle("");
@@ -1372,7 +1379,7 @@ export default function PurchasedBookReader() {
         docxUrl,
         pdfDocument,
         pageNumber,
-        language: selectedOCRLanguage,
+
       });
 
       console.log("PURCHASED BOOK PAGE:", pageNumber);
@@ -1434,6 +1441,13 @@ export default function PurchasedBookReader() {
       clearTimeout(speechTimeoutRef.current);
       speechTimeoutRef.current = null;
     }
+
+    if (autoFlipTimeoutRef.current) {
+      clearTimeout(autoFlipTimeoutRef.current);
+      autoFlipTimeoutRef.current = null;
+    }
+
+    autoFlipRetryRef.current = 0;
 
     speechUtteranceRef.current = null;
 
@@ -1593,7 +1607,7 @@ export default function PurchasedBookReader() {
   );
 
   // OCR language is based on the book, not the selected TTS voice.
-  const selectedOCRLanguage = "mr-IN";
+  // const selectedOCRLanguage = "mr-IN";
 
 
   // function preparePageForSpeech(pageNumber) {
@@ -1636,10 +1650,12 @@ export default function PurchasedBookReader() {
       return Promise.reject(new Error("PDF or DOCX is not ready."));
     }
 
-    const language = selectedOCRLanguage;
+    // const language = selectedOCRLanguage;
     const cache = pagePreparationCacheRef.current;
 
-    const cacheKey = `${pageNumber}:${language}`;
+    // const cacheKey = `${pageNumber}:${language}`;
+    // const cacheKey = String(pageNumber);
+    const cacheKey = `${docxUrl}:${pageNumber}`;
 
     if (cache.has(cacheKey)) {
       return cache.get(cacheKey);
@@ -1649,15 +1665,22 @@ export default function PurchasedBookReader() {
       docxUrl,
       pdfDocument,
       pageNumber,
-      language,
+
     })
       .then((text) => {
         if (!text?.trim()) {
           throw new Error(`Page ${pageNumber}: no verified text.`);
         }
 
-        console.log("PAGE OCR LANGUAGE:", language);
-        console.log("PAGE EXTRACTED TEXT:", text.slice(0, 500));
+        console.log(
+          "PAGE OCR:",
+          "Language automatically detected by BookTextService"
+        );
+
+        console.log(
+          "PAGE EXTRACTED TEXT:",
+          text.slice(0, 500)
+        );
 
         return text;
       })
@@ -1880,37 +1903,153 @@ export default function PurchasedBookReader() {
         }
 
         // Otherwise turn the physical book page.
-        const currentIndex = flip.getCurrentPageIndex();
+        // const currentIndex = flip.getCurrentPageIndex();
 
-        // Target is the next visible spread's first page.
-        const expectedIndex =
-          currentIndex === 0
-            ? 1
-            : currentIndex % 2 === 0
-              ? currentIndex + 1
-              : currentIndex + 2;
+        // // Target is the next visible spread's first page.
+        // const expectedIndex =
+        //   currentIndex === 0
+        //     ? 1
+        //     : currentIndex % 2 === 0
+        //       ? currentIndex + 1
+        //       : currentIndex + 2;
 
-        autoFlipTargetRef.current = expectedIndex;
+        // autoFlipTargetRef.current = expectedIndex;
+
+        // autoFlipContinuationRef.current = () => {
+        //   if (!active()) return;
+
+        //   autoFlipContinuationRef.current = null;
+        //   scheduleNext(() => readPage(nextIndex), 100);
+        // };
+
+
+
+        // flip.flipNext();
+
+        // speechTimeoutRef.current = setTimeout(() => {
+        //   if (!active()) return;
+
+        //   if (autoFlipTargetRef.current !== null) {
+        //     fail(
+        //       new Error("Automatic page flip did not complete."),
+        //       pageIndex
+        //     );
+        //   }
+        // }, 2500);
+
+
+
+
+
+        // Otherwise turn the physical book page.
+
+        const getExpectedFlipIndex = () => {
+          const currentIndex = flip.getCurrentPageIndex();
+
+          const isPortrait =
+            flip.getSettings?.()?.usePortrait &&
+            flip.getOrientation?.() === "portrait";
+
+          // Portrait: advance one page.
+          if (isPortrait) {
+            return currentIndex + 1;
+          }
+
+          // Landscape: advance to the next visible spread.
+          if (currentIndex === 0) {
+            return 1;
+          }
+
+          return currentIndex % 2 === 0
+            ? currentIndex + 1
+            : currentIndex + 2;
+        };
+
+        autoFlipTargetRef.current = getExpectedFlipIndex();
+        autoFlipRetryRef.current = 0;
 
         autoFlipContinuationRef.current = () => {
           if (!active()) return;
 
+          if (autoFlipTimeoutRef.current) {
+            clearTimeout(autoFlipTimeoutRef.current);
+            autoFlipTimeoutRef.current = null;
+          }
+
+          autoFlipTargetRef.current = null;
           autoFlipContinuationRef.current = null;
-          scheduleNext(() => readPage(nextIndex), 100);
+          autoFlipRetryRef.current = 0;
+
+          scheduleNext(() => readPage(nextIndex), 150);
         };
 
-        flip.flipNext();
-
-        speechTimeoutRef.current = setTimeout(() => {
+        const attemptAutomaticFlip = () => {
           if (!active()) return;
 
-          if (autoFlipTargetRef.current !== null) {
-            fail(
-              new Error("Automatic page flip did not complete."),
-              pageIndex
-            );
+          if (autoFlipTimeoutRef.current) {
+            clearTimeout(autoFlipTimeoutRef.current);
+            autoFlipTimeoutRef.current = null;
           }
-        }, 2500);
+
+          const targetIndex = autoFlipTargetRef.current;
+
+          if (targetIndex === null) return;
+
+          flip.flipNext();
+
+          autoFlipTimeoutRef.current = setTimeout(() => {
+            autoFlipTimeoutRef.current = null;
+
+            if (!active()) return;
+
+            const actualIndex = flip.getCurrentPageIndex();
+
+            // Flip succeeded, even if the onFlip event was missed.
+            if (actualIndex === targetIndex) {
+              autoFlipContinuationRef.current?.();
+              return;
+            }
+
+            // Retry only once.
+            if (autoFlipRetryRef.current < 1) {
+              autoFlipRetryRef.current += 1;
+
+              console.warn(
+                "Automatic page flip failed. Retrying...",
+                {
+                  expected: targetIndex,
+                  actual: actualIndex,
+                  retry: autoFlipRetryRef.current,
+                }
+              );
+
+              autoFlipTargetRef.current = getExpectedFlipIndex();
+
+              attemptAutomaticFlip();
+              return;
+            }
+
+            // Do not terminate continuous reading.
+            console.warn(
+              "Automatic page flip failed after retry. Continuing speech.",
+              {
+                expected: autoFlipTargetRef.current,
+                actual: actualIndex,
+              }
+            );
+
+            autoFlipTargetRef.current = null;
+            autoFlipContinuationRef.current = null;
+            autoFlipRetryRef.current = 0;
+
+            scheduleNext(() => readPage(nextIndex), 300);
+
+          }, 2500);
+        };
+
+        attemptAutomaticFlip();
+
+
       });
     }
 
@@ -2124,12 +2263,27 @@ export default function PurchasedBookReader() {
                 const nextPage = event.data;
                 setCurrentPage(nextPage);
 
-                if (autoFlipTargetRef.current === nextPage) {
-                  autoFlipTargetRef.current = null;
+                // if (autoFlipTargetRef.current === nextPage) {
+                //   autoFlipTargetRef.current = null;
 
-                  if (speechTimeoutRef.current) {
-                    clearTimeout(speechTimeoutRef.current);
-                    speechTimeoutRef.current = null;
+                //   if (speechTimeoutRef.current) {
+                //     clearTimeout(speechTimeoutRef.current);
+                //     speechTimeoutRef.current = null;
+                //   }
+
+                //   const continuation = autoFlipContinuationRef.current;
+
+                //   if (typeof continuation === "function") {
+                //     continuation();
+                //   }
+
+                //   return;
+                // }
+
+                if (autoFlipTargetRef.current === nextPage) {
+                  if (autoFlipTimeoutRef.current) {
+                    clearTimeout(autoFlipTimeoutRef.current);
+                    autoFlipTimeoutRef.current = null;
                   }
 
                   const continuation = autoFlipContinuationRef.current;
