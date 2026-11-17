@@ -616,8 +616,20 @@ const ocrPageCache = new WeakMap();
 // let ocrWorkerPromise = null;
 const ocrWorkerPromise = new Map();
 
+// function getOCRLanguage(language) {
+//   const lang = String(language || "").toLowerCase();
+
+//   if (lang.startsWith("en")) return "eng";
+//   if (lang.startsWith("mr")) return "mar";
+//   if (lang.startsWith("hi")) return "hin";
+
+//   return "mar+hin";
+// }
+
 function getOCRLanguage(language) {
   const lang = String(language || "").toLowerCase();
+
+  if (lang === "mixed") return "eng+hin";
 
   if (lang.startsWith("en")) return "eng";
   if (lang.startsWith("mr")) return "mar";
@@ -642,12 +654,19 @@ async function getOCRWorker(language = "mr-IN") {
 
   if (!ocrWorkerPromise.has(ocrLanguage)) {
     // const workerPromise = createWorker([ocrLanguage]).catch((error) => {
-    const workerPromise = createWorker(
-      ocrLanguage === "mar+hin" ? ["mar", "hin"] : [ocrLanguage],
-    ).catch((error) => {
-      ocrWorkerPromise.delete(ocrLanguage);
-      throw error;
-    });
+    // const workerPromise = createWorker(
+    //   ocrLanguage === "mar+hin" ? ["mar", "hin"] : [ocrLanguage],
+    // ).catch((error) => {
+    //   ocrWorkerPromise.delete(ocrLanguage);
+    //   throw error;
+    // });
+
+    const workerPromise = createWorker(ocrLanguage.split("+")).catch(
+      (error) => {
+        ocrWorkerPromise.delete(ocrLanguage);
+        throw error;
+      },
+    );
 
     ocrWorkerPromise.set(ocrLanguage, workerPromise);
     console.log("OCR LANGUAGE SELECTED:", ocrLanguage);
@@ -684,9 +703,6 @@ export async function extractDocxText(docxUrl) {
   }
 }
 
-
-
-
 const bookLanguageCache = new Map();
 
 export async function detectBookOCRLanguage(docxUrl) {
@@ -698,11 +714,9 @@ export async function detectBookOCRLanguage(docxUrl) {
     const request = (async () => {
       const text = await extractDocxText(docxUrl);
 
-      const devanagariCount =
-        (text.match(/[\u0900-\u097F]/g) || []).length;
+      const devanagariCount = (text.match(/[\u0900-\u097F]/g) || []).length;
 
-      const englishCount =
-        (text.match(/[A-Za-z]/g) || []).length;
+      const englishCount = (text.match(/[A-Za-z]/g) || []).length;
 
       const detectedLanguage =
         devanagariCount >= englishCount ? "mr-IN" : "en-US";
@@ -725,13 +739,8 @@ export async function detectBookOCRLanguage(docxUrl) {
   }
 }
 
-
-
-
-
 export async function getBookText({ docxUrl, pdfDocument, pageNumber }) {
   if (docxUrl) {
-
     const text = await extractDocxText(docxUrl);
 
     return {
@@ -864,7 +873,12 @@ export async function getReadablePageText({
 
   // Admin and purchased reader: original matching logic.
   if (docxUrl) {
-    const detectedLanguage = await detectBookOCRLanguage(docxUrl);
+    // const detectedLanguage = await detectBookOCRLanguage(docxUrl);
+
+    const detectedLanguage = language === "mixed"
+    ? "mixed"
+    : await detectBookOCRLanguage(docxUrl);
+
     const result = await extractVerifiedDocxPage({
       docxUrl,
       pdfDocument,

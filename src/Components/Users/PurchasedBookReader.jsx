@@ -972,6 +972,10 @@ import pdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import "../../BookReader.css";
 import Chant from "./Chant"
 
+import {
+  prepareMixedSpeechChunks,
+} from "../../Services/MixedBookTextService";
+
 import { getReadablePageText } from "../../Services/BookTextService";
 
 
@@ -1189,6 +1193,9 @@ const PurchasedPage = forwardRef(function PurchasedPage(
 
 export default function PurchasedBookReader() {
   const { productId } = useParams();
+
+  const isMixedLanguageBook = Number(productId) === 9;
+
   const flipBookRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
@@ -1245,6 +1252,7 @@ export default function PurchasedBookReader() {
       setCurrentPage(0);
       setDocxUrl("");
       setIsChantProduct(false);
+      pagePreparationCacheRef.current.clear();
 
       try {
         const token = sessionStorage.getItem("authToken");
@@ -1379,6 +1387,7 @@ export default function PurchasedBookReader() {
         docxUrl,
         pdfDocument,
         pageNumber,
+        language: isMixedLanguageBook ? "mixed" : undefined,
 
       });
 
@@ -1665,6 +1674,7 @@ export default function PurchasedBookReader() {
       docxUrl,
       pdfDocument,
       pageNumber,
+      language: isMixedLanguageBook ? "mixed" : undefined,
 
     })
       .then((text) => {
@@ -1770,7 +1780,11 @@ export default function PurchasedBookReader() {
 
         if (!active()) return;
 
-        const chunks = prepareSpeechChunks(text);
+        // const chunks = prepareSpeechChunks(text);
+
+        const chunks = isMixedLanguageBook
+          ? prepareMixedSpeechChunks(text)
+          : prepareSpeechChunks(text);
 
         if (!chunks.length) {
           throw new Error("No verified speaking text found.");
@@ -1803,11 +1817,32 @@ export default function PurchasedBookReader() {
             }
 
             const chunk = chunks[chunkIndex];
+            // const utterance = new SpeechSynthesisUtterance(chunk.text);
+
+            // if (voice) utterance.voice = voice;
+
+            // utterance.lang = voice?.lang || "mr-IN";
+
             const utterance = new SpeechSynthesisUtterance(chunk.text);
 
-            if (voice) utterance.voice = voice;
+            if (isMixedLanguageBook) {
+              const targetVoice = speechVoices.find((item) =>
+                item.lang.toLowerCase().startsWith(
+                  chunk.language === "hi-IN" ? "hi" : "en"
+                )
+              );
 
-            utterance.lang = voice?.lang || "mr-IN";
+              if (targetVoice) {
+                utterance.voice = targetVoice;
+              }
+
+              utterance.lang = chunk.language;
+            } else {
+              if (voice) utterance.voice = voice;
+
+              utterance.lang = voice?.lang || "mr-IN";
+            }
+
             utterance.rate = speechRate;
             utterance.pitch = 1;
             utterance.volume = 1;
