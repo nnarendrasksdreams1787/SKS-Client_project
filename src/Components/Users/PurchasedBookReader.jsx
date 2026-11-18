@@ -984,6 +984,17 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 // const API_URL = "http://localhost:4000" || "https://sks-serverproject-new.onrender.com";
 const API_URL = "https://sks-serverproject-new.onrender.com";
 
+const BOOK_TTS_API_URL = "http://localhost:4000";
+
+const BOOK_TTS_VOICES = [
+  { id: "mr-IN-AarohiNeural", name: "Aarohi — Marathi Female" },
+  { id: "mr-IN-ManoharNeural", name: "Manohar — Marathi Male" },
+  { id: "hi-IN-SwaraNeural", name: "Swara — Hindi Female" },
+  { id: "hi-IN-MadhurNeural", name: "Madhur — Hindi Male" },
+  { id: "en-IN-NeerjaNeural", name: "Neerja — English Female" },
+  { id: "en-IN-PrabhatNeural", name: "Prabhat — English Male" },
+];
+
 // const PurchasedPage = forwardRef(function PurchasedPage(
 //   { pdfDocument, number, shouldRender },
 //   ref
@@ -1211,7 +1222,10 @@ export default function PurchasedBookReader() {
   const [speakingError, setSpeakingError] = useState("");
   const [speechRate, setSpeechRate] = useState(0.9);
   const [speechVoices, setSpeechVoices] = useState([]);
-  const [selectedVoice, setSelectedVoice] = useState("");
+  // const [selectedVoice, setSelectedVoice] = useState("");
+  const [selectedVoice, setSelectedVoice] = useState(
+    "mr-IN-AarohiNeural"
+  );
 
   const speechSessionRef = useRef(0);
   const speechPausedRef = useRef(false);
@@ -1234,6 +1248,12 @@ export default function PurchasedBookReader() {
   const [docxUrl, setDocxUrl] = useState("");
 
   const [isChantProduct, setIsChantProduct] = useState(false);
+
+  const ttsAudioRef = useRef(null);
+  const ttsAbortRef = useRef(null);
+  const ttsAudioUrlRef = useRef(null);
+
+  const ttsControllersRef = useRef(new Set());
 
   useEffect(() => {
     const controller = new AbortController();
@@ -1372,6 +1392,26 @@ export default function PurchasedBookReader() {
         window.speechSynthesis.cancel();
       }
 
+      ttsAbortRef.current?.abort();
+      ttsAbortRef.current = null;
+
+      for (const controller of ttsControllersRef.current) {
+        controller.abort();
+      }
+      ttsControllersRef.current.clear();
+
+      if (ttsAudioRef.current) {
+        ttsAudioRef.current.pause();
+        ttsAudioRef.current.onended = null;
+        ttsAudioRef.current.onerror = null;
+        ttsAudioRef.current = null;
+      }
+
+      if (ttsAudioUrlRef.current) {
+        URL.revokeObjectURL(ttsAudioUrlRef.current);
+        ttsAudioUrlRef.current = null;
+      }
+
       controller.abort();
       loadingTask?.destroy();
       if (objectUrl) URL.revokeObjectURL(objectUrl);
@@ -1438,6 +1478,31 @@ export default function PurchasedBookReader() {
 
   function stopSpeaking() {
     speechSessionRef.current += 1;
+
+    ttsAbortRef.current?.abort();
+    ttsAbortRef.current = null;
+
+    for (const controller of ttsControllersRef.current) {
+      controller.abort();
+    }
+    ttsControllersRef.current.clear();
+
+    if (ttsAudioRef.current) {
+      ttsAudioRef.current.pause();
+      ttsAudioRef.current.onended = null;
+      ttsAudioRef.current.onerror = null;
+      ttsAudioRef.current = null;
+    }
+
+    if (ttsAudioUrlRef.current) {
+      URL.revokeObjectURL(ttsAudioUrlRef.current);
+      ttsAudioUrlRef.current = null;
+    }
+
+
+
+
+
     autoFlipTargetRef.current = null;
     pendingSpeechContinuationRef.current = null;
     autoFlipContinuationRef.current = null;
@@ -1475,6 +1540,7 @@ export default function PurchasedBookReader() {
     speechStatusRef.current = "paused";
 
     window.speechSynthesis.pause();
+    ttsAudioRef.current?.pause();
     setSpeakingStatus("paused");
   }
 
@@ -1486,6 +1552,17 @@ export default function PurchasedBookReader() {
     speechStatusRef.current = "speaking";
 
     window.speechSynthesis.resume();
+    // if (ttsAudioRef.current?.paused) {
+    if (
+      ttsAudioRef.current?.paused &&
+      ttsAudioRef.current.currentTime > 0
+    ) {
+      ttsAudioRef.current.play().catch((error) => {
+        console.error("TTS resume failed:", error);
+        setSpeakingError("Unable to resume audio.");
+      });
+    }
+
     setSpeakingStatus("speaking");
 
     const continuation = pendingSpeechContinuationRef.current;
@@ -1744,18 +1821,131 @@ export default function PurchasedBookReader() {
       console.error("Continuous reading failed:", error);
     }
 
+    // function waitWhilePaused(next) {
+    //   if (!active()) return;
+
+    //   // if (speechPausedRef.current) {
+    //   //   pendingSpeechContinuationRef.current = next;
+    //   //   speechStatusRef.current = "paused";
+    //   //   setSpeakingStatus("paused");
+    //   //   return;
+    //   // }
+
+    //   if (speechPausedRef.current) {
+    //     pendingSpeechContinuationRef.current = () => {
+    //       if (!active()) return;
+
+    //       speechStatusRef.current = "speaking";
+    //       setSpeakingStatus("speaking");
+
+    //       audio.play().catch((error) => {
+    //         fail(error, pageIndex);
+    //       });
+    //     };
+
+    //     return;
+    //   }
+
+    //   pendingSpeechContinuationRef.current = null;
+    //   next();
+    // }
+
+
+    // async function fetchTtsAudio(text, voice) {
+    //   const token = sessionStorage.getItem("authToken");
+
+    //   if (!token) {
+    //     throw new Error("Please log in to listen to this book.");
+    //   }
+
+    //   const controller = new AbortController();
+    //   ttsAbortRef.current = controller;
+
+    //   try {
+    //     const response = await fetch(
+    //       `${BOOK_TTS_API_URL}/api/book-tts/${productId}/speak`,
+    //       {
+    //         method: "POST",
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //           Authorization: `Bearer ${token}`,
+    //         },
+    //         body: JSON.stringify({ text, voice }),
+    //         signal: controller.signal,
+    //       }
+    //     );
+
+    //     if (!response.ok) {
+    //       throw new Error(`TTS request failed: ${response.status}`);
+    //     }
+
+    //     return await response.blob();
+    //   } finally {
+    //     if (ttsAbortRef.current === controller) {
+    //       ttsAbortRef.current = null;
+    //     }
+    //   }
+    // }
+
+
     function waitWhilePaused(next) {
       if (!active()) return;
 
       if (speechPausedRef.current) {
-        pendingSpeechContinuationRef.current = next;
-        speechStatusRef.current = "paused";
-        setSpeakingStatus("paused");
+        pendingSpeechContinuationRef.current = () => {
+          if (!active()) return;
+          next();
+        };
         return;
       }
 
       pendingSpeechContinuationRef.current = null;
       next();
+    }
+
+    async function fetchTtsAudio(text, voice) {
+      const token = sessionStorage.getItem("authToken");
+
+      if (!token) {
+        throw new Error("Please log in to listen to this book.");
+      }
+
+      const controller = new AbortController();
+      ttsControllersRef.current.add(controller);
+
+      const startedAt = performance.now();
+
+      try {
+        const response = await fetch(
+          `${BOOK_TTS_API_URL}/api/book-tts/${productId}/speak`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ text, voice }),
+            signal: controller.signal,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`TTS request failed: ${response.status}`);
+        }
+
+        const blob = await response.blob();
+
+        console.log(
+          "TTS FETCH:",
+          voice,
+          Math.round(performance.now() - startedAt),
+          "ms"
+        );
+
+        return blob;
+      } finally {
+        ttsControllersRef.current.delete(controller);
+      }
     }
 
     function scheduleNext(next, delay) {
@@ -1805,6 +1995,58 @@ export default function PurchasedBookReader() {
 
         let chunkIndex = 0;
 
+
+        const prefetchedAudio = new Map();
+
+        function getChunkVoice(chunk) {
+          return isMixedLanguageBook
+            ? chunk.language === "hi-IN"
+              ? "hi-IN-SwaraNeural"
+              : "en-IN-NeerjaNeural"
+            : selectedVoice;
+        }
+
+        function getAudioForChunk(index) {
+          if (!active()) {
+            return Promise.reject(new Error("Reading stopped."));
+          }
+
+          if (index >= chunks.length) {
+            return Promise.reject(new Error("Chunk not found."));
+          }
+
+          if (prefetchedAudio.has(index)) {
+            return prefetchedAudio.get(index);
+          }
+
+          const chunk = chunks[index];
+
+          const promise = fetchTtsAudio(
+            chunk.text,
+            getChunkVoice(chunk)
+          );
+
+          prefetchedAudio.set(index, promise);
+
+          return promise;
+        }
+
+        function prefetchNextChunk(index) {
+          const nextIndex = index + 1;
+
+          if (!active() || nextIndex >= chunks.length) return;
+
+          const promise = getAudioForChunk(nextIndex);
+
+          // Attach a rejection handler immediately to avoid
+          // unhandled rejections if Stop cancels the request.
+          promise.catch((error) => {
+            if (active() && error.name !== "AbortError") {
+              console.warn("TTS prefetch failed:", error);
+            }
+          });
+        }
+
         function speakNext() {
           if (!active()) return;
 
@@ -1823,63 +2065,207 @@ export default function PurchasedBookReader() {
 
             // utterance.lang = voice?.lang || "mr-IN";
 
-            const utterance = new SpeechSynthesisUtterance(chunk.text);
+            // const utterance = new SpeechSynthesisUtterance(chunk.text);
 
-            if (isMixedLanguageBook) {
-              const targetVoice = speechVoices.find((item) =>
-                item.lang.toLowerCase().startsWith(
-                  chunk.language === "hi-IN" ? "hi" : "en"
-                )
-              );
+            // if (isMixedLanguageBook) {
+            //   const targetVoice = speechVoices.find((item) =>
+            //     item.lang.toLowerCase().startsWith(
+            //       chunk.language === "hi-IN" ? "hi" : "en"
+            //     )
+            //   );
 
-              if (targetVoice) {
-                utterance.voice = targetVoice;
+            //   if (targetVoice) {
+            //     utterance.voice = targetVoice;
+            //   }
+
+            //   utterance.lang = chunk.language;
+            // } else {
+            //   if (voice) utterance.voice = voice;
+
+            //   utterance.lang = voice?.lang || "mr-IN";
+            // }
+
+            // utterance.rate = speechRate;
+            // utterance.pitch = 1;
+            // utterance.volume = 1;
+
+            // speechUtteranceRef.current = utterance;
+
+            // utterance.onstart = () => {
+            //   if (!active()) return;
+            //   if (speechPausedRef.current) {
+            //     synth.pause();
+            //     return;
+            //   }
+            //   speechStatusRef.current = "speaking";
+            //   setSpeakingStatus("speaking");
+            // };
+
+            // utterance.onend = () => {
+            //   if (!active()) return;
+
+            //   chunkIndex += 1;
+            //   speechUtteranceRef.current = null;
+
+            //   scheduleNext(speakNext, chunk.pauseMs);
+            // };
+
+            // utterance.onerror = (event) => {
+            //   if (!active()) return;
+
+            //   if (
+            //     event.error === "canceled" ||
+            //     event.error === "interrupted"
+            //   ) return;
+
+            //   fail(new Error(`Speech failed: ${event.error}`), pageIndex);
+            // };
+
+            // synth.speak(utterance);
+
+
+
+            // const ttsVoice =
+            //   isMixedLanguageBook && chunk.language === "hi-IN"
+            //     ? "hi-IN-SwaraNeural"
+            //     : "mr-IN-AarohiNeural";
+
+            // const ttsVoice = isMixedLanguageBook
+            //   ? chunk.language === "hi-IN"
+            //     ? "hi-IN-SwaraNeural"
+            //     : "en-IN-NeerjaNeural"
+            //   : selectedVoice;
+
+            // (async () => {
+            //   try {
+            //     const audioBlob = await fetchTtsAudio(chunk.text, ttsVoice);
+
+            //     if (!active()) return;
+
+            //     const audioUrl = URL.createObjectURL(audioBlob);
+            //     ttsAudioUrlRef.current = audioUrl;
+
+            //     const audio = new Audio(audioUrl);
+            //     ttsAudioRef.current = audio;
+
+            //     audio.playbackRate = speechRate;
+
+            //     audio.onended = () => {
+            //       if (!active()) return;
+
+            //       URL.revokeObjectURL(audioUrl);
+            //       ttsAudioUrlRef.current = null;
+            //       ttsAudioRef.current = null;
+
+            //       chunkIndex += 1;
+            //       scheduleNext(speakNext, chunk.pauseMs);
+            //     };
+
+            //     audio.onerror = () => {
+            //       if (!active()) return;
+            //       fail(new Error("MP3 playback failed."), pageIndex);
+            //     };
+
+            //     if (speechPausedRef.current) {
+            //       pendingSpeechContinuationRef.current = () => {
+            //         if (!active()) return;
+            //         speechStatusRef.current = "speaking";
+            //         setSpeakingStatus("speaking");
+            //         audio.play().catch((error) => fail(error, pageIndex));
+            //       };
+            //       return;
+            //     }
+
+            //     await audio.play();
+
+            //     if (!active()) return;
+
+            //     speechStatusRef.current = "speaking";
+            //     setSpeakingStatus("speaking");
+            //   } catch (error) {
+            //     if (!active()) return;
+            //     fail(error, pageIndex);
+            //   }
+            // })();
+
+            (async () => {
+              const playingIndex = chunkIndex;
+
+              try {
+                const audioBlob = await getAudioForChunk(playingIndex);
+
+                if (!active()) return;
+
+                prefetchedAudio.delete(playingIndex);
+
+                const audioUrl = URL.createObjectURL(audioBlob);
+                ttsAudioUrlRef.current = audioUrl;
+
+                const audio = new Audio(audioUrl);
+                ttsAudioRef.current = audio;
+                audio.playbackRate = speechRate;
+
+                let started = false;
+
+                const playCurrentAudio = async () => {
+                  if (!active() || started || speechPausedRef.current) return;
+
+                  started = true;
+
+                  try {
+                    await audio.play();
+
+                    if (!active()) return;
+
+                    speechStatusRef.current = "speaking";
+                    setSpeakingStatus("speaking");
+
+                    // Generate next chunk while this one plays.
+                    prefetchNextChunk(playingIndex);
+                  } catch (error) {
+                    if (active()) fail(error, pageIndex);
+                  }
+                };
+
+                audio.onended = () => {
+                  if (!active()) return;
+
+                  audio.onended = null;
+                  audio.onerror = null;
+
+                  URL.revokeObjectURL(audioUrl);
+
+                  if (ttsAudioUrlRef.current === audioUrl) {
+                    ttsAudioUrlRef.current = null;
+                  }
+
+                  if (ttsAudioRef.current === audio) {
+                    ttsAudioRef.current = null;
+                  }
+
+                  chunkIndex = playingIndex + 1;
+
+                  // No artificial delay for ordinary chunk boundaries.
+                  // Natural punctuation pauses remain inside generated MP3.
+                  scheduleNext(speakNext, 0);
+                };
+
+                audio.onerror = () => {
+                  if (!active()) return;
+                  fail(new Error("MP3 playback failed."), pageIndex);
+                };
+
+                if (speechPausedRef.current) {
+                  pendingSpeechContinuationRef.current = playCurrentAudio;
+                  return;
+                }
+
+                await playCurrentAudio();
+              } catch (error) {
+                if (!active()) return;
+                fail(error, pageIndex);
               }
-
-              utterance.lang = chunk.language;
-            } else {
-              if (voice) utterance.voice = voice;
-
-              utterance.lang = voice?.lang || "mr-IN";
-            }
-
-            utterance.rate = speechRate;
-            utterance.pitch = 1;
-            utterance.volume = 1;
-
-            speechUtteranceRef.current = utterance;
-
-            utterance.onstart = () => {
-              if (!active()) return;
-              if (speechPausedRef.current) {
-                synth.pause();
-                return;
-              }
-              speechStatusRef.current = "speaking";
-              setSpeakingStatus("speaking");
-            };
-
-            utterance.onend = () => {
-              if (!active()) return;
-
-              chunkIndex += 1;
-              speechUtteranceRef.current = null;
-
-              scheduleNext(speakNext, chunk.pauseMs);
-            };
-
-            utterance.onerror = (event) => {
-              if (!active()) return;
-
-              if (
-                event.error === "canceled" ||
-                event.error === "interrupted"
-              ) return;
-
-              fail(new Error(`Speech failed: ${event.error}`), pageIndex);
-            };
-
-            synth.speak(utterance);
+            })();
           });
         }
 
@@ -2239,9 +2625,15 @@ export default function PurchasedBookReader() {
             }}
             style={{ maxWidth: 220, padding: 8 }}
           >
-            {speechVoices.map((voice) => (
+            {/* {speechVoices.map((voice) => (
               <option key={voice.voiceURI} value={voice.voiceURI}>
                 {voice.name} ({voice.lang})
+              </option>
+            ))} */}
+
+            {BOOK_TTS_VOICES.map((voice) => (
+              <option key={voice.id} value={voice.id}>
+                {voice.name}
               </option>
             ))}
           </select>
@@ -2257,7 +2649,12 @@ export default function PurchasedBookReader() {
             <option value={0.75}>0.75x</option>
             <option value={0.9}>0.9x</option>
             <option value={1}>1x</option>
-            <option value={1.15}>1.15x</option>
+            {/* <option value={1.15}>1.15x</option> */}
+            <option value={1.25}>1.25x</option>
+            <option value={1.50}>1.50x</option>
+            <option value={1.75}>1.75x</option>
+            <option value={2}>2x</option>
+
           </select>
         </div>
 
