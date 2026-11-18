@@ -1786,6 +1786,84 @@ export default function PurchasedBookReader() {
 
 
 
+  async function analyzeTtsSilence(blob, chunkNumber) {
+    let audioContext;
+
+    try {
+      audioContext = new (
+        window.AudioContext || window.webkitAudioContext
+      )();
+
+      const buffer = await blob.arrayBuffer();
+      const decoded = await audioContext.decodeAudioData(buffer);
+
+      const sampleRate = decoded.sampleRate;
+      const channels = Array.from(
+        { length: decoded.numberOfChannels },
+        (_, index) => decoded.getChannelData(index)
+      );
+
+      // Diagnostic threshold only. Does not modify audio.
+      const threshold = 0.003;
+      const frameSize = Math.max(1, Math.round(sampleRate * 0.01));
+      const totalFrames = Math.ceil(decoded.length / frameSize);
+
+      function frameHasSound(frameIndex) {
+        const start = frameIndex * frameSize;
+        const end = Math.min(start + frameSize, decoded.length);
+
+        for (const channel of channels) {
+          for (let i = start; i < end; i++) {
+            if (Math.abs(channel[i]) > threshold) {
+              return true;
+            }
+          }
+        }
+
+        return false;
+      }
+
+      let firstSoundFrame = 0;
+
+      while (
+        firstSoundFrame < totalFrames &&
+        !frameHasSound(firstSoundFrame)
+      ) {
+        firstSoundFrame++;
+      }
+
+      let lastSoundFrame = totalFrames - 1;
+
+      while (
+        lastSoundFrame >= firstSoundFrame &&
+        !frameHasSound(lastSoundFrame)
+      ) {
+        lastSoundFrame--;
+      }
+
+      const leadingMs = firstSoundFrame * 10;
+      const trailingMs =
+        (totalFrames - 1 - lastSoundFrame) * 10;
+
+      console.log("TTS SILENCE ANALYSIS:", {
+        chunk: chunkNumber,
+        durationMs: Math.round(decoded.duration * 1000),
+        leadingSilenceMs: leadingMs,
+        trailingSilenceMs: trailingMs,
+        threshold
+      });
+
+    } catch (error) {
+      console.warn("TTS silence analysis failed:", error);
+    } finally {
+      if (audioContext) {
+        await audioContext.close().catch(() => { });
+      }
+    }
+  }
+
+
+
 
   async function startSpeaking() {
     if (!("speechSynthesis" in window)) {
@@ -2021,10 +2099,28 @@ export default function PurchasedBookReader() {
 
           const chunk = chunks[index];
 
+
+
+          // const promise = fetchTtsAudio(
+          //   chunk.text,
+          //   getChunkVoice(chunk)
+          // );
+
+          const startedAt = performance.now();
+
           const promise = fetchTtsAudio(
             chunk.text,
             getChunkVoice(chunk)
-          );
+          ).then((blob) => {
+            void analyzeTtsSilence(blob, index + 1);
+            console.log("PREFETCH READY:", {
+
+              chunk: index + 1,
+              durationMs: Math.round(performance.now() - startedAt),
+            });
+
+            return blob;
+          });
 
           prefetchedAudio.set(index, promise);
 
@@ -2205,6 +2301,28 @@ export default function PurchasedBookReader() {
                 ttsAudioRef.current = audio;
                 audio.playbackRate = speechRate;
 
+                // First-pass conservative boundary silence settings.
+                // These values are in seconds of audio timeline.
+                const LEADING_TRIM_SECONDS = 0.12;
+                const TRAILING_TRIM_SECONDS = 0.65;
+
+                // Skip only part of the measured leading quiet region.
+                audio.addEventListener(
+                  "loadedmetadata",
+                  () => {
+                    if (!active()) return;
+
+                    if (
+                      Number.isFinite(audio.duration) &&
+                      audio.duration > LEADING_TRIM_SECONDS + 0.5
+                    ) {
+                      audio.currentTime = LEADING_TRIM_SECONDS;
+                    }
+                  },
+                  { once: true }
+                );
+
+
                 let started = false;
 
                 const playCurrentAudio = async () => {
@@ -2217,6 +2335,20 @@ export default function PurchasedBookReader() {
 
                     if (!active()) return;
 
+                    const gapStart = window.__lastTtsChunkEnd;
+
+                    if (typeof gapStart === "number") {
+                      console.log(
+                        "AUDIO TRANSITION GAP:",
+                        Math.round(performance.now() - gapStart),
+                        "ms",
+                        "chunk:",
+                        playingIndex + 1
+                      );
+                    }
+
+                    window.__lastTtsChunkEnd = null;
+
                     speechStatusRef.current = "speaking";
                     setSpeakingStatus("speaking");
 
@@ -2227,11 +2359,67 @@ export default function PurchasedBookReader() {
                   }
                 };
 
-                audio.onended = () => {
-                  if (!active()) return;
+                // audio.onended = () => {
+                //   if (!active()) return;
+
+                //   const endedAt = performance.now();
+
+                //   console.log("AUDIO CHUNK ENDED:", {
+                //     page: pageIndex + 1,
+                //     chunk: playingIndex + 1,
+                //     time: Math.round(endedAt),
+                //   });
+
+                //   window.__lastTtsChunkEnd = endedAt;
+
+                //   audio.onended = null;
+                //   audio.onerror = null;
+
+                //   URL.revokeObjectURL(audioUrl);
+
+                //   if (ttsAudioUrlRef.current === audioUrl) {
+                //     ttsAudioUrlRef.current = null;
+                //   }
+
+                //   if (ttsAudioRef.current === audio) {
+                //     ttsAudioRef.current = null;
+                //   }
+
+                //   chunkIndex = playingIndex + 1;
+
+                //   // No artificial delay for ordinary chunk boundaries.
+                //   // Natural punctuation pauses remain inside generated MP3.
+                //   scheduleNext(speakNext, 0);
+                // };
+
+
+                let chunkFinished = false;
+
+                const finishCurrentChunk = () => {
+                  if (!active() || chunkFinished) return;
+
+                  chunkFinished = true;
+
+                  const endedAt = performance.now();
+
+                  console.log("AUDIO CHUNK ENDED:", {
+                    page: pageIndex + 1,
+                    chunk: playingIndex + 1,
+                    time: Math.round(endedAt),
+                    earlyTrimmed: audio.currentTime < audio.duration,
+                  });
+
+                  window.__lastTtsChunkEnd = endedAt;
 
                   audio.onended = null;
                   audio.onerror = null;
+                  audio.ontimeupdate = null;
+
+                  audio.pause();
+
+                  // Release media resources after playback.
+                  audio.removeAttribute("src");
+                  audio.load();
 
                   URL.revokeObjectURL(audioUrl);
 
@@ -2245,10 +2433,28 @@ export default function PurchasedBookReader() {
 
                   chunkIndex = playingIndex + 1;
 
-                  // No artificial delay for ordinary chunk boundaries.
-                  // Natural punctuation pauses remain inside generated MP3.
+                  // Keep existing pause-aware continuation mechanism.
                   scheduleNext(speakNext, 0);
                 };
+
+                audio.onended = finishCurrentChunk;
+
+                // timeupdate fires periodically, not sample-accurately.
+                // This is a conservative first-pass optimization.
+                audio.ontimeupdate = () => {
+                  if (!active() || chunkFinished || speechPausedRef.current) {
+                    return;
+                  }
+
+                  if (
+                    Number.isFinite(audio.duration) &&
+                    audio.duration > TRAILING_TRIM_SECONDS + 0.5 &&
+                    audio.currentTime >= audio.duration - TRAILING_TRIM_SECONDS
+                  ) {
+                    finishCurrentChunk();
+                  }
+                };
+
 
                 audio.onerror = () => {
                   if (!active()) return;

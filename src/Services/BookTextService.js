@@ -875,9 +875,8 @@ export async function getReadablePageText({
   if (docxUrl) {
     // const detectedLanguage = await detectBookOCRLanguage(docxUrl);
 
-    const detectedLanguage = language === "mixed"
-    ? "mixed"
-    : await detectBookOCRLanguage(docxUrl);
+    const detectedLanguage =
+      language === "mixed" ? "mixed" : await detectBookOCRLanguage(docxUrl);
 
     const result = await extractVerifiedDocxPage({
       docxUrl,
@@ -1097,13 +1096,34 @@ export async function testDocxPageMatch({
 
   console.time(`OCR PAGE ${pageNumber}`);
   // const ocrText = await testPageOCR(pdfDocument, pageNumber);
-  const ocrText = await testPageOCR(pdfDocument, pageNumber, language);
-  // const ocrText = await testPageOCR(pdfDocument, pageNumber, language, "mr-IN");
-  console.timeEnd(`OCR PAGE ${pageNumber}`);
+  // const ocrText = await testPageOCR(pdfDocument, pageNumber, language);
+  // // const ocrText = await testPageOCR(pdfDocument, pageNumber, language, "mr-IN");
+  // console.timeEnd(`OCR PAGE ${pageNumber}`);
 
-  console.time(`DOCX PAGE ${pageNumber}`);
-  const docxText = await extractDocxText(docxUrl);
-  console.timeEnd(`DOCX PAGE ${pageNumber}`);
+  // console.time(`DOCX PAGE ${pageNumber}`);
+  // const docxText = await extractDocxText(docxUrl);
+
+  const ocrStart = performance.now();
+  const docxStart = performance.now();
+
+  const [ocrText, docxText] = await Promise.all([
+    testPageOCR(pdfDocument, pageNumber, language),
+    extractDocxText(docxUrl),
+  ]);
+
+  console.log(
+    `OCR PAGE ${pageNumber}:`,
+    Math.round(performance.now() - ocrStart),
+    "ms",
+  );
+
+  console.log(
+    `OCR + DOCX READY ${pageNumber}:`,
+    Math.round(performance.now() - docxStart),
+    "ms",
+  );
+
+  // console.timeEnd(`DOCX PAGE ${pageNumber}`);
 
   console.log(
     `TOTAL PREPARATION PAGE ${pageNumber}:`,
@@ -1118,23 +1138,59 @@ export async function testDocxPageMatch({
 
   const paragraphs = getTextParagraphs(docxText);
 
+  const normalizedParagraphs = paragraphs.map(normalizeForMatching);
+
+  // const matches = [];
+
+  // for (const ocrLine of ocrLines) {
+  //   const normalizedOCR = normalizeForMatching(ocrLine);
+
+  //   for (let i = 0; i < paragraphs.length; i++) {
+  //     // const normalizedDOCX = normalizeForMatching(paragraphs[i]);
+  //     const normalizedDOCX = normalizedParagraphs[i];
+
+  //     if (normalizedDOCX.includes(normalizedOCR)) {
+  //       matches.push({
+  //         ocrLine,
+  //         paragraphIndex: i,
+  //         docxParagraph: paragraphs[i],
+  //       });
+
+  //       break;
+  //     }
+  //   }
+  // }
+
   const matches = [];
+
+  let lastParagraphIndex = 0;
+  let lastCharacterPosition = 0;
 
   for (const ocrLine of ocrLines) {
     const normalizedOCR = normalizeForMatching(ocrLine);
 
-    for (let i = 0; i < paragraphs.length; i++) {
-      const normalizedDOCX = normalizeForMatching(paragraphs[i]);
+    if (!normalizedOCR) continue;
 
-      if (normalizedDOCX.includes(normalizedOCR)) {
-        matches.push({
-          ocrLine,
-          paragraphIndex: i,
-          docxParagraph: paragraphs[i],
-        });
+    for (let i = lastParagraphIndex; i < normalizedParagraphs.length; i++) {
+      const normalizedDOCX = normalizedParagraphs[i];
 
-        break;
-      }
+      const searchStart = i === lastParagraphIndex ? lastCharacterPosition : 0;
+
+      const matchPosition = normalizedDOCX.indexOf(normalizedOCR, searchStart);
+
+      if (matchPosition === -1) continue;
+
+      matches.push({
+        ocrLine,
+        paragraphIndex: i,
+        docxParagraph: paragraphs[i],
+        matchPosition,
+      });
+
+      lastParagraphIndex = i;
+      lastCharacterPosition = matchPosition + normalizedOCR.length;
+
+      break;
     }
   }
 
@@ -1291,6 +1347,21 @@ export async function extractVerifiedDocxPage({
       const paragraphs = getTextParagraphs(docxText);
 
       const indexes = matches.map((match) => match.paragraphIndex);
+
+      console.log("DOCX MATCH SEQUENCE:", {
+        pageNumber,
+        indexes,
+        backwardMatches: indexes
+          .map((index, i) => ({
+            previous: indexes[i - 1],
+            current: index,
+            ocrLine: matches[i]?.ocrLine,
+          }))
+          .filter(
+            (item) =>
+              item.previous !== undefined && item.current < item.previous,
+          ),
+      });
 
       // Matches should progress forward through the DOCX.
       for (let i = 1; i < indexes.length; i++) {
