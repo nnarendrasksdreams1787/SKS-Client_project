@@ -866,6 +866,8 @@ export async function getReadablePageText({
   previewTextUrl,
   // language = "mr-IN",
   language,
+
+  strictBoundaryRecovery = false,
 }) {
   if (!pdfDocument || !pageNumber) {
     throw new Error("PDF document and page number are required.");
@@ -883,6 +885,8 @@ export async function getReadablePageText({
       pdfDocument,
       pageNumber,
       language: detectedLanguage,
+
+      strictBoundaryRecovery,
     });
 
     if (!result.text?.trim()) {
@@ -1075,6 +1079,50 @@ function normalizeForMatching(text) {
   );
 }
 
+function isOCRSupportedParagraph(paragraph, ocrLines, language) {
+  const normalizedParagraph = normalizeForMatching(paragraph);
+
+  if (normalizedParagraph.length < 12) return false;
+
+  const paragraphPairs = new Set();
+
+  for (let i = 0; i < normalizedParagraph.length - 1; i++) {
+    paragraphPairs.add(normalizedParagraph.slice(i, i + 2));
+  }
+
+  return ocrLines.some((line) => {
+    const normalizedLine = normalizeForMatching(line);
+
+    if (normalizedLine.length < 12) return false;
+
+    // Exact substring is the strongest evidence.
+    if (
+      normalizedParagraph.includes(normalizedLine) ||
+      normalizedLine.includes(normalizedParagraph)
+    ) {
+      return true;
+    }
+
+    // Allow small OCR spelling errors in Devanagari.
+    const linePairs = new Set();
+
+    for (let i = 0; i < normalizedLine.length - 1; i++) {
+      linePairs.add(normalizedLine.slice(i, i + 2));
+    }
+
+    let common = 0;
+
+    for (const pair of paragraphPairs) {
+      if (linePairs.has(pair)) common++;
+    }
+
+    const similarity = (2 * common) / (paragraphPairs.size + linePairs.size);
+
+    // return similarity >= 0.75;
+    return similarity >= (language === "mixed" ? 0.55 : 0.75);
+  });
+}
+
 function getTextParagraphs(text) {
   return text
     .split(/\n+/)
@@ -1131,10 +1179,19 @@ export async function testDocxPageMatch({
     "seconds",
   );
 
-  const ocrLines = ocrText
+  // const ocrLines = ocrText
+  //   .split("\n")
+  //   .map((line) => line.trim())
+  //   .filter((line) => normalizeForMatching(line).length > 25);
+
+  const ocrTextLines = ocrText
     .split("\n")
     .map((line) => line.trim())
-    .filter((line) => normalizeForMatching(line).length > 25);
+    .filter(Boolean);
+
+  const ocrLines = ocrTextLines.filter(
+    (line) => normalizeForMatching(line).length > 25,
+  );
 
   const paragraphs = getTextParagraphs(docxText);
 
@@ -1199,9 +1256,17 @@ export async function testDocxPageMatch({
   console.log("EXACT MATCHES:", matches.length);
   console.log("MATCH DETAILS:", matches);
 
+  // return {
+  //   pageNumber,
+  //   ocrLines: ocrLines.length,
+  //   exactMatches: matches.length,
+  //   matches,
+  // };
+
   return {
     pageNumber,
     ocrLines: ocrLines.length,
+    ocrTextLines,
     exactMatches: matches.length,
     matches,
   };
@@ -1285,6 +1350,8 @@ export async function extractVerifiedDocxPage({
   pdfDocument,
   pageNumber,
   language,
+
+  strictBoundaryRecovery = false,
 }) {
   if (!docxUrl || !pdfDocument || !pageNumber) {
     throw new Error("PDF, DOCX and page number are required.");
@@ -1298,7 +1365,8 @@ export async function extractVerifiedDocxPage({
   }
 
   // const cacheKey = `${docxUrl}:${pageNumber}`;
-  const cacheKey = `${docxUrl}:${pageNumber}:${getOCRLanguage(language)}`;
+  // const cacheKey = `${docxUrl}:${pageNumber}:${getOCRLanguage(language)}`;
+  const cacheKey = `${docxUrl}:${pageNumber}:${getOCRLanguage(language)}:${strictBoundaryRecovery}`;
   if (!documentCache.has(cacheKey)) {
     const request = (async () => {
       const matchResult = await testDocxPageMatch({
@@ -1373,8 +1441,77 @@ export async function extractVerifiedDocxPage({
       const firstMatch = matches[0];
       const lastMatch = matches[matches.length - 1];
 
-      const firstIndex = firstMatch.paragraphIndex;
+      // const firstIndex = firstMatch.paragraphIndex;
+      // const lastIndex = lastMatch.paragraphIndex;
+
+      let firstIndex = firstMatch.paragraphIndex;
       const lastIndex = lastMatch.paragraphIndex;
+
+      if ([14, 15, 31].includes(pageNumber)) {
+        console.log("MISSING TEXT DEBUG:", {
+          pageNumber,
+          firstMatchedLine: firstMatch.ocrLine,
+          firstMatchedParagraph: paragraphs[firstMatch.paragraphIndex],
+          previousParagraphs: paragraphs.slice(
+            Math.max(0, firstMatch.paragraphIndex - 4),
+            firstMatch.paragraphIndex,
+          ),
+          firstMatchPosition: firstMatch.matchPosition,
+          firstOCRLines: matchResult.ocrTextLines?.slice(0, 8),
+        });
+      }
+
+      if (strictBoundaryRecovery) {
+        firstIndex = Math.max(0, firstIndex - 2);
+      }
+
+      let includeStartingParagraph = false;
+
+      const firstMatchedOCRIndex = matchResult.ocrTextLines.findIndex(
+        (line) =>
+          normalizeForMatching(line) ===
+          normalizeForMatching(firstMatch.ocrLine),
+      );
+
+      const precedingOCRLines =
+        firstMatchedOCRIndex > 0
+          ? matchResult.ocrTextLines.slice(0, firstMatchedOCRIndex)
+          : [];
+
+      // if (precedingOCRLines.length > 0) {
+      if (!strictBoundaryRecovery && precedingOCRLines.length > 0) {
+        // First check for text before the match in the same paragraph.
+        const firstParagraph = paragraphs[firstIndex];
+        const normalizedFirst = normalizeWithPositions(firstParagraph);
+
+        const matchStart = normalizedFirst.normalized.indexOf(
+          normalizeForMatching(firstMatch.ocrLine),
+        );
+
+        if (matchStart > 0) {
+          const prefix = firstParagraph.slice(
+            0,
+            normalizedFirst.positions[matchStart],
+          );
+
+          if (isOCRSupportedParagraph(prefix, precedingOCRLines, language)) {
+            includeStartingParagraph = true;
+          }
+        }
+
+        // Check up to two preceding DOCX paragraphs.
+        // Stop immediately when OCR cannot verify a paragraph.
+        for (let i = firstIndex - 1; i >= Math.max(0, firstIndex - 2); i--) {
+          if (
+            !isOCRSupportedParagraph(paragraphs[i], precedingOCRLines, language)
+          ) {
+            break;
+          }
+
+          firstIndex = i;
+          includeStartingParagraph = true;
+        }
+      }
 
       const selectedParagraphs = paragraphs.slice(firstIndex, lastIndex + 1);
 
@@ -1397,13 +1534,105 @@ export async function extractVerifiedDocxPage({
         throw new Error("Unable to identify clean page boundaries.");
       }
 
-      const originalStart = mapped.positions[startPosition];
+      // const originalStart = mapped.positions[startPosition];
+
+      // const originalStart = includeStartingParagraph
+      //   ? 0
+      //   : mapped.positions[startPosition];
+
+      // const originalStart =
+      //   includeStartingParagraph && firstIndex === firstMatch.paragraphIndex
+      //     ? 0
+      //     : mapped.positions[startPosition];
+
+      let originalStart =
+        includeStartingParagraph && firstIndex === firstMatch.paragraphIndex
+          ? 0
+          : mapped.positions[startPosition];
+
+      if (strictBoundaryRecovery && precedingOCRLines.length > 0) {
+        const candidates = precedingOCRLines
+          .map((line) => normalizeForMatching(line))
+          .filter((line) => line.length >= 28);
+
+        let earliestVerifiedPosition = startPosition;
+
+        for (const line of candidates) {
+          const firstAnchor = line.slice(0, 12);
+          const lastAnchor = line.slice(-12);
+
+          const searchFrom = Math.max(0, startPosition - 700);
+          const firstPos = mapped.normalized.indexOf(firstAnchor, searchFrom);
+
+          if (firstPos < 0 || firstPos >= startPosition) continue;
+
+          const lastPos = mapped.normalized.indexOf(
+            lastAnchor,
+            firstPos + firstAnchor.length,
+          );
+
+          if (
+            lastPos < 0 ||
+            lastPos >= startPosition ||
+            lastPos - firstPos > line.length * 1.5
+          ) {
+            continue;
+          }
+
+          earliestVerifiedPosition = Math.min(
+            earliestVerifiedPosition,
+            firstPos,
+          );
+        }
+
+        originalStart = mapped.positions[earliestVerifiedPosition];
+
+        console.log(
+          "STRICT START CANDIDATES FULL:",
+          JSON.stringify(
+            {
+              pageNumber,
+              precedingOCRLines,
+              selectedParagraphs: selectedParagraphs.slice(0, 4),
+              firstMatchIndex: firstMatch.paragraphIndex,
+              selectedFirstIndex: firstIndex,
+              firstMatchPosition: firstMatch.matchPosition,
+            },
+            null,
+            2,
+          ),
+        );
+
+        console.log("STRICT BOUNDARY RECOVERY:", {
+          pageNumber,
+          recovered: earliestVerifiedPosition < startPosition,
+          firstMatchedOCR: firstMatch.ocrLine,
+          recoveredStart: combinedText.slice(
+            originalStart,
+            originalStart + 180,
+          ),
+        });
+      }
 
       const endCharacterIndex = endPosition + normalizedEnd.length - 1;
 
       const originalEnd = mapped.positions[endCharacterIndex] + 1;
 
       const cleanText = combinedText.slice(originalStart, originalEnd).trim();
+
+      if ([10, 11, 12].includes(pageNumber)) {
+        console.log("MARATHI PAGE BOUNDARY DEBUG:", {
+          pageNumber,
+          firstMatchedOCR: firstMatch.ocrLine,
+          firstMatchedParagraph: paragraphs[firstMatch.paragraphIndex],
+          firstMatchIndex: firstMatch.paragraphIndex,
+          selectedFirstIndex: firstIndex,
+          includeStartingParagraph,
+          startPosition,
+          originalStart,
+          extractedStart: cleanText.slice(0, 250),
+        });
+      }
 
       if (!cleanText) {
         throw new Error("Clean page text is empty.");

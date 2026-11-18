@@ -1203,9 +1203,13 @@ const PurchasedPage = forwardRef(function PurchasedPage(
 
 
 export default function PurchasedBookReader() {
+
+
+
   const { productId } = useParams();
 
   const isMixedLanguageBook = Number(productId) === 9;
+  const useStrictBoundaryRecovery = Number(productId) === 29;
 
   const flipBookRef = useRef(null);
 
@@ -1214,9 +1218,31 @@ export default function PurchasedBookReader() {
   const [bookTitle, setBookTitle] = useState("");
   const [pdfDocument, setPdfDocument] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [zoom, setZoom] = useState(100);
+  // const [currentPage, setCurrentPage] = useState(0);
 
+  const userId = (() => {
+    try {
+      return JSON.parse(sessionStorage.getItem("user") || "null")?.id;
+    } catch {
+      return null;
+    }
+  })();
+
+  const progressKey = userId
+    ? `sks_reading_progress_${userId}_${productId}`
+    : null;
+
+  const getSavedPage = () => {
+    if (!progressKey) return 0;
+
+    const saved = Number(localStorage.getItem(progressKey));
+
+    return Number.isSafeInteger(saved) && saved >= 0 ? saved : 0;
+  };
+
+
+  const [currentPage, setCurrentPage] = useState(getSavedPage);
+  const [zoom, setZoom] = useState(100);
 
   const [speakingStatus, setSpeakingStatus] = useState("idle");
   const [speakingError, setSpeakingError] = useState("");
@@ -1264,12 +1290,15 @@ export default function PurchasedBookReader() {
     async function loadPurchasedBook() {
       pagePreparationCacheRef.current.clear();
 
+
+
       setLoading(true);
       setError("");
       setBookTitle("");
       setPdfDocument(null);
       setTotalPages(0);
-      setCurrentPage(0);
+      // setCurrentPage(0);
+      setCurrentPage(getSavedPage());
       setDocxUrl("");
       setIsChantProduct(false);
       pagePreparationCacheRef.current.clear();
@@ -1333,8 +1362,15 @@ export default function PurchasedBookReader() {
 
         if (controller.signal.aborted) return;
 
-        setPdfDocument(pdf);
+
+        // setPdfDocument(pdf);
+        // setTotalPages(pdf.numPages);
+
+        const restoredPage = Math.min(getSavedPage(), pdf.numPages - 1);
+
+        setCurrentPage(restoredPage);
         setTotalPages(pdf.numPages);
+        setPdfDocument(pdf);
 
         const docxResponse = await axios.get(
           `${API_URL}/api/library/${productId}/docx`,
@@ -1428,6 +1464,7 @@ export default function PurchasedBookReader() {
         pdfDocument,
         pageNumber,
         language: isMixedLanguageBook ? "mixed" : undefined,
+        strictBoundaryRecovery: useStrictBoundaryRecovery,
 
       });
 
@@ -1752,6 +1789,7 @@ export default function PurchasedBookReader() {
       pdfDocument,
       pageNumber,
       language: isMixedLanguageBook ? "mixed" : undefined,
+      strictBoundaryRecovery: useStrictBoundaryRecovery,
 
     })
       .then((text) => {
@@ -2881,6 +2919,8 @@ export default function PurchasedBookReader() {
           <section className="book-stage">
             <HTMLFlipBook
               key={productId}
+
+              startPage={Math.min(currentPage, Math.max(0, totalPages - 1))}
               ref={flipBookRef}
               width={380}
               height={520}
@@ -2900,6 +2940,10 @@ export default function PurchasedBookReader() {
               onFlip={(event) => {
                 const nextPage = event.data;
                 setCurrentPage(nextPage);
+
+                if (progressKey && Number.isInteger(nextPage)) {
+                  localStorage.setItem(progressKey, String(nextPage));
+                }
 
                 // if (autoFlipTargetRef.current === nextPage) {
                 //   autoFlipTargetRef.current = null;
