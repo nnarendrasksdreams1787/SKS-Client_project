@@ -1210,6 +1210,7 @@ export default function PurchasedBookReader() {
 
   const isMixedLanguageBook = Number(productId) === 9;
   const useStrictBoundaryRecovery = Number(productId) === 29;
+  const useHanumanShortLineMatching = Number(productId) === 31;
 
   const flipBookRef = useRef(null);
 
@@ -1465,6 +1466,8 @@ export default function PurchasedBookReader() {
         pageNumber,
         language: isMixedLanguageBook ? "mixed" : undefined,
         strictBoundaryRecovery: useStrictBoundaryRecovery,
+
+        hanumanShortLineMatching: useHanumanShortLineMatching,
 
       });
 
@@ -1790,6 +1793,7 @@ export default function PurchasedBookReader() {
       pageNumber,
       language: isMixedLanguageBook ? "mixed" : undefined,
       strictBoundaryRecovery: useStrictBoundaryRecovery,
+       hanumanShortLineMatching: useHanumanShortLineMatching,
 
     })
       .then((text) => {

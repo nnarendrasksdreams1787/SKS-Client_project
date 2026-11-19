@@ -868,6 +868,7 @@ export async function getReadablePageText({
   language,
 
   strictBoundaryRecovery = false,
+  hanumanShortLineMatching = false,
 }) {
   if (!pdfDocument || !pageNumber) {
     throw new Error("PDF document and page number are required.");
@@ -887,6 +888,7 @@ export async function getReadablePageText({
       language: detectedLanguage,
 
       strictBoundaryRecovery,
+      hanumanShortLineMatching,
     });
 
     if (!result.text?.trim()) {
@@ -1164,6 +1166,7 @@ export async function testDocxPageMatch({
   pdfDocument,
   pageNumber,
   language = "mr-IN",
+  hanumanShortLineMatching = false,
 }) {
   if (!docxUrl || !pdfDocument || !pageNumber) {
     throw new Error("DOCX URL, PDF document and page number are required.");
@@ -1218,13 +1221,51 @@ export async function testDocxPageMatch({
     .map((line) => line.trim())
     .filter(Boolean);
 
-  const ocrLines = ocrTextLines.filter(
-    (line) => normalizeForMatching(line).length > 25,
-  );
+  // const ocrLines = ocrTextLines.filter(
+  //   (line) => normalizeForMatching(line).length > 25,
+  // );
+
+  console.log("HANUMAN MATCHING FLAG:", hanumanShortLineMatching);
+  const ocrLines = ocrTextLines.filter((line) => {
+    const length = normalizeForMatching(line).length;
+
+    return hanumanShortLineMatching ? length >= 12 : length > 25;
+  });
 
   const paragraphs = getTextParagraphs(docxText);
 
+  console.log(
+    "HANUMAN DOCX SAMPLE:",
+    paragraphs
+      .filter(
+        (p) =>
+          p.includes("जय हनुमान") ||
+          p.includes("जय कपीस") ||
+          p.includes("राम दूत") ||
+          p.includes("अंजनि"),
+      )
+      .slice(0, 12),
+  );
+
   const normalizedParagraphs = paragraphs.map(normalizeForMatching);
+
+  if (hanumanShortLineMatching && pageNumber === 7) {
+    const targetParagraphs = paragraphs.slice(21, 26);
+
+    console.log(
+      "HANUMAN PAGE 7 LINE SIMILARITY:",
+      ocrLines.map((ocrLine) => ({
+        ocrLine,
+        candidates: targetParagraphs.map((paragraph, index) => ({
+          paragraphIndex: index + 21,
+          similarity: Number(
+            getBoundarySimilarity(ocrLine, paragraph).toFixed(3),
+          ),
+          paragraph,
+        })),
+      })),
+    );
+  }
 
   // const matches = [];
 
@@ -1284,6 +1325,38 @@ export async function testDocxPageMatch({
   console.log("OCR LINES:", ocrLines.length);
   console.log("EXACT MATCHES:", matches.length);
   console.log("MATCH DETAILS:", matches);
+
+  if (hanumanShortLineMatching && pageNumber === 7) {
+    console.log(
+      "HANUMAN PAGE 7 DOCX PARAGRAPHS:",
+      paragraphs.slice(19, 30).map((text, index) => ({
+        paragraphIndex: index + 19,
+        text,
+      })),
+    );
+
+    console.log(
+      "HANUMAN PAGE 7 MATCH POSITIONS:",
+      matches.map((match) => ({
+        ocrLine: match.ocrLine,
+        paragraphIndex: match.paragraphIndex,
+        matchPosition: match.matchPosition,
+      })),
+    );
+  }
+
+  if (hanumanShortLineMatching) {
+    const matchedLines = new Set(
+      matches.map((match) => normalizeForMatching(match.ocrLine)),
+    );
+
+    console.log(
+      "HANUMAN UNMATCHED OCR LINES:",
+      ocrLines.filter((line) => !matchedLines.has(normalizeForMatching(line))),
+    );
+
+    console.log("HANUMAN LAST MATCH:", matches[matches.length - 1] || null);
+  }
 
   // return {
   //   pageNumber,
@@ -1381,6 +1454,7 @@ export async function extractVerifiedDocxPage({
   language,
 
   strictBoundaryRecovery = false,
+  hanumanShortLineMatching = false,
 }) {
   if (!docxUrl || !pdfDocument || !pageNumber) {
     throw new Error("PDF, DOCX and page number are required.");
@@ -1395,7 +1469,8 @@ export async function extractVerifiedDocxPage({
 
   // const cacheKey = `${docxUrl}:${pageNumber}`;
   // const cacheKey = `${docxUrl}:${pageNumber}:${getOCRLanguage(language)}`;
-  const cacheKey = `${docxUrl}:${pageNumber}:${getOCRLanguage(language)}:${strictBoundaryRecovery}`;
+  // const cacheKey = `${docxUrl}:${pageNumber}:${getOCRLanguage(language)}:${strictBoundaryRecovery}`;
+  const cacheKey = `${docxUrl}:${pageNumber}:${getOCRLanguage(language)}:${strictBoundaryRecovery}:${hanumanShortLineMatching}`;
   if (!documentCache.has(cacheKey)) {
     const request = (async () => {
       const matchResult = await testDocxPageMatch({
@@ -1403,6 +1478,8 @@ export async function extractVerifiedDocxPage({
         pdfDocument,
         pageNumber,
         language,
+
+        hanumanShortLineMatching,
       });
 
       const { matches, ocrLines, exactMatches } = matchResult;
@@ -1423,10 +1500,14 @@ export async function extractVerifiedDocxPage({
       //   Math.max(5, Math.ceil(ocrLines * 0.7)),
       // );
 
-      const requiredMatches = Math.min(
-        10,
-        Math.max(2, Math.ceil(ocrLines * 0.7)),
-      );
+      // const requiredMatches = Math.min(
+      //   10,
+      //   Math.max(2, Math.ceil(ocrLines * 0.7)),
+      // );
+
+      const requiredMatches = hanumanShortLineMatching
+        ? Math.min(10, Math.max(2, Math.ceil(ocrLines * 0.6)))
+        : Math.min(10, Math.max(2, Math.ceil(ocrLines * 0.7)));
 
       // if (exactMatches < requiredMatches || matchRatio < 0.7) {
       //   throw new Error(
