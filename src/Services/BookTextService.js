@@ -1440,6 +1440,92 @@ function normalizeWithPositions(text) {
   };
 }
 
+function extractHanumanVerifiedLines(docxText, matchResult) {
+  const paragraphs = getTextParagraphs(docxText);
+  const matches = matchResult.matches || [];
+
+  if (matches.length < 2) {
+    throw new Error("Hanuman page anchors could not be verified.");
+  }
+
+  // Use existing exact matches only as trustworthy location anchors.
+  const firstIndex = matches[0].paragraphIndex;
+  const lastIndex = matches[matches.length - 1].paragraphIndex;
+
+  // Search locally around verified paragraphs, never the whole book.
+  const searchFrom = Math.max(0, firstIndex - 2);
+  const searchTo = Math.min(paragraphs.length, lastIndex + 3);
+
+  const segments = [];
+
+  for (let p = searchFrom; p < searchTo; p++) {
+    const paragraph = paragraphs[p];
+
+    // Split complete verse lines at their original punctuation.
+    const parts = paragraph
+      .split(/(?<=[।॥])\s*|\t|\n/u)
+      .map((part) => part.trim())
+      .filter(Boolean);
+
+    for (const part of parts) {
+      if (normalizeForMatching(part).length >= 10) {
+        segments.push({
+          text: part,
+          paragraphIndex: p,
+        });
+      }
+    }
+  }
+
+  const ocrLines = (matchResult.ocrTextLines || [])
+    .map((line) => line.trim())
+    .filter((line) => normalizeForMatching(line).length >= 10)
+    .filter((line) => !/SKS|DREAM|हनुमान चालीसा/i.test(line));
+
+  const selected = [];
+  let cursor = 0;
+
+  for (const ocrLine of ocrLines) {
+    let bestIndex = -1;
+    let bestScore = 0;
+
+    // Only look a few verse lines ahead to preserve page order.
+    for (let i = cursor; i < Math.min(segments.length, cursor + 7); i++) {
+      const score = getBoundarySimilarity(ocrLine, segments[i].text);
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestIndex = i;
+      }
+    }
+
+    if (bestIndex >= 0 && bestScore >= 0.65) {
+      selected.push(segments[bestIndex]);
+      cursor = bestIndex + 1;
+    }
+  }
+
+  // Reject uncertain pages instead of reading unrelated content.
+  const minimumMatches = Math.max(2, Math.ceil(ocrLines.length * 0.6));
+
+  if (selected.length < minimumMatches) {
+    throw new Error("Hanuman page verification failed. Reading stopped.");
+  }
+
+  // Do not bridge unmatched gaps: that could include next-page text.
+  const text = selected.map((item) => item.text).join("\n");
+
+  console.log("HANUMAN VERIFIED EXTRACTION:", {
+    matchedLines: selected.length,
+    ocrLines: ocrLines.length,
+    firstParagraph: selected[0]?.paragraphIndex,
+    lastParagraph: selected[selected.length - 1]?.paragraphIndex,
+    text,
+  });
+
+  return text;
+}
+
 const cleanPageTextCache = new WeakMap();
 
 // export async function extractVerifiedDocxPage({
@@ -1484,6 +1570,19 @@ export async function extractVerifiedDocxPage({
 
       const { matches, ocrLines, exactMatches } = matchResult;
 
+      if (hanumanShortLineMatching) {
+        const docxText = await extractDocxText(docxUrl);
+
+        const verifiedText = extractHanumanVerifiedLines(docxText, matchResult);
+
+        return {
+          pageNumber,
+          text: verifiedText,
+          exactMatches,
+          ocrLines,
+        };
+      }
+
       // if (
       //   exactMatches < 10 ||
       //   exactMatches / ocrLines < 0.7
@@ -1506,7 +1605,7 @@ export async function extractVerifiedDocxPage({
       // );
 
       const requiredMatches = hanumanShortLineMatching
-        ? Math.min(10, Math.max(2, Math.ceil(ocrLines * 0.6)))
+        ? Math.min(10, Math.max(2, Math.ceil(ocrLines * 0.5)))
         : Math.min(10, Math.max(2, Math.ceil(ocrLines * 0.7)));
 
       // if (exactMatches < requiredMatches || matchRatio < 0.7) {
