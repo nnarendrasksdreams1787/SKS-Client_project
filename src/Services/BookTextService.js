@@ -1079,6 +1079,35 @@ function normalizeForMatching(text) {
   );
 }
 
+function getBoundarySimilarity(firstText, secondText) {
+  const a = normalizeForMatching(firstText);
+  const b = normalizeForMatching(secondText);
+
+  if (!a || !b) return 0;
+  if (a === b) return 1;
+
+  const makePairs = (value) => {
+    const pairs = new Set();
+
+    for (let i = 0; i < value.length - 1; i++) {
+      pairs.add(value.slice(i, i + 2));
+    }
+
+    return pairs;
+  };
+
+  const aPairs = makePairs(a);
+  const bPairs = makePairs(b);
+
+  let common = 0;
+
+  for (const pair of aPairs) {
+    if (bPairs.has(pair)) common++;
+  }
+
+  return (2 * common) / (aPairs.size + bPairs.size || 1);
+}
+
 function isOCRSupportedParagraph(paragraph, ocrLines, language) {
   const normalizedParagraph = normalizeForMatching(paragraph);
 
@@ -1612,6 +1641,57 @@ export async function extractVerifiedDocxPage({
             originalStart + 180,
           ),
         });
+      }
+
+      // Product 29 only: recover verified Sanskrit lines before first exact match.
+      if (strictBoundaryRecovery && precedingOCRLines.length > 0) {
+        const ocrCandidates = precedingOCRLines.filter((line) => {
+          const normalized = normalizeForMatching(line);
+
+          return (
+            normalized.length >= 18 &&
+            !normalized.includes(
+              normalizeForMatching("भगवद्गीता - जशी आहे तशी"),
+            )
+          );
+        });
+
+        let earliestParagraphIndex = firstMatch.paragraphIndex;
+
+        for (
+          let index = firstMatch.paragraphIndex - 1;
+          index >= firstIndex;
+          index--
+        ) {
+          const paragraph = paragraphs[index];
+
+          const verified = ocrCandidates.some(
+            (line) => getBoundarySimilarity(line, paragraph) >= 0.78,
+          );
+
+          if (!verified) break;
+
+          earliestParagraphIndex = index;
+        }
+
+        if (earliestParagraphIndex < firstMatch.paragraphIndex) {
+          const localIndex = earliestParagraphIndex - firstIndex;
+
+          const recoveredStart = selectedParagraphs
+            .slice(0, localIndex)
+            .reduce((length, paragraph) => length + paragraph.length + 2, 0);
+
+          originalStart = Math.min(originalStart, recoveredStart);
+
+          console.log("GITA SHLOK RECOVERY:", {
+            pageNumber,
+            earliestParagraphIndex,
+            recoveredText: combinedText.slice(
+              originalStart,
+              originalStart + 200,
+            ),
+          });
+        }
       }
 
       const endCharacterIndex = endPosition + normalizedEnd.length - 1;

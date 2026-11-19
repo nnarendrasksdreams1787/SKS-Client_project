@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import "../CSS/About.css";
 import shlokaPlaque from "../assets/Theme/shloka_plaque_transparent.png";
 
@@ -62,26 +62,141 @@ const shlokas = [
 function ShlokaCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
+  const [needsInteraction, setNeedsInteraction] = useState(false);
+  const [audioError, setAudioError] = useState(false);
+
+  const audioRef = useRef(null);
+  const transitionRef = useRef(null);
+  const playbackStartedRef = useRef(false);
 
   useEffect(() => {
-    let timeout;
+    const audio = new Audio();
+    audio.preload = "auto";
+    audioRef.current = audio;
 
-    const interval = setInterval(() => {
+    const handleEnded = () => {
+      audio.pause();
       setIsVisible(false);
 
-      timeout = setTimeout(() => {
+      transitionRef.current = setTimeout(() => {
         setActiveIndex((current) => (current + 1) % shlokas.length);
         setIsVisible(true);
       }, 350);
-    }, 4000);
+    };
+
+    audio.addEventListener("ended", handleEnded);
 
     return () => {
-      clearInterval(interval);
-      clearTimeout(timeout);
+      clearTimeout(transitionRef.current);
+      audio.removeEventListener("ended", handleEnded);
+      audio.pause();
+      audio.removeAttribute("src");
+      audio.load();
+      audioRef.current = null;
     };
   }, []);
 
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    let cancelled = false;
+
+    audio.pause();
+    // audio.src = `/Audio/AboutShlokas/${activeIndex + 1}.mp3`;
+    // audio.src = `/Audio/AboutShlokas/${activeIndex + 1}.wav`;
+    audio.src = `/Audio/AboutShlokas/${activeIndex + 1}.${activeIndex === 0 ? "wav" : "mp3"}`;
+    audio.load();
+
+    setAudioError(false);
+
+    const startPlayback = async () => {
+      try {
+        await audio.play();
+
+        if (cancelled) return;
+
+        setNeedsInteraction(false);
+        setAudioError(false);
+      } catch (error) {
+        if (cancelled) return;
+
+        if (error.name === "NotAllowedError") {
+          setNeedsInteraction(true);
+        } else if (error.name !== "AbortError") {
+          setAudioError(true);
+          setNeedsInteraction(true);
+          console.error("Shloka audio error:", error);
+        }
+      }
+    };
+
+    startPlayback();
+
+    return () => {
+      cancelled = true;
+      audio.pause();
+    };
+  }, [activeIndex]);
+
+
+  const startAudio = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    try {
+      console.log("SHLOKA AUDIO START from second useeffect :", activeIndex + 1, audio.src);
+      await audio.play();
+      playbackStartedRef.current = true;
+      setNeedsInteraction(false);
+      setAudioError(false);
+    } catch (error) {
+      console.error("SHLOKA PLAY FAILED:", activeIndex + 1, error.name, error.message);
+      console.error("Unable to play shloka:", error);
+      setNeedsInteraction(true);
+      setAudioError(true);
+    }
+  };
+
+  const selectShloka = (index) => {
+    clearTimeout(transitionRef.current);
+
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+
+    setIsVisible(true);
+
+    if (index === activeIndex) {
+      startAudio();
+    } else {
+      setActiveIndex(index);
+    }
+  };
+
   const currentShloka = shlokas[activeIndex];
+
+  // useEffect(() => {
+  //   let timeout;
+
+  //   const interval = setInterval(() => {
+  //     setIsVisible(false);
+
+  //     timeout = setTimeout(() => {
+  //       setActiveIndex((current) => (current + 1) % shlokas.length);
+  //       setIsVisible(true);
+  //     }, 350);
+  //   }, 4000);
+
+  //   return () => {
+  //     clearInterval(interval);
+  //     clearTimeout(timeout);
+  //   };
+  // }, []);
+
+  // const currentShloka = shlokas[activeIndex];
 
   return (
     <section className="about-shloka-section">
@@ -94,9 +209,8 @@ function ShlokaCarousel() {
         />
 
         <div
-          className={`about-shloka-content ${
-            isVisible ? "shloka-visible" : "shloka-hidden"
-          }`}
+          className={`about-shloka-content ${isVisible ? "shloka-visible" : "shloka-hidden"
+            }`}
           aria-live="polite"
           aria-atomic="true"
         >
@@ -121,18 +235,32 @@ function ShlokaCarousel() {
           <button
             key={shloka.chapter}
             type="button"
-            className={`shloka-indicator ${
-              index === activeIndex ? "active" : ""
-            }`}
-            onClick={() => {
-              setActiveIndex(index);
-              setIsVisible(true);
-            }}
+            className={`shloka-indicator ${index === activeIndex ? "active" : ""
+              }`}
+            // onClick={() => {
+            //   setActiveIndex(index);
+            //   setIsVisible(true);
+            // }}
+
+            onClick={() => selectShloka(index)}
             aria-label={`Show ${shloka.chapter}`}
             aria-current={index === activeIndex ? "true" : undefined}
           />
         ))}
       </div>
+
+      {needsInteraction && (
+        <div className="about-shloka-audio-control">
+          <button
+            type="button"
+            className="about-shloka-start-audio"
+            onClick={startAudio}
+          >
+            {audioError ? "Retry Shloka Audio" : "▶ Start Shloka Audio"}
+          </button>
+        </div>
+      )}
+
     </section>
   );
 }
