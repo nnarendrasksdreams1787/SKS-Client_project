@@ -11,9 +11,13 @@ import {
 
 import "../../CSS/Manager/ManagerDashboard.css";
 
-const API_BASE = (
-  import.meta.env.VITE_API_URL 
-).replace(/\/$/, "");
+// const API_BASE = (
+//   import.meta.env.VITE_API_URL 
+// ).replace(/\/$/, "");
+
+import { API_BASE_URL } from "../../Config/api";
+
+const API_BASE = API_BASE_URL;
 
 const API_URL = `${API_BASE}/api/manager/dashboard`;
 

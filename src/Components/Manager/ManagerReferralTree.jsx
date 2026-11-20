@@ -4,10 +4,14 @@ import { useState, useEffect, useMemo } from "react";
 import "../../CSS/Manager/ManagerReferralTree.css";
 // import { MANAGER_API_URL } from "../../Config/api";
 
-const MANAGER_API_URL = `${
-  (import.meta.env.VITE_API_URL)
-    .replace(/\/$/, "")
-}/api/manager`;
+// const MANAGER_API_URL = `${
+//   (import.meta.env.VITE_API_URL)
+//     .replace(/\/$/, "")
+// }/api/manager`;
+
+import { API_BASE_URL } from "../../Config/api";
+
+const MANAGER_API_URL = `${API_BASE_URL}/api/manager`;
 
 function getInitials(name) {
   return String(name || "U")

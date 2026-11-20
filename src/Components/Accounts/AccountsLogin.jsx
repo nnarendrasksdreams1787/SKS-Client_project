@@ -3,9 +3,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../CSS/Account/AccountsPanel.css";
 
-const API_BASE = (
-  import.meta.env.VITE_API_URL 
-).replace(/\/$/, "");
+// const API_BASE = (
+//   import.meta.env.VITE_API_URL 
+// ).replace(/\/$/, "");
+
+import { API_BASE_URL } from "../../Config/api";
+
+const API_BASE = API_BASE_URL;
 
 export default function AccountsLogin() {
   const navigate = useNavigate();
