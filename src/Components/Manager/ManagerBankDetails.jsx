@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 
-import "../../CSS/Manager/ManagerBankDetails.css";
+import "../../CSS/Manager/ManagerBankdetails.css";
 
 const API_BASE = (
   import.meta.env.VITE_API_URL || "http://localhost:4000"
