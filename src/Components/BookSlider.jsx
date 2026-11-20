@@ -10,19 +10,21 @@ const books = [
   },
   {
     id: 2,
+    title: "Hanuman Chalisa",
+    image: "/Books/AboutSlider/hanuman-chalisa.png",
+  },
+
+  {
+    id: 3,
     title: "Bhagavad Gita",
     image: "/Books/AboutSlider/bhagavad-gita.png",
   },
   {
-    id: 3,
+    id: 4,
     title: "Mahabharat",
     image: "/Books/AboutSlider/mahabharat.png",
   },
-  {
-    id: 4,
-    title: "Hanuman Chalisa",
-    image: "/Books/AboutSlider/hanuman-chalisa.png",
-  },
+
 ];
 
 export default function BookSlider() {
@@ -79,9 +81,8 @@ export default function BookSlider() {
           <button
             key={book.id}
             type="button"
-            className={`sks-book-slider-dot ${
-              index === activeIndex ? "is-active" : ""
-            }`}
+            className={`sks-book-slider-dot ${index === activeIndex ? "is-active" : ""
+              }`}
             onClick={() => setActiveIndex(index)}
             aria-label={`Show ${book.title}`}
             aria-current={index === activeIndex ? "true" : undefined}

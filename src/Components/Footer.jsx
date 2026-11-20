@@ -1,6 +1,8 @@
 import { BookOpen, ArrowUpRight, ArrowUp } from "lucide-react";
 import "../CSS/Footer.css";
 import { Link } from "react-router-dom";
+import chariot from "../assets/Theme/footer-chariot.png";
+
 
 const footerSections = [
   {
@@ -49,6 +51,7 @@ export default function Footer() {
   };
   return (
     <footer className="sks-footer">
+      <img className="footer-chariot" src={chariot} alt="" aria-hidden="true" />
       <div className="sks-footer-inner">
         <div className="sks-footer-main">
           <div className="sks-footer-brand">

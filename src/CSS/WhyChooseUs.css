@@ -6,12 +6,20 @@
 .why-choose-section {
   width: 100%;
   padding: 85px 30px 95px;
-  background: #fffdf9;
+  background: #faf6ee;
 }
 
-/* Main Container */
+/* Main Container
 .why-choose-container {
   max-width: 1250px;
+  margin: 0 auto;
+  text-align: center;
+} */
+
+
+.why-choose-container {
+  width: 100%;
+  max-width: 1300px;
   margin: 0 auto;
   text-align: center;
 }
@@ -126,7 +134,8 @@
 
   .why-choose-section {
     padding: 65px 24px;
-  }
+  } 
+
 
   .why-choose-card {
     min-height: 175px;
@@ -184,4 +193,258 @@
 
 .why-choose-card:hover {
   background: #ffffff;
+}
+
+
+/* ==========================================
+   WHY CHOOSE US - PREMIUM DESIGN
+   ========================================== */
+
+.why-choose-card {
+  background: #fffdf9;
+  border: 1px solid rgba(7, 27, 48, 0.10);
+  border-radius: 20px;
+
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Icon: Navy Background + Golden Symbol */
+.why-choose-icon {
+  background: #071b30;
+  color: #e9ad43;
+  border-radius: 18px;
+  transition: transform 0.3s ease;
+}
+
+/* Card Heading: Elegant Serif Font */
+.why-choose-card p {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: #071b30;
+}
+
+
+
+
+
+/* Normal Card */
+.why-choose-card {
+  background: #fffdf9;
+  border: 1px solid rgba(7, 27, 48, 0.10);
+  border-radius: 20px;
+
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Soft Teal Border Hover */
+.why-choose-card:hover {
+  background: #fffdf9;
+  border: 1px solid #94c9c5;
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(7, 27, 48, 0.08);
+}
+
+/* Keep Navy and Golden Icon */
+.why-choose-card:hover .why-choose-icon {
+  background: #071b30;
+  color: #e9ad43;
+}
+
+/* Keep Text Navy */
+.why-choose-card:hover p {
+  color: #071b30;
+}
+
+
+/* ==========================================
+   WHY CHOOSE US - FINAL REFINEMENT
+   ========================================== */
+
+/* Card Alignment */
+.why-choose-card {
+  min-height: 185px;
+  padding: 24px 14px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  gap: 20px;
+
+  background: #fffdf9;
+  border: 1px solid rgba(7, 27, 48, 0.10);
+  border-radius: 20px;
+
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Smaller Icons - Same Alignment */
+.why-choose-icon {
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  min-height: 56px;
+  flex-shrink: 0;
+
+  border-radius: 16px;
+  background: #071b30;
+  color: #e9ad43;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Icon SVG */
+.why-choose-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* Smaller Elegant Font */
+.why-choose-card p {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: #071b30;
+  text-align: center;
+  margin: 0;
+}
+
+/* Soft Teal Border Hover */
+.why-choose-card:hover {
+  background: #fffdf9;
+  border-color: #94c9c5;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(7, 27, 48, 0.08);
+}
+
+/* Keep Icon Stable on Hover */
+.why-choose-card:hover .why-choose-icon {
+  background: #071b30;
+  color: #e9ad43;
+  transform: none;
+}
+
+/* Keep Text Navy */
+.why-choose-card:hover p {
+  color: #071b30;
+}
+
+/* Tablet */
+@media (max-width: 1000px) {
+  .why-choose-card {
+    min-height: 175px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .why-choose-card {
+    min-height: 155px;
+    padding: 18px 10px;
+    gap: 14px;
+  }
+
+  .why-choose-icon {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    border-radius: 14px;
+  }
+
+  .why-choose-icon svg {
+    width: 20px;
+    height: 23px;
+  }
+
+  .why-choose-card p {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+}
+
+
+/* WHY CHOOSE US - SECTION HEADING */
+.why-choose-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #071b30;
+  letter-spacing: -0.5px;
+}
+
+/* SECTION SUBTITLE */
+.why-choose-subtitle {
+  font-family: "Poppins", Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: #526274;
+  letter-spacing: 0;
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 600px) {
+  .why-choose-title {
+    font-size: 30px;
+  }
+
+  .why-choose-subtitle {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+}
+
+
+
+/* Top and Bottom Golden Gradient Lines */
+.why-choose-section {
+  position: relative;
+}
+
+/* Common Border Styling */
+.why-choose-section::before,
+.why-choose-section::after {
+  content: "";
+  position: absolute;
+  left: 5%;
+  width: 90%;
+  height: 1px;
+
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(233, 173, 67, 0.25) 20%,
+    #e9ad43 50%,
+    rgba(233, 173, 67, 0.25) 80%,
+    transparent 100%
+  );
+
+  pointer-events: none;
+}
+
+/* Top Border */
+.why-choose-section::before {
+  top: 0;
+}
+
+/* Bottom Border */
+.why-choose-section::after {
+  bottom: 0;
 }

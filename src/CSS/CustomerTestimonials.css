@@ -1,324 +1,489 @@
-/* ========================================
-   CUSTOMER TESTIMONIALS SECTION
-======================================== */
+
+/* ==========================================
+   SKS DREAM - CUSTOMER TESTIMONIALS
+   ========================================== */
 
 .customer-testimonials {
   position: relative;
-  isolation: isolate;
-
+  width: 100%;
+  min-height: 620px;
+  padding: 90px 35px;
+  background: #faf6ee;
+  color: #0b1f3a;
+  overflow: hidden;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
+  box-sizing: border-box;
+}
 
+/* TWO COLUMN LAYOUT */
+
+.testimonial-split-layout {
   width: 100%;
-  min-height: 440px;
-
-  padding: 65px 7%;
-
-  overflow: hidden;
-
-  background: #0d766e;
+  max-width: 1650px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 46% minmax(0, 1fr);
+  gap: 35px;
+  align-items: center;
 }
 
-/* ========================================
-   RADHA KRISHNA IMAGE CONTAINER
-======================================== */
+/* ==========================================
+   LEFT SIDE - GOLDEN PEACOCK FEATHER
+   ========================================== */
 
-.customer-testimonials-image {
-  position: absolute;
-  top: 0;
-  left: 0;
- 
- 
-  width: 65%;
-  height: 100%;
-
-  z-index: -1;
-
+.testimonial-feather-side {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-
-  pointer-events: none;
 }
 
-/* ========================================
-   ACTUAL IMAGE WITH SMOOTH FADE
-======================================== */
-
-.customer-testimonials-image img {
+.testimonial-golden-feather {
   display: block;
+  width: 100%;
+  max-width: 750px;
+  height: auto;
+  object-fit: contain;
 
-  width: auto;
-  height: 1200px;
-  max-width: none;
-
-  position: absolute;
-  top: -25%;
-  left: 0;
-
+  /* Slight fade towards right */
   -webkit-mask-image: linear-gradient(
     to right,
-
-    black 0%,
-    black 30%,
-    rgba(0, 0, 0, 0.9) 45%,
-    rgba(0, 0, 0, 0.5) 65%,
-
+    #000 0%,
+    #000 68%,
     transparent 100%
   );
 
   mask-image: linear-gradient(
     to right,
-  
-
-    black 0%,
-    black 30%,
-    rgba(0, 0, 0, 0.9) 45%,
-    rgba(0, 0, 0, 0.5) 65%,
+    #000 0%,
+    #000 68%,
     transparent 100%
   );
 }
 
-/* ========================================
-   RIGHT SIDE CONTENT
-======================================== */
+/* ==========================================
+   RIGHT SIDE - TESTIMONIAL CONTENT
+   ========================================== */
 
 .customer-testimonials-content {
   position: relative;
   z-index: 1;
-
-  width: 58%;
-  max-width: 760px;
-
+  width: 100%;
+  min-width: 0;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
   text-align: center;
-  color: #ffffff;
+  opacity: 1;
+  transform: none;
 }
 
-/* MAIN HEADING */
+/* HEADING */
 
 .customer-testimonials-content h2 {
-  margin: 0 0 20px;
-
-  font-size: clamp(28px, 3.5vw, 44px);
-  font-weight: 800;
-  line-height: 1.2;
-
-  color: #ffffff;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(28px, 3vw, 43px);
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0;
+  color: #071b30;
 }
 
-/* ========================================
-   GOLD DIVIDER
-======================================== */
+/* GOLD DIVIDER */
 
 .testimonial-divider {
   display: flex;
   align-items: center;
   justify-content: center;
-
   gap: 14px;
-  margin-bottom: 28px;
-
+  margin: 20px 0 40px;
   color: #e9ad43;
-  font-size: 26px;
 }
 
-.testimonial-divider::before,
-.testimonial-divider::after {
-  content: "";
-
+.testimonial-divider i {
   display: block;
   width: 65px;
   height: 1px;
-
   background: #e9ad43;
 }
 
-/* ========================================
-   CUSTOMER NAME AND ROLE
-======================================== */
+.testimonial-divider span {
+  font-size: 1.2rem;
+}
 
-.customer-testimonials-content h3 {
-  margin: 0 0 6px;
+/* ==========================================
+   CUSTOMER REVIEW
+   ========================================== */
 
-  font-size: 28px;
+.testimonial-card {
+  min-height: 190px;
+  animation: testimonialSlideIn 0.7s
+    cubic-bezier(0.22, 0.8, 0.3, 1) both;
+}
+
+@keyframes testimonialSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(70px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.testimonial-card h3 {
+  font-size: 22px;
   font-weight: 700;
-
-  color: #ffffff;
+  color: #071b30;
+  margin: 0;
 }
 
 .testimonial-role {
-  margin: 0 0 12px;
-
-  font-size: 17px;
-  color: #ffffff;
+  margin: 7px 0 15px;
+  font-size: 15px;
+  color: #526274;
 }
-
-/* ========================================
-   GOLD STAR RATING
-======================================== */
 
 .testimonial-stars {
-  margin-bottom: 20px;
-
   color: #e9ad43;
-  font-size: 30px;
+  font-size: 23px;
   letter-spacing: 5px;
+  margin-bottom: 22px;
 }
 
-/* ========================================
-   CUSTOMER REVIEW
-======================================== */
-
-.customer-testimonials-content blockquote {
+.testimonial-card blockquote {
   margin: 0;
-
-  font-size: clamp(17px, 2vw, 23px);
-  font-style: italic;
+  font-size: clamp(16px, 1.5vw, 20px);
   line-height: 1.7;
-
-  color: #ffffff;
+  color: #0b1f3a;
+  overflow-wrap: break-word;
 }
 
 .testimonial-quote {
-  padding: 0 8px;
-
   color: #e9ad43;
-  font-size: 35px;
-  font-weight: 700;
+  font-size: 1.8em;
+  line-height: 0;
+  vertical-align: -0.3em;
+  margin: 0 6px;
 }
 
-/* ========================================
-   TABLET RESPONSIVE
-======================================== */
+/* ==========================================
+   SLIDER DOTS
+   ========================================== */
 
-@media (max-width: 1024px) {
+.testimonial-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 28px;
+}
+
+.testimonial-dots button {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(233, 173, 67, 0.35);
+  cursor: pointer;
+  transition: background 0.3s, width 0.3s;
+}
+
+.testimonial-dots button.is-active {
+  width: 26px;
+  border-radius: 6px;
+  background: #e9ad43;
+}
+
+/* ==========================================
+   TABLET
+   ========================================== */
+
+@media (max-width: 1000px) {
   .customer-testimonials {
-    min-height: 400px;
-    padding: 55px 5%;
+    padding: 70px 25px;
   }
 
-  .customer-testimonials-image {
-    width: 55%;
-  }
-
-  .customer-testimonials-content {
-    width: 60%;
-  }
-
-  .customer-testimonials-content h2 {
-    font-size: 34px;
-  }
-
-  .customer-testimonials-content h3 {
-    font-size: 25px;
+  .testimonial-split-layout {
+    grid-template-columns: 43% minmax(0, 1fr);
+    gap: 20px;
   }
 }
 
-/* ========================================
-   MOBILE RESPONSIVE
-======================================== */
+/* ==========================================
+   MOBILE
+   ========================================== */
 
 @media (max-width: 768px) {
   .customer-testimonials {
-    justify-content: center;
-
-    min-height: 560px;
-    padding: 280px 20px 45px;
+    padding: 55px 18px;
+    min-height: auto;
   }
 
-  /* Image on top, fading downward */
-
-  .customer-testimonials-image {
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 75%;
-
-    overflow: hidden;
+  .testimonial-split-layout {
+    grid-template-columns: 1fr;
+    gap: 25px;
   }
 
-  .customer-testimonials-image img {
+  .testimonial-feather-side {
+    max-width: 450px;
+    margin: 0 auto;
+  }
+
+  .testimonial-golden-feather {
     width: 100%;
-    height: 100%;
-
-    max-width: none;
-
-    object-fit: cover;
-    object-position: center 25%;
-
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      #000 0%,
-      #000 55%,
-      rgba(0, 0, 0, 0.5) 65%,
-      transparent 100%
-    );
-
-    mask-image: linear-gradient(
-      to bottom,
-      #000 0%,
-      #000 35%,
-      rgba(0, 0, 0, 0.5) 65%,
-      transparent 100%
-    );
   }
 
   .customer-testimonials-content {
-    width: 100%;
-    max-width: 520px;
+    padding: 10px 0;
   }
 
   .customer-testimonials-content h2 {
-    font-size: 29px;
+    font-size: 30px;
   }
 
-  .customer-testimonials-content h3 {
-    font-size: 23px;
+  .testimonial-card h3 {
+    font-size: 20px;
   }
 
-  .testimonial-role {
-    font-size: 15px;
-  }
-
-  .testimonial-stars {
-    font-size: 25px;
-  }
-
-  .customer-testimonials-content blockquote {
-    font-size: 17px;
-  }
-
-  .testimonial-divider::before,
-  .testimonial-divider::after {
-    width: 35px;
+  .testimonial-card blockquote {
+    font-size: 16px;
   }
 }
 
-/* ========================================
-   SMALL MOBILE
-======================================== */
+/* ACCESSIBILITY */
 
-@media (max-width: 420px) {
-  .customer-testimonials {
-    min-height: 540px;
-    padding: 260px 16px 40px;
-    background: #0d766e;
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-card {
+    animation: none;
+  }
+}
+
+/* Debug feather visibility */
+/* .customer-testimonials .testimonial-feather-side {
+  display: flex !important;
+  min-height: 250px;
+  background: #eee4d3;
+} */
+
+.customer-testimonials .testimonial-feather-side {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #faf6ee;
+  isolation: isolate;
+}
+
+ /* .customer-testimonials .testimonial-golden-feather {
+  display: block !important;
+  width: 100% !important;
+  max-width: 650px;
+  opacity: 1 !important;
+  visibility: visible !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+}  */
+
+
+/* GOLDEN FEATHER + TESTIMONIALS LAYOUT */
+/* 
+.customer-testimonials .testimonial-split-layout {
+  display: grid;
+  grid-template-columns: 48% 52%;
+  align-items: center;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  gap: 0;
+}
+
+LEFT SIDE FEATHER 
+
+.customer-testimonials .testimonial-feather-side {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.customer-testimonials .testimonial-golden-feather {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+
+  
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 0%,
+    #000 60%,
+    transparent 100%
+  );
+
+  mask-image: linear-gradient(
+    to right,
+    #000 0%,
+    #000 60%,
+    transparent 100%
+  );
+}
+
+
+/* RIGHT SIDE REVIEWS */
+/*
+.customer-testimonials
+.testimonial-split-layout
+.customer-testimonials-content {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 30px;
+  box-sizing: border-box;
+  opacity: 1;
+  transform: none;
+  text-align: center;
+}
+*/
+/* MOBILE */
+/*
+@media (max-width: 768px) {
+  .customer-testimonials .testimonial-split-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 
-  .customer-testimonials-content h2 {
-    font-size: 25px;
+  .customer-testimonials .testimonial-feather-side {
+    max-width: 450px;
+    margin: 0 auto;
   }
 
-  .customer-testimonials-content h3 {
-    font-size: 21px;
+  .customer-testimonials
+  .testimonial-split-layout
+  .customer-testimonials-content {
+    padding: 20px 12px;
+  }
+} */
+
+/* ===== GOLDEN FEATHER + TESTIMONIALS LAYOUT ===== */
+
+.customer-testimonials .testimonial-split-layout {
+  display: grid;
+  grid-template-columns: 48% 52%;
+  align-items: center;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  gap: 0;
+}
+
+/* LEFT SIDE FEATHER */
+.customer-testimonials .testimonial-feather-side {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  background: transparent;
+  overflow: hidden;
+}
+
+.customer-testimonials .testimonial-golden-feather {
+  display: block;
+  width: 100%;
+  max-width: 750px;
+  height: auto;
+  object-fit: contain;
+
+  /* Image ke chaaro kinare soft fade honge (box dikhna band) */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 18%, #000 82%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 18%, #000 82%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%);
+  mask-composite: intersect;
+}
+
+/* RIGHT SIDE REVIEWS */
+.customer-testimonials .testimonial-split-layout .customer-testimonials-content {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 30px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .customer-testimonials .testimonial-split-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 
-  .customer-testimonials-content blockquote {
-    font-size: 16px;
+  .customer-testimonials .testimonial-feather-side {
+    max-width: 450px;
+    margin: 0 auto;
   }
+}
 
-  .testimonial-stars {
-    font-size: 23px;
-    letter-spacing: 3px;
-  }
+
+/* FINAL GOLDEN PEACOCK FEATHER */
+
+.customer-testimonials .testimonial-golden-feather {
+  display: block;
+  width: 100%;
+  max-width: 750px;
+  height: auto;
+  object-fit: contain;
+
+  opacity: 1;
+  filter: none;
+  mix-blend-mode: normal;
+
+  /* Keep feather sharp, fade only the right edge */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 0%,
+    #000 82%,
+    transparent 100%
+  );
+
+  mask-image: linear-gradient(
+    to right,
+    #000 0%,
+    #000 82%,
+    transparent 100%
+  );
+}
+
+
+/* ===== HOVER: same as Book Showcase ===== */
+.customer-testimonials {
+  transition: background-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.customer-testimonials:hover {
+  background: #e9e1d5;
+  box-shadow: inset 0 0 55px rgba(7, 27, 48, 0.035);
 }

@@ -1,224 +1,388 @@
-/* ==========================================
-   SKS DREAM — HOME BOOK SHOWCASE
-========================================== */
+
+/* =========================================
+   SKS DREAM - BOOK SHOWCASE
+========================================= */
 
 .home-book-showcase {
+  position: relative;
   width: 100%;
-  padding: 75px 24px;
-  background: #f8f2e8;
+  overflow: hidden;
+  background: #faf6ee;
+  padding: 95px 40px;
+  color: #071b30;
+
+  transition:
+    background-color 0.5s ease,
+    box-shadow 0.5s ease;
 }
 
+.home-book-showcase:hover {
+  background: #e9e1d5;
+  box-shadow: inset 0 0 55px rgba(7, 27, 48, 0.035);
+}
+
+/* Main Layout */
+
 .home-book-showcase-container {
-  width: min(1500px, 100%);
+  position: relative;
+  z-index: 1;
+
+  width: min(1380px, 100%);
   margin: 0 auto;
 
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+
   align-items: center;
-  gap: 45px;
+
+  /* MORE DISTANCE BETWEEN BOOK AND CONTENT */
+  column-gap: clamp(75px, 8vw, 125px);
 }
 
-/* LEFT — BOOK SLIDER */
+/* =========================================
+   LEFT - BOOK IMAGE
+========================================= */
 
 .home-book-showcase-left {
-  width: 100%;
+  position: relative;
   min-width: 0;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  opacity: 0;
+  transform: translateX(-70px);
+
+  transition:
+    opacity 0.9s ease,
+    transform 0.9s cubic-bezier(0.22, 0.8, 0.3, 1);
 }
 
 .home-book-showcase-left .sks-book-slider {
   width: 100%;
-  max-width: 440px;
+  max-width: 520px;
+
+  transition:
+    transform 0.45s ease,
+    filter 0.45s ease;
 }
 
-/* RIGHT — CONTENT */
+/* Golden Frame */
+
+.home-book-showcase-left::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  transform: translate(16px, 16px);
+
+  border: 1px solid #e9ad43;
+  border-radius: 20px;
+
+  pointer-events: none;
+}
+
+/* Book Hover */
+
+.home-book-showcase:hover .home-book-showcase-left .sks-book-slider {
+  transform: translateY(-6px);
+  filter: drop-shadow(0 14px 18px rgba(7, 27, 48, 0.12));
+}
+
+/* =========================================
+   RIGHT - CONTENT
+========================================= */
 
 .home-book-showcase-right {
-  width: 100%;
   min-width: 0;
+
+  opacity: 0;
+  transform: translateX(70px);
+
+  transition:
+    opacity 0.9s ease,
+    transform 0.9s cubic-bezier(0.22, 0.8, 0.3, 1);
+
+  transition-delay: 0.12s;
 }
+
+/* Reveal Animation */
+
+.home-book-showcase.is-visible .home-book-showcase-left,
+.home-book-showcase.is-visible .home-book-showcase-right {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* HEADING - FEATURED PRODUCTS FONT STYLE */
 
 .home-book-showcase-right h2 {
-  margin: 0 0 18px;
+  margin: 0 0 24px;
+
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(42px, 4.2vw, 58px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -1.5px;
+
   color: #071b30;
-  font-size: clamp(28px, 3vw, 38px);
-  font-weight: 800;
-  line-height: 1.2;
 }
+
+/* Decorative Divider */
+
+.home-book-showcase-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin: 18px 0 30px;
+
+  color: #e9ad43;
+}
+
+.home-book-showcase-divider i {
+  display: block;
+  width: 80px;
+  height: 1px;
+
+  background: linear-gradient(
+    90deg,
+    #e9ad43,
+    transparent
+  );
+}
+
+/* DESCRIPTION - CLEAN FONT */
 
 .home-book-showcase-right p {
-  margin: 0 0 16px;
-  color: #071b30;
-  font-size: 14px;
+  margin: 0 0 20px;
+
+  font-family: "Inter", sans-serif;
+  font-size: 17px;
+  font-weight: 400;
   line-height: 1.85;
+
+  color: #52647a;
 }
 
-/* FEATURE CARDS */
+/* =========================================
+   FEATURE CARDS
+========================================= */
 
 .home-book-showcase-features {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 30px;
-  margin-bottom: 22px;
+
+  gap: 15px;
+  margin: 32px 0 30px;
 }
 
 .home-book-showcase-feature {
   min-width: 0;
-  min-height: 66px;
-  padding: 12px 10px;
+  min-height: 75px;
 
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 
-  background: #f8f2e8;
-  border-radius: 13px;
+  padding: 13px;
+
+  background: #fffdf9;
+  border: 1px solid #e9e1d5;
+  border-radius: 14px;
 
   color: #071b30;
-  font-size: 11px;
+
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
   font-weight: 700;
-  line-height: 1.35;
+  line-height: 1.4;
+
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
 }
+
+.home-book-showcase-feature:hover {
+  background: #ffffff;
+  transform: translateY(-5px);
+
+  border-color: #e9ad43;
+
+  box-shadow: 0 12px 26px rgba(184, 135, 50, 0.18);
+}
+
+/* Feature Icons */
 
 .home-book-showcase-feature-icon {
-  width: 38px;
-  height: 38px;
+  display: grid;
+  place-items: center;
+
   flex-shrink: 0;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 44px;
+  height: 44px;
 
-  background: #f8f2e8;
-  color: #e9ad43;
-  border-radius: 10px;
+  border-radius: 50%;
+
+  background: #faf6ee;
+  color: #c78a22;
 }
 
-/* LEARN MORE BUTTON */
+/* =========================================
+   LEARN MORE BUTTON
+========================================= */
 
 .home-book-showcase-button {
-  width: 100%;
-  min-height: 44px;
-  padding: 12px 20px;
-
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 12px;
 
-  color: #f8f2e8;
+  min-height: 50px;
+  padding: 14px 32px;
+
   background: #071b30;
-  border-radius: 50px;
+  color: #ffffff;
 
-  font-size: 14px;
+  border: 1px solid #071b30;
+  border-radius: 40px;
+
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
   font-weight: 700;
-  text-decoration: underline;
 
-  box-shadow: 0 8px 18px rgba(182, 75, 204, 0.22);
+  text-decoration: none;
+
   transition:
-    background 0.25s ease,
-    transform 0.25s ease;
+    background-color 0.3s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.home-book-showcase-button svg {
+  transition: transform 0.3s ease;
 }
 
 .home-book-showcase-button:hover {
-  background: #071b30;
-  transform: translateY(-2px);
+  background: #102f4d;
+  border-color: #e9ad43;
+
+  transform: translateY(-3px);
+
+  box-shadow: 0 10px 24px rgba(7, 27, 48, 0.22);
 }
 
-/* TABLET */
+.home-book-showcase-button:hover svg {
+  transform: translateX(5px);
+}
+
+/* =========================================
+   TABLET RESPONSIVE
+========================================= */
 
 @media (max-width: 900px) {
-  .home-book-showcase-container {
-    gap: 25px;
-  }
 
-  .home-book-showcase-features {
-    /* gap: 8px; */
-    position: relative;
-    right: 26px;
-  }
-
-  .home-book-showcase-feature {
-    padding: 10px 7px;
-    gap: 7px;
-  }
-}
-
-/* MOBILE */
-
-@media (max-width: 700px) {
   .home-book-showcase {
-    padding: 48px 18px;
+    padding: 70px 28px;
   }
 
   .home-book-showcase-container {
     grid-template-columns: 1fr;
-    gap: 35px;
+    gap: 55px;
   }
 
   .home-book-showcase-left .sks-book-slider {
-    max-width: 400px;
+    max-width: 440px;
   }
 
   .home-book-showcase-right h2 {
-    font-size: 30px;
+    font-size: 44px;
   }
 
-  .home-book-showcase-right p {
-    font-size: 13px;
+  .home-book-showcase-features {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
-@media (max-width: 420px) {
+/* =========================================
+   MOBILE RESPONSIVE
+========================================= */
+
+@media (max-width: 700px) {
+
+  .home-book-showcase {
+    padding: 55px 20px;
+  }
+
+  .home-book-showcase-container {
+    grid-template-columns: 1fr;
+    gap: 45px;
+  }
+
+  .home-book-showcase-left .sks-book-slider {
+    max-width: 380px;
+  }
+
+  .home-book-showcase-right h2 {
+    font-size: 37px;
+    letter-spacing: -0.8px;
+  }
+
+  .home-book-showcase-right p {
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
   .home-book-showcase-features {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .home-book-showcase-feature {
-    min-height: 54px;
-    padding: 10px 14px;
-  }
-}
-
-/* SKS Dream heading */
-.home-book-showcase-right h2 {
-  font-size: 48px;
-}
-
-/* Description paragraphs */
-.home-book-showcase-right p {
-  font-size: 19px;
-  line-height: 1.9;
-}
-
-/* Three feature cards text */
-.home-book-showcase-feature {
-  font-size: 16px;
-}
-
-/* Learn More button text */
-.home-book-showcase-button {
-  font-size: 18px;
-}
-
-/* Responsive font sizes */
-@media (max-width: 700px) {
-  .home-book-showcase-right h2 {
-    font-size: 34px;
-  }
-
-  .home-book-showcase-right p {
-    font-size: 16px;
-  }
-
-  .home-book-showcase-feature {
+    min-height: 65px;
     font-size: 14px;
   }
 
   .home-book-showcase-button {
-    font-size: 16px;
+    font-size: 15px;
   }
 }
+
+/* SMALL MOBILE */
+
+@media (max-width: 420px) {
+
+  .home-book-showcase-right h2 {
+    font-size: 32px;
+  }
+
+  .home-book-showcase {
+    padding: 45px 16px;
+  }
+}
+
+/* ACCESSIBILITY */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .home-book-showcase,
+  .home-book-showcase-left,
+  .home-book-showcase-right,
+  .home-book-showcase-feature,
+  .home-book-showcase-button,
+  .home-book-showcase-left .sks-book-slider {
+    transition: none;
+  }
+
+  .home-book-showcase-left,
+  .home-book-showcase-right {
+    opacity: 1;
+    transform: none;
+  }
+
+}
+

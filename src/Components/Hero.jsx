@@ -1,12 +1,13 @@
+
 import {
   ArrowRight,
   BookOpen,
   ShieldCheck,
   Zap,
   Headphones,
+  Sparkles,
 } from "lucide-react";
 
-import rightImg from "../assets/Theme/rightSide.png";
 import SearchBar from "./SearchBar";
 import CategoryGrid from "./CategoryGrid";
 
@@ -16,7 +17,11 @@ export default function Hero() {
       <div className="hero-inner container">
         <div className="hero-copy">
           <div className="hero-eyebrow">
-            DIGITAL BOOKS <span /> ONLINE COURSES <span /> MPSC STUDY MATERIAL
+            DIGITAL BOOKS
+            <span />
+            ONLINE COURSES
+            <span />
+            MPSC STUDY MATERIAL
           </div>
 
           <h1>
@@ -28,16 +33,24 @@ export default function Hero() {
           </h1>
 
           <p className="hero-description">
-            Explore high-quality digital books, expert-led online courses, and
-            MPSC study material — all in one place.
+            Explore high-quality digital books,
+            expert-led online courses, and MPSC
+            study material — all in one place.
           </p>
 
           <div className="hero-buttons">
-            <a className="button button-gold hero-cta" href="#products">
-              Explore Products <ArrowRight size={17} />
+            <a
+              className="button button-gold hero-cta"
+              href="#products"
+            >
+              Explore Products
+              <ArrowRight size={17} />
             </a>
 
-            <a className="button button-outline hero-cta" href="#courses">
+            <a
+              className="button button-outline hero-cta"
+              href="#courses"
+            >
               View Courses
             </a>
           </div>
@@ -50,6 +63,7 @@ export default function Hero() {
                 <small>Learning resources</small>
               </span>
             </div>
+
             <div>
               <ShieldCheck />
               <span>
@@ -57,6 +71,7 @@ export default function Hero() {
                 <small>Shopping experience</small>
               </span>
             </div>
+
             <div>
               <Zap />
               <span>
@@ -64,6 +79,7 @@ export default function Hero() {
                 <small>Digital access</small>
               </span>
             </div>
+
             <div>
               <Headphones />
               <span>
@@ -75,31 +91,32 @@ export default function Hero() {
         </div>
 
         <div className="hero-art">
-          {/* <div className="hero-art-glow" /> */}
-
-          {/* <img
-            className="hero-image"
-            // src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1200&q=85"
-            src={rightImg}
-            alt="SKS Dream learning experience with MPSC books, laptop and peacock feather"
-          /> */}
-
           <div className="hero-caption">
-            <span className="caption-symbol">✦</span>
+            <span className="caption-symbol">
+              <Sparkles size={23} />
+            </span>
+
             <span>
-              <strong>Knowledge. Discipline. Success.</strong>
-              <small>Your learning journey starts here.</small>
+              <strong>
+                Knowledge. Discipline. Success.
+              </strong>
+              <small>
+                Your learning journey starts here.
+              </small>
             </span>
           </div>
 
-          <div className="hero-feather" aria-hidden="true">
+          <div
+            className="hero-feather"
+            aria-hidden="true"
+          >
             ✧
           </div>
         </div>
-
       </div>
-        <SearchBar />
-        <CategoryGrid />
+
+      <SearchBar />
+      <CategoryGrid />
     </section>
   );
 }
