@@ -12,7 +12,7 @@ import {
 import "../../CSS/Manager/ManagerDashboard.css";
 
 const API_BASE = (
-  import.meta.env.VITE_API_URL || "http://localhost:4000"
+  import.meta.env.VITE_API_URL 
 ).replace(/\/$/, "");
 
 const API_URL = `${API_BASE}/api/manager/dashboard`;

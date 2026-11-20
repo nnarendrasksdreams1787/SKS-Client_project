@@ -5,7 +5,7 @@ import "../../CSS/Manager/ManagerReferralTree.css";
 // import { MANAGER_API_URL } from "../../Config/api";
 
 const MANAGER_API_URL = `${
-  (import.meta.env.VITE_API_URL || "http://localhost:4000")
+  (import.meta.env.VITE_API_URL)
     .replace(/\/$/, "")
 }/api/manager`;
 

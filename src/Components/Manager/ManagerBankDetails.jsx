@@ -14,7 +14,7 @@ import {
 import "../../CSS/Manager/ManagerBankdetails.css";
 
 const API_BASE = (
-  import.meta.env.VITE_API_URL || "http://localhost:4000"
+  import.meta.env.VITE_API_URL 
 ).replace(/\/$/, "");
 
 const BANK_API_URL = `${API_BASE}/api/manager/bank-details`;

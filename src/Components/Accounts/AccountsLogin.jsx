@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../../CSS/Account/AccountsPanel.css";
 
 const API_BASE = (
-  import.meta.env.VITE_API_URL || "http://localhost:4000"
+  import.meta.env.VITE_API_URL 
 ).replace(/\/$/, "");
 
 export default function AccountsLogin() {
