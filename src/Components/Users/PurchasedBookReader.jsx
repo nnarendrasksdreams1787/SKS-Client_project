@@ -1728,6 +1728,45 @@ export default function PurchasedBookReader() {
 
   // const selectedOCRLanguage = selectedSpeechVoice?.lang || "mr-IN";
 
+
+
+  function prepareHanumanSafeChunks(chunks) {
+    const result = [];
+
+    for (const chunk of chunks) {
+      const text = String(chunk.text || "").trim();
+      if (!text) continue;
+
+      const hasSpeakableText = /[\p{L}\p{N}]/u.test(text);
+
+      // Attach punctuation-only fragments to the previous chunk.
+      if (!hasSpeakableText) {
+        if (result.length) {
+          result[result.length - 1].text += text;
+        }
+        continue;
+      }
+
+      // Merge very short fragments with the previous chunk.
+      // This prevents one-character TTS requests.
+      if (text.length < 3 && result.length) {
+        result[result.length - 1].text += " " + text;
+        continue;
+      }
+
+      result.push({ ...chunk, text });
+    }
+
+    // If the first chunk is very short, merge it forward.
+    if (result.length > 1 && result[0].text.length < 3) {
+      result[1].text = result[0].text + " " + result[1].text;
+      result.shift();
+    }
+
+    return result;
+  }
+
+
   const selectedSpeechVoice = speechVoices.find(
     (item) => item.voiceURI === selectedVoice
   );
@@ -1793,7 +1832,7 @@ export default function PurchasedBookReader() {
       pageNumber,
       language: isMixedLanguageBook ? "mixed" : undefined,
       strictBoundaryRecovery: useStrictBoundaryRecovery,
-       hanumanShortLineMatching: useHanumanShortLineMatching,
+      hanumanShortLineMatching: useHanumanShortLineMatching,
 
     })
       .then((text) => {
@@ -2092,9 +2131,28 @@ export default function PurchasedBookReader() {
 
         // const chunks = prepareSpeechChunks(text);
 
-        const chunks = isMixedLanguageBook
+        // const chunks = isMixedLanguageBook
+        //   ? prepareMixedSpeechChunks(text)
+        //   : prepareSpeechChunks(text);
+
+        const rawChunks = isMixedLanguageBook
           ? prepareMixedSpeechChunks(text)
           : prepareSpeechChunks(text);
+
+        const chunks = useHanumanShortLineMatching
+          ? prepareHanumanSafeChunks(rawChunks)
+          : rawChunks;
+
+        if (useHanumanShortLineMatching) {
+          console.log(
+            "HANUMAN SAFE TTS CHUNKS:",
+            chunks.map((chunk, index) => ({
+              chunk: index + 1,
+              length: chunk.text.length,
+              text: chunk.text
+            }))
+          );
+        }
 
         if (!chunks.length) {
           throw new Error("No verified speaking text found.");

@@ -1154,11 +1154,22 @@ function isOCRSupportedParagraph(paragraph, ocrLines, language) {
   });
 }
 
-function getTextParagraphs(text) {
+// function getTextParagraphs(text) {
+//   return text
+//     .split(/\n+/)
+//     .map((paragraph) => paragraph.trim())
+//     .filter((paragraph) => paragraph.length > 20);
+// }
+
+function getTextParagraphs(text, preserveShortLines = false) {
   return text
     .split(/\n+/)
     .map((paragraph) => paragraph.trim())
-    .filter((paragraph) => paragraph.length > 20);
+    .filter((paragraph) =>
+      preserveShortLines
+        ? normalizeForMatching(paragraph).length >= 4
+        : paragraph.length > 20,
+    );
 }
 
 export async function testDocxPageMatch({
@@ -1232,7 +1243,8 @@ export async function testDocxPageMatch({
     return hanumanShortLineMatching ? length >= 12 : length > 25;
   });
 
-  const paragraphs = getTextParagraphs(docxText);
+  // const paragraphs = getTextParagraphs(docxText);
+  const paragraphs = getTextParagraphs(docxText, hanumanShortLineMatching);
 
   console.log(
     "HANUMAN DOCX SAMPLE:",
@@ -1291,6 +1303,23 @@ export async function testDocxPageMatch({
   const matches = [];
 
   let lastParagraphIndex = 0;
+
+  if (hanumanShortLineMatching && pageNumber >= 16) {
+    const marathiSectionIndex = paragraphs.findIndex((paragraph) =>
+      normalizeForMatching(paragraph).includes(
+        normalizeForMatching("चाळीस चौपाया व मराठी अर्थ"),
+      ),
+    );
+
+    if (marathiSectionIndex === -1) {
+      throw new Error(
+        "Hanuman Marathi meaning section not found. Reading stopped.",
+      );
+    }
+
+    lastParagraphIndex = marathiSectionIndex;
+  }
+
   let lastCharacterPosition = 0;
 
   for (const ocrLine of ocrLines) {
@@ -1512,6 +1541,20 @@ function extractHanumanVerifiedLines(docxText, matchResult) {
     throw new Error("Hanuman page verification failed. Reading stopped.");
   }
 
+  const selectedIndexes = selected.map((item) => segments.indexOf(item));
+
+  console.log("HANUMAN PAGE GAP AUDIT:", {
+    pageNumber: matchResult.pageNumber,
+    selectedIndexes,
+    gaps: selectedIndexes.slice(1).map((index, i) => ({
+      from: selectedIndexes[i],
+      to: index,
+      missingSegments: segments
+        .slice(selectedIndexes[i] + 1, index)
+        .map((item) => item.text),
+    })),
+  });
+
   // Do not bridge unmatched gaps: that could include next-page text.
   const text = selected.map((item) => item.text).join("\n");
 
@@ -1570,7 +1613,8 @@ export async function extractVerifiedDocxPage({
 
       const { matches, ocrLines, exactMatches } = matchResult;
 
-      if (hanumanShortLineMatching) {
+      // if (hanumanShortLineMatching) {
+      if (hanumanShortLineMatching && pageNumber >= 3 && pageNumber <= 12) {
         const docxText = await extractDocxText(docxUrl);
 
         const verifiedText = extractHanumanVerifiedLines(docxText, matchResult);
@@ -1580,6 +1624,265 @@ export async function extractVerifiedDocxPage({
           text: verifiedText,
           exactMatches,
           ocrLines,
+        };
+      }
+
+      // Product 31 only: verified Chaupayi + complete Marathi meaning.
+      // if (hanumanShortLineMatching && pageNumber >= 16 && pageNumber <= 55) {
+      //   const docxText = await extractDocxText(docxUrl);
+      //   const paragraphs = getTextParagraphs(docxText);
+
+      //   const chaupayiNumber = pageNumber - 15;
+
+      //   const sectionStart = paragraphs.findIndex((paragraph) =>
+      //     normalizeForMatching(paragraph).includes(
+      //       normalizeForMatching("चाळीस चौपाया व मराठी अर्थ"),
+      //     ),
+      //   );
+
+      //   if (sectionStart === -1) {
+      //     throw new Error("Hanuman Marathi section not found.");
+      //   }
+
+      //   const verseIndex = sectionStart + 1 + (chaupayiNumber - 1) * 2;
+      //   const meaningIndex = verseIndex + 1;
+
+      //   const verse = paragraphs[verseIndex];
+      //   const meaning = paragraphs[meaningIndex];
+
+      //   if (!verse || !meaning || !meaning.includes("मराठी अर्थ")) {
+      //     throw new Error(
+      //       "Hanuman verse and Marathi meaning verification failed.",
+      //     );
+      //   }
+
+      //   return {
+      //     pageNumber,
+      //     text: `${verse}\n\n${meaning}`,
+      //     exactMatches,
+      //     ocrLines,
+      //   };
+      // }
+
+      if (hanumanShortLineMatching && pageNumber >= 16) {
+        const docxText = await extractDocxText(docxUrl);
+        // const paragraphs = getTextParagraphs(docxText);
+        const paragraphs = getTextParagraphs(docxText, true);
+
+        const sectionStart = paragraphs.findIndex((p) =>
+          normalizeForMatching(p).includes(
+            normalizeForMatching("चाळीस चौपाया व मराठी अर्थ"),
+          ),
+        );
+
+        if (sectionStart < 0) {
+          throw new Error("Hanuman Marathi section not found.");
+        }
+
+        // Product 31: handle heading-only pages safely.
+        if (
+          hanumanShortLineMatching &&
+          exactMatches >= 1 &&
+          matches.length === 1
+        ) {
+          const matchedIndex = matches[0].paragraphIndex;
+          const matchedParagraph = paragraphs[matchedIndex];
+
+          const normalizedOCR = normalizeForMatching(matches[0].ocrLine);
+
+          const normalizedDOCX = normalizeForMatching(matchedParagraph || "");
+
+          const isHeadingOnlyPage =
+            ocrLines <= 2 &&
+            normalizedOCR.length >= 12 &&
+            normalizedOCR === normalizedDOCX &&
+            /(?:अष्टक|ाष्टक|चालीसा|आरती|स्तोत्र|वंदना|स्तुती|दोहा|श्रीराम\s*जय\s*राम\s*जय\s*जय\s*राम)/u.test(
+              matchedParagraph || "",
+            );
+
+          if (isHeadingOnlyPage) {
+            console.log("HANUMAN HEADING PAGE VERIFIED:", {
+              pageNumber,
+              paragraphIndex: matchedIndex,
+              text: matchedParagraph,
+            });
+
+            return {
+              pageNumber,
+              text: matchedParagraph,
+              exactMatches,
+              ocrLines,
+              firstIndex: matchedIndex,
+              lastIndex: matchedIndex,
+            };
+          }
+        }
+
+        const ocrContent = (matchResult.ocrTextLines || [])
+          .map((line) => line.trim())
+          .filter((line) => {
+            const normalized = normalizeForMatching(line);
+            return (
+              normalized.length >= 10 &&
+              !/SKS|DREAM|श्री हनुमान चालीसा/i.test(line)
+            );
+          });
+
+        // Compare OCR lines with a sliding window of DOCX paragraphs.
+        // This avoids depending on exact spelling or fixed page numbers.
+        const scoreWindow = (text) => {
+          const normalizedText = normalizeForMatching(text);
+          if (!normalizedText) return 0;
+
+          let score = 0;
+          let evidence = 0;
+
+          for (const line of ocrContent) {
+            const normalizedLine = normalizeForMatching(line);
+
+            if (normalizedText.includes(normalizedLine)) {
+              score += 1;
+              evidence++;
+              continue;
+            }
+
+            // OCR may contain spelling mistakes.
+            const lineLength = normalizedLine.length;
+            let best = 0;
+
+            for (
+              let pos = 0;
+              pos < normalizedText.length;
+              pos += Math.max(1, Math.floor(lineLength / 4))
+            ) {
+              const candidate = normalizedText.slice(pos, pos + lineLength + 5);
+
+              best = Math.max(best, getBoundarySimilarity(line, candidate));
+            }
+
+            if (best >= 0.65) {
+              score += best;
+              evidence++;
+            }
+          }
+
+          return evidence >= 2 ? score / ocrContent.length : 0;
+        };
+
+        let best = null;
+        let secondBestScore = 0;
+
+        for (let start = sectionStart; start < paragraphs.length; start++) {
+          for (let count = 1; count <= 5; count++) {
+            const end = start + count;
+
+            if (end > paragraphs.length) break;
+
+            const selected = paragraphs.slice(start, end);
+
+            const combined = selected.join("\n\n");
+
+            const score = scoreWindow(combined);
+
+            // Prefer a smaller window when scores are comparable.
+            const adjustedScore = score - (count - 1) * 0.005;
+
+            if (!best || adjustedScore > best.adjustedScore) {
+              secondBestScore = best
+                ? Math.max(secondBestScore, best.adjustedScore)
+                : secondBestScore;
+
+              best = {
+                start,
+                end,
+                text: combined,
+                score,
+                adjustedScore,
+              };
+            } else {
+              secondBestScore = Math.max(secondBestScore, adjustedScore);
+            }
+          }
+        }
+
+        if (hanumanShortLineMatching && pageNumber === 67) {
+          const candidates = [];
+
+          for (let start = sectionStart; start < paragraphs.length; start++) {
+            for (let count = 1; count <= 5; count++) {
+              const end = start + count;
+
+              if (end > paragraphs.length) break;
+
+              const text = paragraphs.slice(start, end).join("\n\n");
+              const score = scoreWindow(text);
+
+              if (score > 0) {
+                candidates.push({
+                  start,
+                  end,
+                  score,
+                  text: text.slice(0, 350),
+                });
+              }
+            }
+          }
+
+          candidates.sort((a, b) => b.score - a.score);
+
+          if (hanumanShortLineMatching && pageNumber === 67) {
+            console.log(
+              "HANUMAN PAGE 67 DOCX PARAGRAPHS:",
+              paragraphs.slice(175, 185).map((text, index) => ({
+                index: 175 + index,
+                text,
+              })),
+            );
+          }
+
+          console.log("HANUMAN PAGE 67 OCR CONTENT:", ocrContent);
+          console.log(
+            "HANUMAN PAGE 67 TOP CANDIDATES:",
+            candidates.slice(0, 10),
+          );
+        }
+
+        if (!best || best.score < 0.6) {
+          throw new Error(
+            `Hanuman page ${pageNumber}: DOCX page could not be verified.`,
+          );
+        }
+
+        // Prevent matching an unrelated passage.
+        const meaningfulOCR = ocrContent.filter(
+          (line) => !/^(चौपाई|दोहा|मराठी अर्थ)/u.test(line),
+        );
+
+        const hasTextEvidence = meaningfulOCR.some(
+          (line) => scoreWindow(best.text) >= 0.6,
+        );
+
+        if (!hasTextEvidence) {
+          throw new Error(
+            `Hanuman page ${pageNumber}: insufficient text evidence.`,
+          );
+        }
+
+        console.log("HANUMAN VERIFIED PAGE:", {
+          pageNumber,
+          firstIndex: best.start,
+          lastIndex: best.end - 1,
+          confidence: best.score,
+          text: best.text,
+        });
+
+        return {
+          pageNumber,
+          text: best.text,
+          exactMatches,
+          ocrLines,
+          firstIndex: best.start,
+          lastIndex: best.end - 1,
         };
       }
 
@@ -1879,6 +2182,28 @@ export async function extractVerifiedDocxPage({
       const originalEnd = mapped.positions[endCharacterIndex] + 1;
 
       const cleanText = combinedText.slice(originalStart, originalEnd).trim();
+
+      if (hanumanShortLineMatching && pageNumber >= 13) {
+        console.log("HANUMAN BOUNDARY AUDIT:", {
+          pageNumber,
+          firstIndex,
+          lastIndex,
+          firstMatchParagraph: firstMatch.paragraphIndex,
+          lastMatchParagraph: lastMatch.paragraphIndex,
+          firstMatchOCR: firstMatch.ocrLine,
+          lastMatchOCR: lastMatch.ocrLine,
+          startPosition,
+          endPosition,
+          originalStart,
+          originalEnd,
+          selectedParagraphCount: selectedParagraphs.length,
+          selectedParagraphs: selectedParagraphs.map((text, index) => ({
+            index: firstIndex + index,
+            text: text.slice(0, 160),
+          })),
+          cleanText,
+        });
+      }
 
       if ([10, 11, 12].includes(pageNumber)) {
         console.log("MARATHI PAGE BOUNDARY DEBUG:", {
